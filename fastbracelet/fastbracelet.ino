@@ -11,6 +11,9 @@
  #
  # - https://learn.adafruit.com/led-ampli-tie/overview
  #
+ # You need a microphone (with pre-amp), such as the Sparkfun INMP401 plugged
+ # into A5 of the Arduino.
+ #
 */
 
 #define LED_DT 13
