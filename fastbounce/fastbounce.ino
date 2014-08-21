@@ -1,3 +1,14 @@
+// fastbounce
+//
+// By: Andrew Tuline
+//
+// Date: Aug, 2014
+//
+// This is a simple FastLED (2.1 and greater) display sequence.
+// 
+// FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
+//
+
 #include <FastLED.h>
 
 #define LED_PIN     13

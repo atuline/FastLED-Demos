@@ -1,59 +1,72 @@
 
-#include <FastLED.h>        // FastLED library
-
-/* The fastbracelet is based Neopixel code by John Burroughs:
+/* fastbracelet
  #
- # - https://www.youtube.com/watch?v=JjX8X5D8RW0&feature=youtu.be
- # - https://plus.google.com/105445034001275025240/posts/jK2fxRx79kj
- # - http://www.slickstreamer.info/2014/07/led-bracelet-vu-meter-3dprinting.html
+ # Converted by: Andrew Tuline
+ #
+ # Date: Aug, 2014
+ #
+ # The fastbracelet is based Neopixel code by John Burroughs:
+ #
+ # https://www.youtube.com/watch?v=JjX8X5D8RW0&feature=youtu.be
+ # https://plus.google.com/105445034001275025240/posts/jK2fxRx79kj
+ # http://www.slickstreamer.info/2014/07/led-bracelet-vu-meter-3dprinting.html
  #
  # That was based on the Adafruit LED Ampli-tie project at:
  #
- # - https://learn.adafruit.com/led-ampli-tie/overview
+ # https://learn.adafruit.com/led-ampli-tie/overview
  #
  # You need a microphone (with pre-amp), such as the Sparkfun INMP401 plugged
  # into A5 of the Arduino.
  #
+ # Plug Vcc of the mic into 3.3V of Arduino. Connect 3.3V of Arduino to aref pin, and gnd to gnd.
+ #
+ # FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
 */
 
-#define LED_DT 13
-#define MIC_PIN 5           // Analog port for microphone
-#define NUM_LEDS  24        // Number of pixels in strand
-#define COLOR_ORDER GRB
-#define BRIGHTNESS  196     // How bright do we want to go
+
+#include <FastLED.h>                                           // FastLED library
+ 
+#define LED_DT 13                                              // Data pin
+#define NUM_LEDS 24                                            // Number of LED's
+#define COLOR_ORDER GRB                                        // Change the order as necessary
+#define LED_TYPE WS2811                                        // What kind of strip are you using?
+#define BRIGHTNESS  196                                        // How bright do we want to go
 
 
-#define DC_OFFSET  32       // DC offset in mic signal - if unusure, leave 0
-                            // I calculated this value by serialprintln lots of mic values
-#define NOISE     100       // Noise/hum/interference in mic signal and increased value until it went quiet
-#define SAMPLES   60        // Length of buffer for dynamic level adjustment
-#define TOP (NUM_LEDS + 2)  // Allow dot to go slightly off scale
-#define PEAK_FALL 40        // Rate of peak falling dot
+#define MIC_PIN 5                                              // Analog port for microphone
+
+#define DC_OFFSET  32                                          // DC offset in mic signal - if unusure, leave 0
+                                                               // I calculated this value by serialprintln lots of mic values
+#define NOISE     100                                          // Noise/hum/interference in mic signal and increased value until it went quiet
+#define SAMPLES   60                                           // Length of buffer for dynamic level adjustment
+#define TOP (NUM_LEDS + 2)                                     // Allow dot to go slightly off scale
+#define PEAK_FALL 40                                           // Rate of peak falling dot
  
 byte
-  peak      = 0,            // Used for falling dot
-  dotCount  = 0,            // Frame counter for delaying dot-falling speed
-  volCount  = 0;            // Frame counter for storing past volume data
+  peak      = 0,                                               // Used for falling dot
+  dotCount  = 0,                                               // Frame counter for delaying dot-falling speed
+  volCount  = 0;                                               // Frame counter for storing past volume data
 int
-  vol[SAMPLES],             // Collection of prior volume samples
-  lvl       = 10,           // Current "dampened" audio level
-  minLvlAvg = 0,            // For dynamic adjustment of graph low & high
+  vol[SAMPLES],                                                // Collection of prior volume samples
+  lvl       = 10,                                              // Current "dampened" audio level
+  minLvlAvg = 0,                                               // For dynamic adjustment of graph low & high
   maxLvlAvg = 512;
 
 struct CRGB leds[NUM_LEDS];
 
 void setup() {
+  
   // This is only needed on 5V Arduinos (Uno, Leonardo, etc.).
   // Connect 3.3V to mic AND TO AREF ON ARDUINO and enable this
   // line.  Audio samples are 'cleaner' at 3.3V.
   // COMMENT OUT THIS LINE FOR 3.3V ARDUINOS (FLORA, ETC.):
   analogReference(EXTERNAL);
   
-  Serial.begin(9600);         // DEBUG
-
-  //LEDS.addLeds<WS2801, LED_CK, LED_DT, BGR, DATA_RATE_MHZ(1)>(leds, NUM_LEDS);
-  LEDS.addLeds<WS2811, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);
+  Serial.begin(9600);
+  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.setBrightness(BRIGHTNESS);
+  set_max_power_in_volts_and_milliamps(5, 500);                // FastLED 2.1 Power management set at 5V, 500mA
+
 }
  
 void loop() {
@@ -61,18 +74,18 @@ void loop() {
   uint16_t minLvl, maxLvl;
   int      n, height;
    
-  n   = analogRead(MIC_PIN);                        // Raw reading from mic
-  n   = abs(n - 512 - DC_OFFSET);                   // Center on zero
+  n   = analogRead(MIC_PIN);                                   // Raw reading from mic
+  n   = abs(n - 512 - DC_OFFSET);                              // Center on zero
   
-  n   = (n <= NOISE) ? 0 : (n - NOISE);             // Remove noise/hum
-  lvl = ((lvl * 7) + n) >> 3;                       // "Dampened" reading (else looks twitchy)
+  n   = (n <= NOISE) ? 0 : (n - NOISE);                        // Remove noise/hum
+  lvl = ((lvl * 7) + n) >> 3;                                  // "Dampened" reading (else looks twitchy)
  
   // Calculate bar height based on dynamic min/max levels (fixed point):
   height = TOP * (lvl - minLvlAvg) / (long)(maxLvlAvg - minLvlAvg);
  
-  if (height < 0L)       height = 0;      // Clip output
+  if (height < 0L)       height = 0;                           // Clip output
   else if (height > TOP) height = TOP;
-  if (height > peak)     peak   = height; // Keep 'peak' dot at top
+  if (height > peak)     peak   = height;                      // Keep 'peak' dot at top
  
  
   // Color pixels based on rainbow gradient
@@ -84,19 +97,20 @@ void loop() {
   // Draw peak dot  
   if(peak > 0 && peak <= NUM_LEDS-1) leds[peak] = CHSV(map(peak,0,NUM_LEDS-1,30,150), 255, 255);
 
-  LEDS.show(); // Update strip
- 
+  LEDS.show();                                                 // Update strip
+//  show_at_max_brightness_for_power();                        // Power managed FastLED display
+
 // Every few frames, make the peak pixel drop by 1:
  
-    if(++dotCount >= PEAK_FALL) { //fall rate 
+    if(++dotCount >= PEAK_FALL) {                              //fall rate 
       
       if(peak > 0) peak--;
       dotCount = 0;
     }
  
  
-  vol[volCount] = n;                      // Save sample for dynamic leveling
-  if(++volCount >= SAMPLES) volCount = 0; // Advance/rollover sample counter
+  vol[volCount] = n;                                           // Save sample for dynamic leveling
+  if(++volCount >= SAMPLES) volCount = 0;                      // Advance/rollover sample counter
  
   // Get volume range of prior frames
   minLvl = maxLvl = vol[0];
@@ -111,7 +125,7 @@ void loop() {
   // and 'jumpy'...so keep some minimum distance between them (this
   // also lets the graph go to zero when no sound is playing):
   if((maxLvl - minLvl) < TOP) maxLvl = minLvl + TOP;
-  minLvlAvg = (minLvlAvg * 63 + minLvl) >> 6; // Dampen min/max levels
-  maxLvlAvg = (maxLvlAvg * 63 + maxLvl) >> 6; // (fake rolling average)
+  minLvlAvg = (minLvlAvg * 63 + minLvl) >> 6;                  // Dampen min/max levels
+  maxLvlAvg = (maxLvlAvg * 63 + maxLvl) >> 6;                  // (fake rolling average)
  
 }

@@ -1,39 +1,40 @@
 
-#include <FastLED.h>        // FastLED library
-
-/* The fastbracelet is based Neopixel code by John Burroughs:
- #
- # - https://www.youtube.com/watch?v=JjX8X5D8RW0&feature=youtu.be
- # - https://plus.google.com/105445034001275025240/posts/jK2fxRx79kj
- # - http://www.slickstreamer.info/2014/07/led-bracelet-vu-meter-3dprinting.html
- #
- # That was based on the Adafruit LED Ampli-tie project at:
- #
- # - https://learn.adafruit.com/led-ampli-tie/overview
- #
-*/
-
-#define LED_DT 13
-#define MIC_PIN 5           // Analog port for microphone
-#define NUM_LEDS  24        // Number of pixels in strand
+// fasthsv
+//
+// By: Andrew Tuline
+//
+// Date: Aug, 2014
+//
+// This is a simple FastLED (2.1 and greater) display sequence .
+// 
+// FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
+//
 
 
-struct CRGB leds[NUM_LEDS];
+#include <FastLED.h>                                           // FastLED library
+ 
+#define LED_DT 13                                              // Data pin
+#define NUM_LEDS 24                                            // Number of LED's
+#define COLOR_ORDER GRB                                        // Change the order as necessary
+#define LED_TYPE WS2811                                        // What kind of strip are you using?
+#define BRIGHTNESS  196                                        // How bright do we want to go
+
+struct CRGB leds[NUM_LEDS];                                    // Initializxe our array
 
 
-int thisdelay = 25;
+// Initialize global variables for sequences
+int thisdelay;                                                 // A delay value for the sequence(s)
+
 
 void setup() {
-  // This is only needed on 5V Arduinos (Uno, Leonardo, etc.).
-  // Connect 3.3V to mic AND TO AREF ON ARDUINO and enable this
-  // line.  Audio samples are 'cleaner' at 3.3V.
-  // COMMENT OUT THIS LINE FOR 3.3V ARDUINOS (FLORA, ETC.):
-  analogReference(EXTERNAL);
-  
+ 
   Serial.begin(9600);         // DEBUG
 
-  //LEDS.addLeds<WS2801, LED_CK, LED_DT, BGR, DATA_RATE_MHZ(1)>(leds, NUM_LEDS);
-  LEDS.addLeds<WS2811, LED_DT, GRB>(leds, NUM_LEDS);
+  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+  FastLED.setBrightness(BRIGHTNESS);
+  set_max_power_in_volts_and_milliamps(5, 500);               // FastLED 2.1 Power management set at 5V, 500mA
+
+  thisdelay = 25;
 }
  
 void loop() {
@@ -41,24 +42,24 @@ void loop() {
 }
 
 void fasthsv() {
-  uint8_t j,k;
+  uint8_t hue_inc,thishue;
   int i;
 
-  for (j = 1; j < 50; j++) {
-    k = 0;
+  for (hue_inc = 1; hue_inc < 50; hue_inc++) {
+    thishue = 0;
     for (i = 0; i < NUM_LEDS; i++) {
-      leds[i] = CHSV(k, 255, 255);
-      k = k + j;
+      leds[i] = CHSV(thishue, 255, 255);                             // 
+      thishue += hue_inc;
     }
     LEDS.show();
     delay(thisdelay);
   }
 
-for (j = 49; j >0; j--) {
-    k = 0;
+for (hue_inc = 49; hue_inc >0; hue_inc--) {
+    thishue = 0;
     for (i = 0; i < NUM_LEDS; i++) {
-      leds[i] = CHSV(k, 255, 255);
-      k = k + j;
+      leds[i] = CHSV(thishue, 255, 255);
+      thishue += hue_inc;
     }
     LEDS.show();
     delay(thisdelay);
