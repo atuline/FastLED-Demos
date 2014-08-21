@@ -1,9 +1,22 @@
- #include <FastLED.h>
+// FastPal
+//
+// By: Andrew Tuline
+//
+// Date: Aug, 2014
+//
+// This is a simple FastLED (2.1 and greater) display sequence template. I found the basis for this on pastebin and modified it.
+// 
+// FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
+//
+
+#include <FastLED.h>
+
 #define LED_PIN  13
 #define NUM_LEDS 24
 #define COLOR_ORDER BRG
-#define CHIPSET WS2811
+#define LED_TYPE WS2811
 #define BRIGHTNESS 128
+
 CRGB leds[NUM_LEDS];
 
 byte startIndex = 0;
@@ -14,9 +27,9 @@ extern const TProgmemPalette16 myPalette_p PROGMEM;
 
 void setup() {
   Serial.begin(9600);
-  FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS);
-  FastLED.setBrightness( BRIGHTNESS );
-  LEDS.setDither(1);        // Enable or disable. Up to you.
+  FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+  FastLED.setBrightness(BRIGHTNESS);
+  LEDS.setDither(1);                                           // Enable or disable. Up to you.
 }
 
 void loop() {

@@ -22,10 +22,10 @@ int TOP_INDEX = int(NUM_LEDS/2);
 
 
 void setup() {
-  delay( 3000 ); // power-up safety delay
+  Serial.begin(9600);
   FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
   FastLED.setBrightness( BRIGHTNESS );
-  Serial.begin(9600);
+
 }
 
 
@@ -41,11 +41,13 @@ void loop() {
 
 void rainbow_bounce() {
   for (int i = 0; i <NUM_LEDS-8; i++) {
-//  fill_rainbow(leds, NUM_LEDS, 1);          // Fill a complete string with a rainbow
+
+//  fill_rainbow(leds, NUM_LEDS, 1);                           // Fill a complete string with a rainbow
 //  fill_solid(leds, NUM_LEDS, CRGB::Red);
 //  fill_solid(&(leds[i]), 8, CRGB::Green);
-    fill_rainbow(&(leds[i]), 8, thishue);              // Fill from starting array value for 8 LED's  
-                                              // The only problem, is that it will overwrite above thearray.
+
+    fill_rainbow(&(leds[i]), 8, thishue);                      // Fill from starting array value for 8 LED's  
+                                                               // The only problem, is that it will overwrite above thearray.
     thishue+=2;
     FastLED.show();
     fill_solid(leds, NUM_LEDS, CRGB::Black);
@@ -53,13 +55,16 @@ void rainbow_bounce() {
   }
 
 for (int i = NUM_LEDS-8; i>0; i--) {
-//  fill_rainbow(leds, NUM_LEDS, 1);          // Fill a complete string with a rainbow
+
+//  fill_rainbow(leds, NUM_LEDS, 1);                           // Fill a complete string with a rainbow
 //  fill_solid(leds, NUM_LEDS, CRGB::Red);
 //  fill_solid(&(leds[i]), 8, CRGB::Green);
-    fill_rainbow(&(leds[i]), 8, thishue);              // Fill from starting array value for 8 LED's  
+
+    fill_rainbow(&(leds[i]), 8, thishue);                      // Fill from starting array value for 8 LED's  
     thishue+=2;
     FastLED.show();
     fill_solid(leds, NUM_LEDS, CRGB::Black);
+    
     delay(thisdelay);
   }
 }

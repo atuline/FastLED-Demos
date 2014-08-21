@@ -25,10 +25,12 @@
 
 #define LED_PIN     13
 #define NUM_LEDS    24
-#define BRIGHTNESS  255
 #define LED_TYPE    WS2811
 #define COLOR_ORDER GRB
-CRGB leds[NUM_LEDS];
+#define BRIGHTNESS  255
+
+struct CRGB leds[NUM_LEDS];                                    // Initializxe our array
+
 
 int thisdelay = 20;
 int thissat = 255;
@@ -54,13 +56,15 @@ void setup() {
   delay(2000);                    // Power-up safety delay or something like that.
   Serial.begin(9600);
 
-  FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
-  FastLED.setBrightness( BRIGHTNESS );
+  FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+  FastLED.setBrightness(BRIGHTNESS);
 }
 
 
 void loop() {
+
   gravball();
+
 }
 
 

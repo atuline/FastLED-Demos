@@ -19,16 +19,26 @@
  
 #define LED_DT 13
 #define NUM_LEDS 24
+#define COLOR_ORDER GRB
+#define LED_TYPE WS2811                                        // What kind of strip are you using?
+#define BRIGHTNESS  196                                        // How bright do we want to go
 
 struct CRGB leds[NUM_LEDS];
-int thisdelay = 20;
+
+// Initialize global variables for sequences
+int thisdelay;                                                 // A delay value for the sequence(s)
 
 fastclass twinkle(leds, NUM_LEDS);
 
 
 void setup() {
 	Serial.begin(9600);
-	LEDS.addLeds<WS2811, LED_DT, GRB>(leds, NUM_LEDS);
+	LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+  FastLED.setBrightness(BRIGHTNESS);
+
+// Initializing code/variables for the sequence
+  thisdelay = 20;
+
 }
 
 void loop () {

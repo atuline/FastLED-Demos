@@ -1,50 +1,55 @@
 
-// Splash
+// fasttwinkle
 //
-// Using FastLED's sin8() and quadwave8() math
+// By: Andrew Tuline
 //
-//  By Andrew Tuline
+// Date: Aug, 2014
 //
-// This demonstrates the cool capabilities of using basic trig functions. They're fast AND and easy.
+// This is a simple FastLED (2.1 and greater) display sequence template.
 // 
-// For instance, you can create fully anti-aliased moving bars using this function with just a few simple
-// lines of code.
+// FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
 //
-// Here's some plasma/demo stuff
-//
-// - http://lodev.org/cgtutor/plasma.html
-// - http://www.flipcode.com/archives/The_Art_of_Demomaking-Issue_04_Per_Pixel_Control.shtml
-// - http://www.pouet.net/topic.php?which=4650
-// - http://www.mennovanslooten.nl/blog/post/72
-// - http://www.bidouille.org/prog/plasma  (see fastplasma)
-// - https://github.com/johncarl81/neopixelplasma
-// - http://codegolf.stackexchange.com/questions/35569/tweetable-mathematical-art (see fasttweetable)
 
-#ifndef twinkle_h
-#define twinkle_h
 
-#include <FastLED.h>        // FastLED library
+#include <FastLED.h>                                           // FastLED library
  
-#define LED_DT 13
-#define NUM_LEDS 24
+#define LED_DT 13                                              // Data pin
+#define NUM_LEDS 24                                            // Number of LED's
+#define COLOR_ORDER GRB                                        // Change the order as necessary
+#define LED_TYPE WS2811                                        // What kind of strip are you using?
+#define BRIGHTNESS  196                                        // How bright do we want to go
 
-struct CRGB leds[NUM_LEDS];
+struct CRGB leds[NUM_LEDS];                                    // Initializxe our array
+
+
+// Initialize global variables for sequences
+int thisdelay;                                                 // A delay value for the sequence(s)
 
 void setup() {
-	Serial.begin(9600);
-	LEDS.addLeds<WS2811, LED_DT, GRB>(leds, NUM_LEDS);
+  Serial.begin(9600);
+  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+  FastLED.setBrightness(BRIGHTNESS);
+  set_max_power_in_volts_and_milliamps(5, 500);               // FastLED 2.1 Power management set at 5V, 500mA
+
+
+// Initializing code/variables for the sequence
+  thisdelay = 8;
+
 }
 
 void loop () {
-	twinkle();
+  twinkle();
 }
 
 void twinkle() {
-	int i = random8();													// A random number. Higher number => fewer twinkles. Use random16() for values >255.
-	if (i < NUM_LEDS) leds[i] = CHSV(50, 100, 255);				// Only the lowest probability twinkles will do. You could even randomize the hue/saturation. .
-	for (int j = 0; j < NUM_LEDS; j++) leds[j].fadeToBlackBy(8);
-	LEDS.show();
-	LEDS.delay(8);																// Higher number => slower twinkles.
-}
+  int i = random8();                                           // A random number. Higher number => fewer twinkles. Use random16() for values >255.
+  if (i < NUM_LEDS) leds[i] = CHSV(50, 100, 255);              // Only the lowest probability twinkles will do. You could even randomize the hue/saturation. .
+  for (int j = 0; j < NUM_LEDS; j++) leds[j].fadeToBlackBy(8);
+  
+ // LEDS.show();                                                // Standard FastLED display
+  show_at_max_brightness_for_power();                          // Power managed FastLED display
 
-#endif
+  delay(thisdelay);                                            // Standard delay
+//  LEDS.delay(thisdelay);                                     // FastLED delay 
+//  delay_at_max_brightness_for_power(thisdelay);              // Power managed FastLED delay
+}

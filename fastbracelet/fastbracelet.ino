@@ -19,6 +19,8 @@
 #define LED_DT 13
 #define MIC_PIN 5           // Analog port for microphone
 #define NUM_LEDS  24        // Number of pixels in strand
+#define COLOR_ORDER GRB
+#define BRIGHTNESS  196     // How bright do we want to go
 
 
 #define DC_OFFSET  32       // DC offset in mic signal - if unusure, leave 0
@@ -50,7 +52,8 @@ void setup() {
   Serial.begin(9600);         // DEBUG
 
   //LEDS.addLeds<WS2801, LED_CK, LED_DT, BGR, DATA_RATE_MHZ(1)>(leds, NUM_LEDS);
-  LEDS.addLeds<WS2811, LED_DT, GRB>(leds, NUM_LEDS);
+  LEDS.addLeds<WS2811, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);
+  FastLED.setBrightness(BRIGHTNESS);
 }
  
 void loop() {
