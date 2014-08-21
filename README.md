@@ -15,6 +15,9 @@ Download FastLED 2.1 library from this GitHub branch at: https://github.com/Fast
 
 
 An LED links page  on my web site:      http://www.tuline.com/dru/content/led-products-libraries-and-effects
+
 My Youtube channel is at:               https://www.youtube.com/user/atuline/videos
+
 My future LED site will be at:          http://www.twinkleds.com
+
 My Github account is at:                https://github.com/atuline
