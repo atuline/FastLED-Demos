@@ -11,7 +11,7 @@ The template for the sequences is called aattemplate.
 
 FastLED is available from: http://fastled.io/
 
-Download FastLED 2.1 library from this GitHub branch at: https://github.com/FastLED/FastLED/tree/FastLED2.1
+Download FastLED 2.1 from: https://github.com/FastLED/FastLED/tree/FastLED2.1
 
 
 An LED links page  on my web site:      http://www.tuline.com/dru/content/led-products-libraries-and-effects
