@@ -5,7 +5,7 @@
 //
 // Date: Aug, 2014
 //
-// This is a simple FastLED (2.1 and greater) display sequence.
+// Multiple bouncing balls. For whatever reason, I call them gravs.
 // 
 // FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
 //

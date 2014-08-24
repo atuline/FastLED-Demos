@@ -1,10 +1,12 @@
 // FastPal
 //
-// By: Andrew Tuline
+// Found on: GitHub
+//
+// Stolen and modified by: Andrew Tuline
 //
 // Date: Aug, 2014
 //
-// This is a simple FastLED (2.1 and greater) display sequence template. I found the basis for this on pastebin and modified it.
+// This uses FastLED palettes.
 // 
 // FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
 //
@@ -19,26 +21,29 @@
 
 CRGB leds[NUM_LEDS];
 
+int thisdelay = 20;
 byte startIndex = 0;
 CRGBPalette16 currentPalette;
 TBlendType  currentBlending;
 extern CRGBPalette16 myPalette;
 extern const TProgmemPalette16 myPalette_p PROGMEM;
 
+
 void setup() {
   Serial.begin(9600);
   FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.setBrightness(BRIGHTNESS);
   LEDS.setDither(1);                                           // Enable or disable. Up to you.
-}
+} // setup()
+
 
 void loop() {
   startIndex +=1;
   currentPalette = myPalette_p;
   currentBlending = BLEND;
   PaletteColors(startIndex);
-  LEDS.show();
-}
+} // loop()
+
 
 void PaletteColors(uint8_t colorIndex){  
     for (int i = 0; i <NUM_LEDS/2; i++) {
@@ -46,8 +51,9 @@ void PaletteColors(uint8_t colorIndex){
     leds[NUM_LEDS/2+i] = ColorFromPalette( currentPalette, colorIndex, BRIGHTNESS, currentBlending);
     colorIndex -=4;
   }
-  delay(20);
-}
+  LEDS.show();
+  delay(thisdelay);
+} // PaletteColors()
 
 const TProgmemPalette16 myPalette_p PROGMEM = {
   CRGB::AliceBlue,

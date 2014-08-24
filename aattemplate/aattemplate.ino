@@ -23,8 +23,7 @@ struct CRGB leds[NUM_LEDS];                                    // Initializxe ou
 
 
 // Initialize global variables for sequences
-int thisdelay;                                                 // A delay value for the sequence(s)
-
+int thisdelay = 8;                                                 // A delay value for the sequence(s)
 
 
 void setup() {
@@ -32,10 +31,6 @@ void setup() {
   LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.setBrightness(BRIGHTNESS);
   set_max_power_in_volts_and_milliamps(5, 500);               // FastLED 2.1 Power management set at 5V, 500mA
-
-// Initializing code/variables for the sequence
-  thisdelay = 8;
-
 } // setup()
 
 
@@ -55,4 +50,5 @@ void twinkle() {
   delay(thisdelay);                                            // Standard delay
 //	LEDS.delay(thisdelay);																     // FastLED delay 
 //  delay_at_max_brightness_for_power(thisdelay);              // Power managed FastLED delay
+
 } // twinkle()

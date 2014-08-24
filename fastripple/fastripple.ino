@@ -31,21 +31,21 @@ int diff;
 uint32_t currentBg = random(256);
 uint32_t nextBg = currentBg;
 
-int thisdelay;
+int thisdelay = 50;
 
  
 void setup() {
   Serial.begin(9600);
   LEDS.addLeds<LED_TYPE, LED_DT, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.setBrightness(BRIGHTNESS);
-
-  thisdelay = 50;
 }
- 
+
+
 void loop () {
   ripple();
 }
- 
+
+
 void ripple() {
 
     if (currentBg == nextBg) {

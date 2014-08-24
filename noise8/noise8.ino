@@ -5,7 +5,7 @@
 //
 // Date: Aug, 2014
 //
-// This is a simple FastLED (2.1 and greater) display sequence utilizing fastled noise.
+// This is uses a FastLED noise generator.
 // 
 // FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
 //
@@ -23,7 +23,7 @@ struct CRGB leds[NUM_LEDS];                                    // Initializxe ou
 
 
 // Initialize global variables for sequences
-int thisdelay;                                                 // A delay value for the sequence(s)
+int thisdelay = 40;                                                // A delay value for the sequence(s)
 
 uint32_t x,v_time,hue_time;
 int hxy = 12630;
@@ -40,10 +40,7 @@ void setup() {
   LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.setBrightness(BRIGHTNESS);
   set_max_power_in_volts_and_milliamps(5, 500);               // FastLED 2.1 Power management set at 5V, 500mA
-
-// Initializing code/variables for the sequence
-  thisdelay = 40;
-}
+} // setup()
 
 
 void loop() {

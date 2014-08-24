@@ -1,13 +1,13 @@
 
 // Matrix
 //
-// Originally from: funkboxing LED
+// By: funkboxing LED
 //
 // Updated by: Andrew Tuline
 //
 // Date: Aug, 2014
 //
-// This is a simple FastLED (2.1 and greater) display sequence template.
+// Green dots going up the strand, a la 'The Matrix'.
 // 
 // FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
 //

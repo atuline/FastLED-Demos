@@ -4,7 +4,7 @@
 //
 // Date: Aug, 2014
 //
-// This is a simple FastLED (2.1 and greater) display sequence.
+// A bar of LED's moving up and down the strand with rotating hues.
 // 
 // FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
 //
@@ -35,18 +35,12 @@ int TOP_INDEX = int(NUM_LEDS/2);
 void setup() {
   Serial.begin(9600);
   FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
-  FastLED.setBrightness( BRIGHTNESS );
-
+  FastLED.setBrightness(BRIGHTNESS);
 }
 
 
 void loop() {
-
-//  thishue = random8();
-//  Serial.println(thishue);
-
   rainbow_bounce();
-
 }
 
 
@@ -63,7 +57,7 @@ void rainbow_bounce() {
     FastLED.show();
     fill_solid(leds, NUM_LEDS, CRGB::Black);
     delay(thisdelay);
-  }
+  } // for i
 
 for (int i = NUM_LEDS-8; i>0; i--) {
 
@@ -77,5 +71,5 @@ for (int i = NUM_LEDS-8; i>0; i--) {
     fill_solid(leds, NUM_LEDS, CRGB::Black);
     
     delay(thisdelay);
-  }
-}
+  } // for i
+} // rainbow_bounce()

@@ -1,17 +1,17 @@
 
-#include <FastLED.h>        // FastLED library
+// TITLE
+//
+// Originally from: the Neopixel Ampli-Tie project.
+//
+// By: Andrew Tuline
+//
+// Date: Aug, 2014
+//
+// Basic code to read from the Sparkfun INMP401 microphone and display CHSV output.
+// 
+// FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
+//
 
-/* The fastbracelet is based Neopixel code by John Burroughs:
- #
- # - https://www.youtube.com/watch?v=JjX8X5D8RW0&feature=youtu.be
- # - https://plus.google.com/105445034001275025240/posts/jK2fxRx79kj
- # - http://www.slickstreamer.info/2014/07/led-bracelet-vu-meter-3dprinting.html
- #
- # That was based on the Adafruit LED Ampli-tie project at:
- #
- # - https://learn.adafruit.com/led-ampli-tie/overview
- #
-*/
 
 #include <FastLED.h>                                           // FastLED library
  
@@ -28,7 +28,7 @@ struct CRGB leds[NUM_LEDS];                                    // Initializxe ou
 
 
 // Initialize global variables for sequences
-int thisdelay;                                                 // A delay value for the sequence(s)
+int thisdelay = 4;                                                 // A delay value for the sequence(s)
 
 #define DC_OFFSET  32                                          // DC offset in mic signal - if unusure, leave 0
  
@@ -44,11 +44,9 @@ void setup() {
 
   LEDS.addLeds<LED_TYPE, LED_DT, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.setBrightness(BRIGHTNESS);
+} // setup()
 
-  // Initializing code/variables for the sequence
-  thisdelay = 4;
-}
- 
+
 void loop() {
   memsmic();
 }
