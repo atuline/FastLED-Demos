@@ -26,14 +26,15 @@ struct CRGB leds[NUM_LEDS];                                    // Initializxe ou
 
 // Initialize global variables for sequences
 int count;
+int mycount = 0;
 
 uint8_t hue = 0;
 uint8_t temp[NUM_LEDS];
 uint8_t wave;
 int wave_scale = 20;
 
-int previousMillis;
-int thisdelay = 10;
+long previousMillis;
+int thisdelay = 40;
 
 
 void setup() {
@@ -46,19 +47,28 @@ void setup() {
 
 
 void loop () {
-//  hue_array();
   hue_wave();
+  hue_inc();
 } // loop()
 
 
 //populate a separate array for 'hue mask'
 void hue_array() {
   for (byte i = 0; i < ((NUM_LEDS/2)+ 1); i++) {
-    static byte x = 0;
-      hue += 10;
+    hue += 5;
     temp[i] = hue;
   }  
 }
+
+// Let's rotate the hue array over time
+void hue_inc() {
+  mycount++;
+  if (mycount == 2000) { 
+    mycount = 0;
+    for (byte i = 0; i < ((NUM_LEDS/2)+ 1); i++) temp[i]++;
+  }
+}  
+
 
 void hue_wave(){
   static byte middle = NUM_LEDS/2;    
