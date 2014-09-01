@@ -47,5 +47,4 @@ My personal web site is at:             http://www.tuline.com
 
 
 Disclaimer: I haven't gone through the code with a fine tooth comb, so it's not yet optimized with non-blocking delays and in many
-cases, the most efficient declarations of variables. Sorry, but I'm not a professional programmer, and at my age, that just won't
-happen.
+cases, the most efficient declarations of variables. Am working on it slowly.
