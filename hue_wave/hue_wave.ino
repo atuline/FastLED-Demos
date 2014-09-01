@@ -66,8 +66,6 @@ void hue_inc() {
   if (mycount == 500) { 
     mycount = 0;
     for (byte i = 0; i < ((NUM_LEDS/2)+ 1); i++) temp[i]++;
-    Serial.print(temp[5]);
-    Serial.print(" ");
   }
 } // hue_inc()
 
