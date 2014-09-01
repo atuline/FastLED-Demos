@@ -25,7 +25,6 @@
 struct CRGB leds[NUM_LEDS];                                    // Initializxe our array
 
 // Initialize global variables for sequences
-int count;
 int mycount = 0;
 
 uint8_t hue = 0;
@@ -58,34 +57,33 @@ void hue_array() {
     hue += 5;
     temp[i] = hue;
   }  
-}
+} // hue_array()
+
 
 // Let's rotate the hue array over time
 void hue_inc() {
   mycount++;
-  if (mycount == 2000) { 
+  if (mycount == 500) { 
     mycount = 0;
     for (byte i = 0; i < ((NUM_LEDS/2)+ 1); i++) temp[i]++;
+    Serial.print(temp[5]);
+    Serial.print(" ");
   }
-}  
+} // hue_inc()
 
 
+// Displaying the wave of hues
 void hue_wave(){
   static byte middle = NUM_LEDS/2;    
   if(millis() - previousMillis >= thisdelay) {
-    count++;
-    if (count == 255) { 
-      count = 0; 
-    }
     for (byte i = 0; i <= middle; i++) {
       wave = sin8((millis() / wave_scale) * i);
-      hue = temp[i];  //populate hue before calling CHSV, otherwise it is destructive to leds[]
-      leds[i] = CHSV(hue, 255, wave);          
+      leds[i] = CHSV(temp[i], 255, wave);          
     }
-    for (byte i = middle; i <= NUM_LEDS; i++) {
+    for (byte i = middle; i <= NUM_LEDS-1; i++) {
       leds[i] = leds[NUM_LEDS - i];
     }
     previousMillis = millis();
     LEDS.show();
   }
-}
+} // hue_wave()
