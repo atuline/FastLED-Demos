@@ -1,4 +1,4 @@
-// fastbounce
+// Fastbounce
 //
 // By: Andrew Tuline
 //

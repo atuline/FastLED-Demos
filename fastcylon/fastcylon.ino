@@ -40,15 +40,15 @@ void cylon() {
 	for(int i = 0; i < NUM_LEDS; i++) {
 		leds[i] = CRGB::Red;
 		show_at_max_brightness_for_power();
-		leds[i] = CRGB::Black;
+    leds[i] = CRGB::Black;
 //		delay_at_max_brightness_for_power(20);
 		delay(thisdelay);
 	}
 
 	for(int i = NUM_LEDS-1; i >= 0; i--) {
-		leds[i] = CRGB::Red;
+    leds[i] = CRGB::Red;
 		show_at_max_brightness_for_power();
-		leds[i] = CRGB::Black;
+  	leds[i] = CRGB::Black;
 //		delay_at_max_brightness_for_power(20);
 		delay(thisdelay);
 	}
