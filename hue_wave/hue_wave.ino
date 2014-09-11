@@ -82,6 +82,6 @@ void hue_wave(){
       leds[i] = leds[NUM_LEDS - i];
     }
     previousMillis = millis();
-    LEDS.show();
+    show_at_max_brightness_for_power();
   }
 } // hue_wave()
