@@ -5,7 +5,7 @@ By: Andrew Tuline
 
 Email: atuline@gmail.com
 
-Date: August, 2014
+Date: September, 2014
 
 
 Here's some demo sequences for FastLED 2.1 (and above) for a single strand of RGB LED's, such as WS2811 or WS2812B. Some I made,
@@ -14,17 +14,27 @@ Nano 3.0, but not the Teensy.
 
 If I haven't properly attributed some code, please let me know and I'd be happy to do so.
 
+In addition to a pile of individual sequences, I have added aalight and aainfra, which support keyboard, IR and switch control of
+several sequences.
+
+aalight - Runs on an Arduino connected to an LED strip. Compile aalight.ino, and it will include the other .ino files in the directory.
+aainfra - Runs on a 2nd Arduino. Compile aainfra.ino and connect Tx of the 2nd Arduino to Rx of the first one.
+
+See aalight.ino for more information on how to use this. Also see aalight.png for a breadboard layout.
+
+
+
+
 In the future, I hope to restructure and include sequences that:
 
 * just run
 * are sound responsive with just a microphone
 * are sound responsive with msgeq7 spectrum analyzer chip
 * support some form of input (button, IR)
-* have multiple displays in one big file
 * I may even investigate classes down the road
 
 
-The template for the sequences is called aattemplate.
+The template for the sequences is called aatemplate.
 
 
 The awesome FastLED Library is available from: http://fastled.io/
