@@ -15,7 +15,7 @@
 #include <FastLED.h>                                           // FastLED library
  
 #define LED_DT 13                                              // Data pin
-#define NUM_LEDS 24                                            // Number of LED's
+#define NUM_LEDS 8                                            // Number of LED's
 #define COLOR_ORDER GRB                                        // Change the order as necessary
 #define LED_TYPE WS2811                                        // What kind of strip are you using?
 #define BRIGHTNESS  128                                        // How bright do we want to go
