@@ -49,8 +49,10 @@ void fasthsv() {
       leds[i] = CHSV(thishue, 255, 255);                             // 
       thishue += hue_inc;
     }
-    LEDS.show();
-    delay(thisdelay);
+  show_at_max_brightness_for_power();
+//  FastLED.delay(thisdelay*2.5);
+//  delay_at_max_brightness_for_power(thisdelay*2.5);
+  delay(thisdelay);
   }
 
 for (hue_inc = 49; hue_inc >0; hue_inc--) {
@@ -59,7 +61,9 @@ for (hue_inc = 49; hue_inc >0; hue_inc--) {
       leds[i] = CHSV(thishue, 255, 255);
       thishue += hue_inc;
     }
-    LEDS.show();
-    delay(thisdelay);
+  show_at_max_brightness_for_power();
+//  FastLED.delay(thisdelay*2.5);
+//  delay_at_max_brightness_for_power(thisdelay*2.5);
+  delay(thisdelay);
   }
 }

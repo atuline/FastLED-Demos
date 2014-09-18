@@ -38,6 +38,7 @@ void setup() {
   Serial.begin(9600);
   LEDS.addLeds<LED_TYPE, LED_DT, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.setBrightness(BRIGHTNESS);
+  set_max_power_in_volts_and_milliamps( 5, 1000);
 }
 
 
@@ -87,8 +88,11 @@ void ripple() {
     }
   }
   
-  LEDS.show();
-  delay(thisdelay);
+  show_at_max_brightness_for_power();
+  
+//  FastLED.delay(thisdelay*2.5);
+  delay_at_max_brightness_for_power(thisdelay*2.5);
+//  delay(thisdelay);
 }
  
  

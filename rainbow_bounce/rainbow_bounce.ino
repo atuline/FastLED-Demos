@@ -37,7 +37,7 @@ void setup() {
 
 
 void loop () {
- rainbow_bounce();                                                   // Improved method of using non-blocking delay
+ rainbow_bounce();                                             
 } // loop()
 
 
@@ -47,7 +47,11 @@ void rainbow_bounce() {
     thishue+=2;
     show_at_max_brightness_for_power();
     fill_solid(leds, NUM_LEDS, CRGB::Black);
-    delay(thisdelay);
+
+//  FastLED.delay(thisdelay*2.5);
+//  delay_at_max_brightness_for_power(thisdelay*2.5);
+  delay(thisdelay);
+
   } // for i
 
   for (int i = NUM_LEDS-8; i>0; i--) {
@@ -55,7 +59,10 @@ void rainbow_bounce() {
     thishue+=2;
     show_at_max_brightness_for_power();
     fill_solid(leds, NUM_LEDS, CRGB::Black);
-    delay(thisdelay);
+//  FastLED.delay(thisdelay*2.5);
+//  delay_at_max_brightness_for_power(thisdelay*2.5);
+  delay(thisdelay);
+
   } // for i
 
 } // rainbow_bounce()

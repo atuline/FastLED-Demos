@@ -8,6 +8,10 @@ void rainbow_fade() {                                 // FADE ALL LEDS THROUGH H
     leds[idex] = CHSV(thishue, thissat, 255);
   }
   show_at_max_brightness_for_power();
-  delay(thisdelay);
+
+//  FastLED.delay(thisdelay*2.5);
+  delay_at_max_brightness_for_power(thisdelay*2.5);
+//  delay(thisdelay);
+
 }
 

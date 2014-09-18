@@ -97,8 +97,8 @@ void loop() {
   // Draw peak dot  
   if(peak > 0 && peak <= NUM_LEDS-1) leds[peak] = CHSV(map(peak,0,NUM_LEDS-1,30,150), 255, 255);
 
-  LEDS.show();                                                 // Update strip
-//  show_at_max_brightness_for_power();                        // Power managed FastLED display
+//  LEDS.show();                                                 // Update strip
+  show_at_max_brightness_for_power();                        // Power managed FastLED display
 
 // Every few frames, make the peak pixel drop by 1:
  

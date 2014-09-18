@@ -33,6 +33,7 @@ void setup() {
   Serial.begin(9600);
   FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.setBrightness(BRIGHTNESS);
+  set_max_power_in_volts_and_milliamps( 5, 1000);
   LEDS.setDither(1);                                           // Enable or disable. Up to you.
 } // setup()
 
@@ -51,8 +52,10 @@ void PaletteColors(uint8_t colorIndex){
     leds[NUM_LEDS/2+i] = ColorFromPalette( currentPalette, colorIndex, BRIGHTNESS, currentBlending);
     colorIndex -=4;
   }
-  LEDS.show();
-  delay(thisdelay);
+  show_at_max_brightness_for_power();
+//  FastLED.delay(thisdelay*2.5);
+  delay_at_max_brightness_for_power(thisdelay*2.5);
+//  delay(thisdelay);
 } // PaletteColors()
 
 const TProgmemPalette16 myPalette_p PROGMEM = {

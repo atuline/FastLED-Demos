@@ -483,7 +483,7 @@ void readbutton() {                            								// Read the button and in
   buttonState = digitalRead(buttonPin);
   if (buttonState != lastButtonState) {
     if (buttonState == LOW) {
-      ledMode = ledMode > 9 ? 0 : ledMode+1;        					// Reset to 0 only during a mode change
+      ledMode = ledMode > 8 ? 0 : ledMode+1;        					// Reset to 0 only during a mode change
       change_mode(ledMode);
     }
   }

@@ -79,6 +79,9 @@ void gravball() {
     leds[i] += CHSV(mygravs[k].thishue, thissat, thisbright);          // Let's get ready to display it.
   }
   show_at_max_brightness_for_power();
-  delay(thisdelay);
+  
+//  FastLED.delay(thisdelay*2.5);
+  delay_at_max_brightness_for_power(thisdelay*2.5);
+//  delay(thisdelay);
 
 } // gravball()

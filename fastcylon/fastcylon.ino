@@ -1,5 +1,5 @@
 
-// TITLE
+// FastCylon
 //
 // By: Andrew Tuline
 //
@@ -19,6 +19,8 @@
 #define BRIGHTNESS  196                                        // How bright do we want to go
 
 CRGB leds[NUM_LEDS];
+
+#define UPDATES_PER_SECOND 20
 
 int thisdelay = 20;
 
@@ -41,15 +43,21 @@ void cylon() {
 		leds[i] = CRGB::Red;
 		show_at_max_brightness_for_power();
     leds[i] = CRGB::Black;
-//		delay_at_max_brightness_for_power(20);
-		delay(thisdelay);
+
+//  FastLED.delay(thisdelay*2.5);
+//  delay_at_max_brightness_for_power(thisdelay*2.5);
+  delay(thisdelay);
+
 	}
 
 	for(int i = NUM_LEDS-1; i >= 0; i--) {
     leds[i] = CRGB::Red;
 		show_at_max_brightness_for_power();
   	leds[i] = CRGB::Black;
-//		delay_at_max_brightness_for_power(20);
-		delay(thisdelay);
+
+//  FastLED.delay(thisdelay*2.5);
+//  delay_at_max_brightness_for_power(thisdelay*2.5);
+  delay(thisdelay);
+
 	}
 } // cylon()

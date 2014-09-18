@@ -54,7 +54,11 @@ void fast_circ() {                                    // FAST CIRCLE
     // thishue++;
     show_at_max_brightness_for_power();
     leds[i] = CRGB::Black;
-    delay(thisdelay);
+
+//  FastLED.delay(thisdelay*2.5);
+//  delay_at_max_brightness_for_power(thisdelay*2.5);
+  delay(thisdelay);
+
   }
 } // fast_circ()
 

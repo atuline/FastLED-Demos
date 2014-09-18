@@ -44,6 +44,7 @@ void setup() {
 
   LEDS.addLeds<LED_TYPE, LED_DT, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.setBrightness(BRIGHTNESS);
+  set_max_power_in_volts_and_milliamps( 5, 1000);
 } // setup()
 
 
@@ -57,7 +58,11 @@ void memsmic() {
     n = analogRead(MIC_PIN);                                   // Raw reading from mic
     n = abs(n - 512 - DC_OFFSET);                              // Center on zero
     leds[i] = CHSV((n*2 % 255), 255, (n*2)% 255);
-    delay(thisdelay);
-    LEDS.show();
+
+//  FastLED.delay(thisdelay*2.5);
+//  delay_at_max_brightness_for_power(thisdelay*2.5);
+  delay(thisdelay);
+
+  show_at_max_brightness_for_power();
   }
 }

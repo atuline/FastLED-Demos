@@ -9,7 +9,10 @@ void pulse_one_color_all() {                          // PULSE BRIGHTNESS ON ALL
     leds[idex] = CHSV(thishue, thissat, thisbright);
   }
   show_at_max_brightness_for_power();
-  delay(thisdelay);
+
+//  FastLED.delay(thisdelay*2.5);
+  delay_at_max_brightness_for_power(thisdelay*2.5);
+//  delay(thisdelay);
 
 }
 

@@ -36,6 +36,7 @@ void setup() {
   Serial.begin(9600);
   FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
   FastLED.setBrightness(BRIGHTNESS);
+  set_max_power_in_volts_and_milliamps( 5, 1000);
 }
 
 
@@ -54,9 +55,13 @@ void rainbow_bounce() {
     fill_rainbow(&(leds[i]), 8, thishue);                      // Fill from starting array value for 8 LED's  
                                                                // The only problem, is that it will overwrite above thearray.
     thishue+=2;
-    FastLED.show();
+    show_at_max_brightness_for_power();
     fill_solid(leds, NUM_LEDS, CRGB::Black);
-    delay(thisdelay);
+
+//  FastLED.delay(thisdelay*2.5);
+//  delay_at_max_brightness_for_power(thisdelay*2.5);
+  delay(thisdelay);
+
   } // for i
 
 for (int i = NUM_LEDS-8; i>0; i--) {
@@ -67,9 +72,12 @@ for (int i = NUM_LEDS-8; i>0; i--) {
 
     fill_rainbow(&(leds[i]), 8, thishue);                      // Fill from starting array value for 8 LED's  
     thishue+=2;
-    FastLED.show();
+    show_at_max_brightness_for_power();
     fill_solid(leds, NUM_LEDS, CRGB::Black);
     
-    delay(thisdelay);
+//  FastLED.delay(thisdelay*2.5);
+//  delay_at_max_brightness_for_power(thisdelay*2.5);
+  delay(thisdelay);
+
   } // for i
 } // rainbow_bounce()

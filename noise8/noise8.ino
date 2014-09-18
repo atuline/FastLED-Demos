@@ -52,6 +52,9 @@ void mynoise() {
   fill_noise8(leds, NUM_LEDS, octaves, x, xscale, hue_octaves, hxy, hue_scale, hue_time);
   x += x_speed;
   hue_time += hue_speed;
-  LEDS.show();
-  delay(thisdelay);
+  show_at_max_brightness_for_power();
+  
+//  FastLED.delay(thisdelay*2.5);
+  delay_at_max_brightness_for_power(thisdelay*2.5);
+//  delay(thisdelay);
 }

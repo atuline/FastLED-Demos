@@ -15,7 +15,7 @@
 #include <FastLED.h>                                           // FastLED library
  
 #define LED_DT 13                                              // Data pin
-#define NUM_LEDS 8                                            // Number of LED's
+#define NUM_LEDS 24                                            // Number of LED's
 #define COLOR_ORDER GRB                                        // Change the order as necessary
 #define LED_TYPE WS2811                                        // What kind of strip are you using?
 #define BRIGHTNESS  128                                        // How bright do we want to go
@@ -52,7 +52,11 @@ void random_color_pop() {                                     // RANDOM COLOR PO
   if (idex < NUM_LEDS) leds[idex] = CHSV(thishue, 255, 255);  // Only the lowest probability twinkles will do. You could even randomize the hue/saturation. .
   for (int i = 0; i <NUM_LEDS; i++) leds[i].fadeToBlackBy(8); // Go through the array and reduce each RGB value by a percentage.
   show_at_max_brightness_for_power();
-  delay(thisdelay);
+
+//  FastLED.delay(thisdelay*2.5);
+  delay_at_max_brightness_for_power(thisdelay*2.5);
+//  delay(thisdelay);
+
 }
 
 

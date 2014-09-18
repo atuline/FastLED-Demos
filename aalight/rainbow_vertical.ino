@@ -9,6 +9,10 @@ void rainbow_vertical() {                     // RAINBOW 'UP/DOWN' THE LOOP
   leds[idexA] = CHSV(thishue, thissat, 255);
   leds[idexB] = CHSV(thishue, thissat, 255);
   show_at_max_brightness_for_power();
-  delay(thisdelay);
+  
+//  FastLED.delay(thisdelay*2.5);
+  delay_at_max_brightness_for_power(thisdelay*2.5);
+//  delay(thisdelay);
+
 
 } // rainbow_vertical()

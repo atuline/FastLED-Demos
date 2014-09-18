@@ -44,11 +44,13 @@ void loop () {
 
 
 void twinkle() {
-  if(millis() - previousMillis >= thisdelay) {
     int i = random8();                                         // A random number. Higher number => fewer twinkles. Use random16() for values >255.
     if (i < NUM_LEDS) leds[i] = CHSV(50, 100, 255);            // Only the lowest probability twinkles will do. You could even randomize the hue/saturation. .
     for (int j = 0; j < NUM_LEDS; j++) leds[j].fadeToBlackBy(8);
     show_at_max_brightness_for_power();                        // Power managed display of LED's
-    previousMillis = millis();                                 // Non-blocking delay gives your more time to do other stuff.
-  } // if millis
+
+//  FastLED.delay(thisdelay*2.5);
+  delay_at_max_brightness_for_power(thisdelay*2.5);
+//  delay(thisdelay);
+
 } // twinkle()

@@ -73,7 +73,7 @@ void hue_inc() {
 // Displaying the wave of hues
 void hue_wave(){
   static byte middle = NUM_LEDS/2;    
-  if(millis() - previousMillis >= thisdelay) {
+
     for (byte i = 0; i <= middle; i++) {
       wave = sin8((millis() / wave_scale) * i);
       leds[i] = CHSV(temp[i], 255, wave);          
@@ -83,5 +83,9 @@ void hue_wave(){
     }
     previousMillis = millis();
     show_at_max_brightness_for_power();
-  }
+
+//  FastLED.delay(thisdelay*2.5);
+  delay_at_max_brightness_for_power(thisdelay*2.5);
+//  delay(thisdelay);
+
 } // hue_wave()

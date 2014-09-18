@@ -37,6 +37,7 @@ void setup() {
   Serial.begin(9600);
   LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.setBrightness(BRIGHTNESS);
+  set_max_power_in_volts_and_milliamps( 5, 1000);
 } // setup()
 
 
@@ -46,8 +47,6 @@ void loop () {
 
 
 void dots() {
-currentMillis = millis();
-  if(currentMillis - previousMillis > thisdelay) {
 
   uint8_t middle = 0;
   uint8_t side = 0;
@@ -65,15 +64,17 @@ currentMillis = millis();
   leds[side] = CRGB::Blue;
   leds[other] = CRGB::Aqua;
 
-  LEDS.show();
+  show_at_max_brightness_for_power();
 
   for ( byte i = 0; i < NUM_LEDS; i++) {
-    leds[i].fadeToBlackBy(32);
+    leds[i].fadeToBlackBy(64);
 //    leds[i].nscale8(180);
   }
 
-  LEDS.show();
+  show_at_max_brightness_for_power();
+
+//  FastLED.delay(thisdelay*2.5);
+  delay_at_max_brightness_for_power(thisdelay*2.5);
 //  delay(thisdelay);
-  previousMillis = currentMillis;
-  }
+
 }

@@ -43,7 +43,11 @@ void loop () {
 void rainbow_march() {                                         // RAINBOW MARCH, DOESN'T SUPPORT FADE
   thishue -= 1;
   fill_rainbow( leds, NUM_LEDS, thishue );
- show_at_max_brightness_for_power();
- delay(thisdelay);
+  show_at_max_brightness_for_power();
+ 
+ //  FastLED.delay(thisdelay*2.5);
+  delay_at_max_brightness_for_power(thisdelay*2.5);
+//  delay(thisdelay);
+
 }
 
