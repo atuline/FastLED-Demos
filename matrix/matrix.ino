@@ -13,19 +13,19 @@
 //
 
 
-#include <FastLED.h>                                           // FastLED library
+#include <FastLED.h>                                          // FastLED library
  
-#define LED_DT 13                                              // Data pin
-#define NUM_LEDS 24                                            // Number of LED's
-#define COLOR_ORDER GRB                                        // Change the order as necessary
-#define LED_TYPE WS2811                                        // What kind of strip are you using?
-#define BRIGHTNESS  196                                        // How bright do we want to go
+#define LED_DT 13                                             // Data pin
+#define NUM_LEDS 24                                           // Number of LED's
+#define COLOR_ORDER GRB                                       // Change the order as necessary
+#define LED_TYPE WS2811                                       // What kind of strip are you using?
+#define BRIGHTNESS  196                                       // How bright do we want to go
 
-struct CRGB leds[NUM_LEDS];                                    // Initializxe our array
+struct CRGB leds[NUM_LEDS];                                   // Initializxe our array
 
 
 // Initialize global variables for sequences
-int thisdelay = 50;                                                 // A delay value for the sequence(s)
+int thisdelay = 50;                                           // A delay value for the sequence(s)
 int thishue = 95;
 int thissat = 255;
 
@@ -43,7 +43,7 @@ void loop () {
 } // loop()
 
 
-void matrix() {                             // ONE LINE MATRIX
+void matrix() {                                               // One line Matrix
   if (random8(0, 100) > 85) {
     leds[0] = CHSV(thishue, thissat, 255);
   }

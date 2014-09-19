@@ -1,5 +1,5 @@
 
-// FastCylon
+// fastcylon
 //
 // By: Andrew Tuline
 //

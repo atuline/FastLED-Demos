@@ -1,4 +1,4 @@
-// Ripple
+// fastripple
 //
 // Converted By: Andrew Tuline
 //

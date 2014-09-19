@@ -5,7 +5,7 @@
  #
  # Date: Aug, 2014
  #
- # The fastbracelet is based Neopixel code by John Burroughs:
+ # fastbracelet is based Neopixel code by John Burroughs:
  #
  # https://www.youtube.com/watch?v=JjX8X5D8RW0&feature=youtu.be
  # https://plus.google.com/105445034001275025240/posts/jK2fxRx79kj
@@ -15,10 +15,10 @@
  #
  # https://learn.adafruit.com/led-ampli-tie/overview
  #
- # You need a microphone (with pre-amp), such as the Sparkfun INMP401 plugged
+ # You need a microphone (with pre-amp), such as the Sparkfun INMP401. In this case, it's plugged
  # into A5 of the Arduino.
  #
- # Plug Vcc of the mic into 3.3V of Arduino. Connect 3.3V of Arduino to aref pin, and gnd to gnd.
+ # Plug Vcc of the microphone into 3.3V of Arduino. Connect 3.3V of Arduino to aref pin, and gnd to gnd.
  #
  # FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
 */

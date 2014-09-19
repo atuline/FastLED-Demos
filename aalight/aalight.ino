@@ -42,6 +42,9 @@ Hardware Setup
 - Sparkfun INMP401 MEMS microphone (a mic+opamp) with power connected to Arduino 3.3V supply, output to A5 of Arduino.
 - Connect Arduino 3.3V output to the AREF pin on the Arduino (for the 3.3V MEMS microphone).
 
+I could use the SoftwareSerial library and use alternate pins for serial communications, but decided not to.
+
+
 On a second Arduino:
 
 - TSOP34838 IR receiver with data connected to pin 9 (other pins are 5V and Gnd).

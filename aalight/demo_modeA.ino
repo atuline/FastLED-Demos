@@ -4,8 +4,6 @@ void demo_modeA(){
   
   int r = 20;
 
-// Not button friendly, but it's a great start to the demo. . 
-
   thisdelay = 20;
   for (int i=0; i<r*20; i++) {rainbow_fade();}
 

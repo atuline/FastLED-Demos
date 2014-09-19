@@ -2,7 +2,7 @@
 //
 // Found on: GitHub
 //
-// Stolen and modified by: Andrew Tuline
+// Copied and modified by: Andrew Tuline
 //
 // Date: Aug, 2014
 //

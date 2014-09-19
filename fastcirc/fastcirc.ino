@@ -1,11 +1,11 @@
 
-// Fastcirc
+// fastcirc
 //
 // By: Andrew Tuline
 //
 // Date: Aug, 2014
 //
-// Single LED going increasingly faster up the strand. I use this as a starting sequence for a series of demos.
+// Single LED going increasingly faster up the strand. I have used this as a starting sequence for a series of demos.
 // 
 // FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
 //

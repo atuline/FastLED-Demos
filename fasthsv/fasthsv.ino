@@ -23,7 +23,7 @@ struct CRGB leds[NUM_LEDS];                                    // Initializxe ou
 
 
 // Initialize global variables for sequences
-int thisdelay = 25;                                                 // A delay value for the sequence(s)
+int thisdelay = 25;                                            // A delay value for the sequence(s)
 
 
 void setup() {
@@ -46,7 +46,7 @@ void fasthsv() {
   for (hue_inc = 1; hue_inc < 50; hue_inc++) {
     thishue = 0;
     for (i = 0; i < NUM_LEDS; i++) {
-      leds[i] = CHSV(thishue, 255, 255);                             // 
+      leds[i] = CHSV(thishue, 255, 255);
       thishue += hue_inc;
     }
   show_at_max_brightness_for_power();

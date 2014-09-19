@@ -23,7 +23,7 @@ struct CRGB leds[NUM_LEDS];                                    // Initializxe ou
 
 
 // Initialize global variables for sequences
-int thisdelay = 15;                                                 // A delay value for the sequence(s)
+int thisdelay = 15;                                            // A delay value for the sequence(s)
 int thissat = 255;
 int thisbright = 255;
 

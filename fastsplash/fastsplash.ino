@@ -1,5 +1,5 @@
 
-// Splash
+// fastsplash
 //
 //  By Andrew Tuline
 //

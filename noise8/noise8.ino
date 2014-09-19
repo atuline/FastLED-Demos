@@ -11,19 +11,19 @@
 //
 
 
-#include <FastLED.h>                                           // FastLED library
+#include <FastLED.h>                                          // FastLED library
  
-#define LED_DT 13                                              // Data pin
-#define NUM_LEDS 24                                            // Number of LED's
-#define COLOR_ORDER GRB                                        // Change the order as necessary
-#define LED_TYPE WS2811                                        // What kind of strip are you using?
-#define BRIGHTNESS  128                                        // How bright do we want to go
+#define LED_DT 13                                             // Data pin
+#define NUM_LEDS 24                                           // Number of LED's
+#define COLOR_ORDER GRB                                       // Change the order as necessary
+#define LED_TYPE WS2811                                       // What kind of strip are you using?
+#define BRIGHTNESS  128                                       // How bright do we want to go
 
-struct CRGB leds[NUM_LEDS];                                    // Initializxe our array
+struct CRGB leds[NUM_LEDS];                                   // Initializxe our array
 
 
 // Initialize global variables for sequences
-int thisdelay = 40;                                                // A delay value for the sequence(s)
+int thisdelay = 40;                                           // A delay value for the sequence(s)
 
 uint32_t x,v_time,hue_time;
 int hxy = 12630;

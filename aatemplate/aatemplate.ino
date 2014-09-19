@@ -1,11 +1,11 @@
 
-// Template
+// FastLED Display Template
 //
 // By: Andrew Tuline
 //
-// Date: Aug, 2014
+// Date: Sep, 2014
 //
-// This is a simple FastLED (2.1 and greater) display sequence template with a non-blocking delay as well as non-blocking delay.
+// This is a simple FastLED (2.1 and greater) display sequence template.
 //
 // FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
 //
@@ -26,7 +26,7 @@ struct CRGB leds[NUM_LEDS];                                    // Initializxe ou
 
 
 // Initialize global variables for sequences
-uint8_t thisdelay = 8;                                             // A delay value for the sequence(s)
+uint8_t thisdelay = 8;                                         // A delay value for the sequence(s)
 
 // Non-blocking delay timers
 volatile long previousMillis = 0;
@@ -42,13 +42,13 @@ void setup() {
 
 void loop () {
 
-//  twinkle();                                                 // Old method of using blocking delay
- twinkle2();                                                   // Improved method of using non-blocking delay
+ twinkle();                                                    // Call our sequence
 
 } // loop()
 
 
 void twinkle() {
+
   int i = random8();													                 // A random number. Higher number => fewer twinkles. Use random16() for values >255.
   if (i < NUM_LEDS) leds[i] = CHSV(50, 100, 255);              // Only the lowest probability twinkles will do. You could even randomize the hue/saturation. .
   for (int j = 0; j < NUM_LEDS; j++) leds[j].fadeToBlackBy(8); // Use a FastLED 2.1 fade
@@ -56,19 +56,8 @@ void twinkle() {
   show_at_max_brightness_for_power();                          // Power managed display of LED's
 //  LEDS.show();                                               // Standard FastLED display
 
-  delay(thisdelay);                                            // Old style blocking delay
+//  FastLED.delay(thisdelay*2.5);                              // Non power managed FastLED delay.
+  delay_at_max_brightness_for_power(thisdelay*2.5);            // Power managed FastLED delay.
+//  delay(thisdelay);                                          // The standard delay. Use this if the others don't work.
+
 } // twinkle()
-
-
-void twinkle2() {
-  if(millis() - previousMillis >= thisdelay) {
-    int i = random8();                                         // A random number. Higher number => fewer twinkles. Use random16() for values >255.
-    if (i < NUM_LEDS) leds[i] = CHSV(50, 100, 255);            // Only the lowest probability twinkles will do. You could even randomize the hue/saturation. .
-    for (int j = 0; j < NUM_LEDS; j++) leds[j].fadeToBlackBy(8);  // Use a FastLED 2.1 fade
-
-    show_at_max_brightness_for_power();                        // Power managed display of LED's
-//    LEDS.show();                                             // Standard FastLED display
-
-    previousMillis = millis();                                 // Non-blocking delay gives you more time to do other stuff.
-  } // if millis
-} // twinkle2()

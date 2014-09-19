@@ -1,5 +1,5 @@
 
-// TITLE
+// fastmems
 //
 // Originally from: the Neopixel Ampli-Tie project.
 //
@@ -49,10 +49,10 @@ void setup() {
 
 
 void loop() {
-  memsmic();
+  fastmems();
 }
 
-void memsmic() {
+void fastmems() {
   int n;
   for (int i = 0; i<NUM_LEDS; i++) {
     n = analogRead(MIC_PIN);                                   // Raw reading from mic

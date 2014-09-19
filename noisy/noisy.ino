@@ -1,12 +1,12 @@
 
-
-// Noisy
+// noisy
 //
 // By: Andrew Tuline
 //
 // Date: Sept, 2014
 //
-// This is a simple FastLED (2.1 and greater) display sequence utilizing the FastLED noise function.
+// This is a simple FastLED (2.1 and greater) display sequence utilizing the FastLED noise function. This is one of
+// those 'wait for a while' routines.
 //
 // FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
 //

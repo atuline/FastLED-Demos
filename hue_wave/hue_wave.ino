@@ -1,5 +1,5 @@
 
-// WAVE
+// hue_wave
 //
 // By: John Burroughs
 // Modified by: Andrew Tuline
