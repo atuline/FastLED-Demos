@@ -10,21 +10,21 @@
 #
 # Two moving waves of different colours, initially red and blue. In this case, the wave values are either '1' or '0', thus really bars.
 # The cool thing about this routine is that there are lot of configurable items without requiring a lot of complex code. It uses
-# sine waves to create 'bars' and not 'marching' code.
+# sine waves to create 'bars' and not lengthy/complex 'marching' code.
 #
 #
-# With a few potentiometers, you could change several values:
+# With a few potentiometers or other input, such as MSGEQ7, you could change several values:
 #
 # - Change the width of each wave
 # - Change the speed
 # - Change the direction
 # - Change the overall frequency
 # - Change the colour of each wave or even change the hue rotation speed.
-# - You could even get real funky and have different frequencies and phase changes for the waves.
+# - You could even get real funky and have different frequencies and phase changes for the waves. Epilepsy alert!
 # 
 # This would make for an awesome interactive display for youth. Oh wait, I've already ordered several 10K pots from aliexpress.
 #
-# I also added some twinkles for Mark Kriegsman.
+# I also added some twinkles just for Mark Kriegsman.
 #
 #
 # FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
@@ -33,13 +33,7 @@
 #
 */
 
-
-// You can define the brightness of the LED wave here. It's currently 128, which ls less bright than the twinkles.
-// Here's a digital version of the qsub. If the wave value > b (a defined cutoff value), the wave brightness is 128. Otherwise, it's 0.
-
-#define qsub(x, b)  ((x>b)?128:0)                             // A digital unsigned subtraction macro. if result <0, then => 0. Otherwise, take on digital value.
-
-// Here's an analog version
+#define qsub(x, b)  ((x>b)?wavebright:0)                      // A digital unsigned subtraction macro. if result <0, then => 0. Otherwise, take on fixed value.
 // #define qsub(x, b)  ((x>b)?x-b:0)                          // Unsigned subtraction macro. if result <0, then => 0
 
 
@@ -53,9 +47,9 @@
 CRGB leds[NUM_LEDS];
 
 
-// Most of these variables can be mucked around with.
+// Most of these variables can be mucked around with. Better yet, add some form of variable input or routine to change them on the fly. 1970's here I come. . 
 //
-// brightness                                                 // You can change the brightness of the waves in the qsub definition above.
+uint8_t wavebright = 128;                                     // You can change the brightness of the waves/bars rolling across the screen. Best to make them not as bright as the sparkles.
 uint8_t thishue = 0;                                          // You can change the starting hue value for the first wave.
 uint8_t thathue = 140;                                        // You can change the starting hue for other wave.
 uint8_t thisrot = 0;                                          // You can change how quickly the hue rotates for this wave. Currently 0.
@@ -64,10 +58,9 @@ uint8_t allsat = 255;                                         // I like 'em full
 uint8_t alldir = 0;                                           // You can change direction.
 uint8_t allspeed = 4;                                         // You can change the speed.
 uint8_t allfreq = 32;                                         // You can change the frequency, thus overall width of bars.
-int allphase = 0;                                             // Current phase value.
+int allphase = 0;                                             // Phase change value gets calculated. Both waves are at same, unchanging frequency.
 uint8_t thiscutoff = 192;                                     // You can change the cutoff value to display this wave. Lower value = longer wave.
 uint8_t thatcutoff = 192;                                     // You can change the cutoff value to display that wave. Lower value = longer wave.
-int wave1 = 0;                                                // Phase change value gets calculated. Both waves are at same, unchanging frequency.
 int loopdelay = 10;                                           // You can change the delay. Also you can change the allspeed variable above. 
 
 typedef struct {                                              // Define a structure for the twinkles that get overlaid on the moving waves.
