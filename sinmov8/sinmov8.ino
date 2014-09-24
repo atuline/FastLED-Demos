@@ -56,12 +56,15 @@ uint8_t thisrot = 0;                                          // You can change 
 uint8_t thatrot = 0;                                          // You can change how quickly the hue rotates for the other wave. Currently 0.
 uint8_t allsat = 255;                                         // I like 'em fully saturated with colour.
 uint8_t alldir = 0;                                           // You can change direction.
-uint8_t allspeed = 4;                                         // You can change the speed.
+int8_t thisspeed = 4;                                         // You can change the speed.
+int8_t thatspeed = 4;                                         // You can change the speed.
 uint8_t allfreq = 32;                                         // You can change the frequency, thus overall width of bars.
-int allphase = 0;                                             // Phase change value gets calculated. Both waves are at same, unchanging frequency.
+int thisphase = 0;                                            // Phase change value gets calculated.
+int thatphase = 0;                                            // Phase change value gets calculated.
 uint8_t thiscutoff = 192;                                     // You can change the cutoff value to display this wave. Lower value = longer wave.
 uint8_t thatcutoff = 192;                                     // You can change the cutoff value to display that wave. Lower value = longer wave.
 int loopdelay = 10;                                           // You can change the delay. Also you can change the allspeed variable above. 
+uint8_t twinkrun = 1;                                         // Enable/disable twinkles.
 
 typedef struct {                                              // Define a structure for the twinkles that get overlaid on the moving waves.
       int twinkled;                                           // Supports a long strand of LED's.
@@ -85,6 +88,9 @@ void setup() {
 
 void loop() {
   sinmove8();                                                 // Simple call to the routine.
+  if(twinkrun == 1) twinkle();                                // You can keep or lose the twinkles.
+  show_at_max_brightness_for_power();
+  delay_at_max_brightness_for_power(loopdelay*2.5);
 } // loop()
 
 
@@ -92,22 +98,21 @@ void loop() {
 // Edit the variables above, and save edits here for last.
 void sinmove8() {
 
-  if (alldir == 0) allphase+=allspeed; else allphase-=allspeed;         // You can change directions.
-  
-  for (int k=0; k<NUM_LEDS-1; k++) {
-    int thisbright = qsub(cubicwave8((k*allfreq)+allphase), thiscutoff);      // qsub sets a minimum value called thiscutoff. If < thiscutoff, then bright = 0. Otherwise, bright = 128 (as defined in qsub)..
-    int thatbright = qsub(cubicwave8((k*allfreq)+128+allphase), thatcutoff);  // This wave is 180 degrees out of phase (with the value of 128).
+  if (alldir == 0) {thisphase+=thisspeed; thatphase+=thatspeed;} else {thisphase-=thisspeed; thatphase-=thatspeed;}   // You can change direction.
+                                                                                                                      // You can have individual speeds.
 
     thishue = thishue + thisrot;                                        // Hue rotation is fun for thiswave.
     thathue = thathue + thatrot;                                        // It's also fun for thatwave.
+  
+  for (int k=0; k<NUM_LEDS-1; k++) {
+    int thisbright = qsub(cubicwave8((k*allfreq)+thisphase), thiscutoff);      // qsub sets a minimum value called thiscutoff. If < thiscutoff, then bright = 0. Otherwise, bright = 128 (as defined in qsub)..
+    int thatbright = qsub(cubicwave8((k*allfreq)+128+thatphase), thatcutoff);  // This wave is 180 degrees out of phase (with the value of 128).
 
     leds[k] = CHSV(thishue, allsat, thisbright);                        // Assigning hues and brightness to the led array.
     leds[k] += CHSV(thathue, allsat, thatbright);                      
   }
-  twinkle();                                                            // This needs to run after the assignments, but before the display gets refreshed.
-  show_at_max_brightness_for_power();
-  delay_at_max_brightness_for_power(loopdelay*2.5);
 } // sinmov8()
+
 
 
 
