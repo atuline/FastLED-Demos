@@ -23,27 +23,23 @@ however it could be improved by converting it to be time based, rather than loop
 
 This is built upon code from several sources, but mainly:
 
-- funkboxing LED effects for FastLED (the main structure of this program + a few effects)
-- http://industriumvita.com/arduino-ir-remote-controled-ws2811-addressable-leds/
+- FastLED as found at http://fastled.io
+- funkboxing LED for general layout as found at http://funkboxing.com/wordpress/?p=1366
+- IR programmability as found at http://industriumvita.com/arduino-ir-remote-controled-ws2811-addressable-leds/)
 
 
 
 Hardware Setup
 
 - 1 (or optionally 2) Arduino UNO or Nano 3.0 (is what I've been using).
-- For a hardware debounced pushbutton, see the next few lines.
-- Connect pin '0' of the pushbutton to pin 6 of UNO.
-- One side of 10K resistor connected to pin '0' of pushbutton. Other side connected to 5V.
-- Positive side of 1uf capacitor connected to pin '0' of pushbutton. Other side connected to gnd.
-- Pushbutton pin '1' connected to gnd.
-- (Code has been commented out for this). TSOP34838 IR receiver with data connected to pin 9 (other pins are 5V and Gnd).
-- WS2812B (or WS2801) LED strip with data line connected to pin 13 (other pins are connected to Vin and Gnd of the Arduino).
-- WS2801 clock would be on pin 11.
+- For a hardware debounced pushbutton, solder an electrolytic capacitor (between .1uf to 10uf) between the two leads of a pushbutton.
+- Connect the positive end to pin 6 of the Arduino.
+- Connect the negative end to ground. We will then program an internal pullup resistor on the Arduino.
+- WS2812B LED strip with data line connected to pin 13 (other pins are connected to Vin and Gnd of the Arduino).
 - Sparkfun INMP401 MEMS microphone (a mic+opamp) with power connected to Arduino 3.3V supply, output to A5 of Arduino.
 - Connect Arduino 3.3V output to the AREF pin on the Arduino (for the 3.3V MEMS microphone).
 
 I could use the SoftwareSerial library and use alternate pins for serial communications, but decided not to.
-
 
 On a second Arduino:
 
@@ -51,8 +47,9 @@ On a second Arduino:
 - Connect ground of the second Arduino to the first Arduino.
 - Connect Tx of the second Arduino to Rx of first Arduino.
 
+
 Microphone Note: If you use a different microphone, you will need to re-calculate the offset as well as amplitude variables. If
-it's a 5V microphone, then remove the AREF wire.
+using a 5V microphone, then remove the AREF wire.
 
 Compiling Note: When compiling or using the serial monitor, disconnect Tx/Rx between the Arduino's.
 
@@ -61,11 +58,11 @@ Compiling Note: When compiling or using the serial monitor, disconnect Tx/Rx bet
 Power Supplies Tested
 
 - USB connection to computer (for <24 LED strands)
-- 6VDC adapter. Be careful, as some are noisy and may damage the LED strip (been there, done that).
+- 5-6VDC adapter. Be careful, as some are noisy and may damage the LED strip (been there, done that).
 - 7.4V battery pack (2 x 3.7V rechargeable 18650 batteries)
 - 6V battery pack (4 x 'AA' batteries)
 
-Note: If the LED strip is plugged into Vin (or directly to the power supply), I wouldn't recommend going above 7.4V. I have blown up several
+Note: If the LED strip is plugged into Vin (or directly to the power supply), get a 5V power supply for it. I have blown up several
 LED's by providing too high of a voltage with noisy regulators.
 
 
@@ -88,10 +85,9 @@ library examples with other types of strands.
 
 IR Operation
 
-Use of a second Arduino that receives IR input and serially transmits commands to the first Arduino is supported. In addition, it also
-provides a lot more functionality, such as:
+Use of a second Arduino that receives IR input and serially transmits commands to the first Arduino is supported as follows:
 
-- Select specific modes (such as mode 0, 1, 888)
+- Select specific modes (such as mode 0, 1, 99)
 - Change hue
 - Change direction
 - Change speed
@@ -106,13 +102,13 @@ to map the codes to the modes in the getir(); routine.
 Push Button Operation
 
 If connected, the physical button should always work and selects the next display mode, up to the last contiguous display mode and then
-loops back to 0. It does not support test, sound responsive or demo modes.
+loops back to 0. It does not support test, sound responsive or demo modes, but that's easily changed.
 
 
 
 If No Controls Are Available
 
-If no controls are available, then it is recommended that you set the starting mode to the demo mode '888', which is the standard one.
+If no controls are available, then it is recommended that you set the starting mode to the demo mode '99'.
 
 
 
@@ -160,7 +156,6 @@ serial commands to the main unit as if they were keyboard commands (see above). 
 - Compile aainfra.ino on the 2nd unit (disconnect Tx and Rx between the Arduino's before doing so)
 - Connect the grounds together
 - Connect Tx of the 2nd unit to Rx of the main unit
-- Remove the IR receiver from the main unit
 - Add the IR receiver to the 2nd unit (on pin 9)
 - Power up the Arduino's
 
@@ -171,15 +166,15 @@ IR Operation on 2nd Arduino
 The following section provides a list of commands that are sent to the main Arduino.
 
 I'm using a 24 pin IR controller from Aliexpress. IR button locations are defined letters corresponding to rows
-and numbers corresponding to columns. A1 = top left, and F4 = bottom right.
+and numbers corresponding to columns. A1 = top left, A4 = top right, and F4 = bottom right.
 
 Serial is the string being sent over the Tx line to the Arduino performing the display.
 
 
 Serial    Command                       IR Button location
 ------    --------                      ------------------
-m889      Set mode 889                          F4
-m888      Set mode 888                          E4
+m98      Set mode 98                            F4
+m99      Set mode 99                            E4
 m1        Set mode 1                            A3
 m0        Set mode 0                            A4
 e1, e2    Increase/Decrease delay               C2, C3
@@ -194,137 +189,299 @@ y         Save of LED's to flash                B1                     // Not ye
 */
 
 
-/*
----------------------------------------------------------------------------------------------------------------------------------
----------------------------------------------------- Start of code --------------------------------------------------------------
----------------------------------------------------------------------------------------------------------------------------------
-*/
 
-#include <FastLED.h>                                            // FastLED library
+/*------------------------------------------------------------------------------------------
+--------------------------------------- Start of variables ---------------------------------
+------------------------------------------------------------------------------------------*/
 
-#define VERSION_NUMBER 1.0
+
+#define qsubd(x, b)  ((x>b)?wavebright:0)                     // A digital unsigned subtraction macro. if result <0, then => 0. Otherwise, take on fixed value.
+#define qsuba(x, b)  ((x>b)?x-b:0)                            // Unsigned subtraction macro. if result <0, then => 0.
+
+#define VERSION_NUMBER 2.0
+
+#include "FastLED.h"                                          // FastLED library. Preferably the latest copy of FastLED 2.1.
+ 
+// Fixed definitions cannot change on the fly.
+#define LED_DT 13                                             // Serial data pin for WS2812B or WS2801.
+#define COLOR_ORDER GRB                                       // Are they RGB, GRB or what??
+#define LED_TYPE WS2811                                       // What kind of strip are you using?
+#define NUM_LEDS 24                                           // Number of LED's.
+
+// Initialize changeable global variables.
+uint8_t max_bright = 255;                                     // Overall brightness definition. It can be changed on the fly.
+
+struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
+
+
+int ledMode = 99;                                             // Starting mode is typically 0. Use 99 if no controls available. ###### CHANGE ME #########
 
 
 // PUSHBUTTON SETUP STUFF
-const int buttonPin = 6;    					// Digital pin used for debounced pushbutton
+const int buttonPin = 6;                                      // Digital pin used for debounced pushbutton
 int buttonState = 0;
 int lastButtonState = 0;
 
 
 // MICROPHONE SETUP STUFF
-#define MIC_PIN 5           					// Analog (not digital) port for microphone
-
-#define DC_OFFSET  32                 // DC offset in mic signal - if unusure, leave 0
-
+#define MIC_PIN 5                                             // Analog (not digital) port for microphone
+#define DC_OFFSET  32                                         // DC offset in mic signal - if unusure, leave 0
 
 
 // SERIAL SETUP STUFF
-#define SERIAL_BAUDRATE 9600  				// Or 57600 or 115200. I'm just old school.
+#define SERIAL_BAUDRATE 57600                                 // Or 115200.
 #define SERIAL_TIMEOUT 5
 
-byte inbyte;                  				// Serial input byte
-int thisarg;                  				// Serial input argument
-
-
-// LED SETUP STUFF
-#define NUM_LEDS 24           				// Number of LED's ###################################################### CHANGE ME #########
-#define LED_DT 13              				// Serial data pin for WS2812B or WS2801
-#define LED_CK 11              				// Serial clock pin for WS2801 only
-#define COLOR_ORDER GRB       				// Are they RGB, GRB or what??
-#define LED_TYPE WS2811               // What kind of strip are you using?
-
-int ledMode = 0;                      // Starting mode is typically 0. Use 888 if no controls available. ###### CHANGE ME #########
-
-struct CRGB leds[NUM_LEDS];    				// Main definition of the LED array
-
-int BOTTOM_INDEX = 0;         				// These are used by the funkboxing code for emslightsONE
-int TOP_INDEX = int(NUM_LEDS/2);
-int EVENODD = NUM_LEDS%2;
-
-
-// Funkboxing variables. You can change some values via the serial monitor.
-int thisdelay = 0;                    // FX LOOPS DELAY VAR
-int thisstep = 10;                    // FX LOOPS DELAY VAR
-int thishue = 0;                      // FX LOOPS COLOR VAR
-int thissat = 255;                    // FX LOOPS COLOR VAR
-int thisbright = 0;                   // FX LOOPS COLOR VAR
-bool thisdir = 0;                     // FX LOOPS DIRECTION VAR
-int max_bright = 128;                 // SET MAX BRIGHTNESS TO 1/4
-
-int thisindex = 0;                    // SET SINGLE LED VAR
-int thisRED = 0;
-int thisGRN = 0;
-int thisBLU = 0;
-int idex = 0;                         // LED INDEX (0 to NUM_LEDS-1)
-
-int thisbounce = 0;                  // Bounce direction variable.
-
-
-//Noise Variables
-uint32_t x,hue_time, hxy;
-int xscale, hue_scale, hue_speed;
-uint8_t x_speed, octaves, hue_octaves;
+byte inbyte;                                                  // Serial input byte
+int thisarg;                                                  // Serial input argument
 
 
 
-// -----------------SETUP------------------
+// Generic variables
+uint8_t thisdelay = 0;                                        // Standard delay
+uint8_t thishue = 0;                                          // Standard hue
+uint8_t thissat = 255;                                        // Standard saturation
+int thisbright = 0;                                           // Standard brightness
+uint8_t thisfade = 8;                                         // Standard fade rate
+bool thisdir = 0;                                             // Standard direction
+
+
+// Note that commented out variable are repeated.
+
+// Matrix variables
+
+bool huerot = 0;
+
+// Two_sin variables-------------------------------------------------------------------------
+uint8_t wavebright = 128;                                     // You can change the brightness of the waves/bars rolling across the screen. Best to make them not as bright as the sparkles.
+//uint8_t thishue = 0;                                          // You can change the starting hue value for the first wave.
+uint8_t thathue = 140;                                        // You can change the starting hue for other wave.
+uint8_t thisrot = 0;                                          // You can change how quickly the hue rotates for this wave. Currently 0.
+uint8_t thatrot = 0;                                          // You can change how quickly the hue rotates for the other wave. Currently 0.
+uint8_t allsat = 255;                                         // I like 'em fully saturated with colour.
+//bool thisdir = 0;                                             // A direction variable that will work with inputs.
+int8_t thisspeed = 4;                                         // You can change the speed, and can use negative values.
+int8_t thatspeed = 4;                                         // You can change the speed, and use negative values.
+uint8_t allfreq = 32;                                         // You can change the frequency, thus overall width of bars.
+int thisphase = 0;                                            // Phase change value gets calculated.
+int thatphase = 0;                                            // Phase change value gets calculated.
+uint8_t thiscutoff = 192;                                     // You can change the cutoff value to display this wave. Lower value = longer wave.
+uint8_t thatcutoff = 192;                                     // You can change the cutoff value to display that wave. Lower value = longer wave.
+
+
+// Twinkle variables -----------------------------------------------------------------------
+int twinkrate = 100;
+
+
+// One_sin variables -----------------------------------------------------------------------
+
+// bool thisdir = 0;
+uint8_t bgclr = 0;
+
+
+// pop_fade variables ----------------------------------------------------------------------
+int ranamount = 50;                                           // The higher the number, lowers the chance for a pixel to light up.
+// uint8_t thisdelay = 50;                                       // Standard delay value.
+bool boolcolours = 1;                                         // True = random, False = array of colours (up to 10)
+uint8_t numcolours = 2;                                       // Number of colours in the array to display.
+unsigned long colours[10] = {0xff0000, 0x00ff00, 0x0000ff, 0xffffff};  // Just assign the first 3 of these selectable colours.
+uint8_t maxbar = 1;                                           // Maximum # of pixels to turn on in a row
+uint8_t fadeval = 224;                                        // Fade rate
+
+
+// three_sin variables ---------------------------------------------------------------------
+
+int wave1=0;
+int wave2=0;
+int wave3=0;
+
+uint8_t inc1 = 2;
+uint8_t inc2 = 1;
+uint8_t inc3 = -3;
+
+uint8_t lvl1 = 80;
+uint8_t lvl2 = 80;
+uint8_t lvl3 = 80;
+
+uint8_t mul1 = 20;
+uint8_t mul2 = 25;
+uint8_t mul3 = 22;
+
+// rainbow_march variables -----------------------------------------------------------------
+
+uint8_t deltahue = 1;                                         // Hue change between pixels.
+
+
+// noise16 variables -----------------------------------------------------------------------
+
+//uint8_t thisdelay = 20;                                       // A delay value for the sequence(s)
+// bool thisdir = 0;                                          // We can reverse the direction.
+uint32_t  x,hue_time;                                         // x & hue_time values
+uint8_t octaves=2;       //2                                  // how many octaves to use for the brightness
+uint8_t hue_octaves=3;   //3                                  // how many octaves to use for the hue
+int xscale=57771;        //57771                              // the 'distance' between points on the x axis
+uint32_t hxy = 43213;    //43213                              // not sure about this
+int hue_scale=20;        //1                                  // the 'distance' between points for the hue noise
+int hue_speed = 1;       //31                                 // how fast we move through hue noise
+uint8_t x_speed = 0;     //331                                // adjust this value to move along the x axis between frames
+
+// uint8_t wavebright= 128;                                      // Usesd by qsub to set a fixed value to LED's depending on their current value
+
+
+
+/*------------------------------------------------------------------------------------------
+--------------------------------------- Start of code --------------------------------------
+------------------------------------------------------------------------------------------*/
+
 void setup() {
 
   // This is used by the microphone and is only needed on 5V Arduinos (Uno, Leonardo, etc.).
   // Connect 3.3V to mic AND TO AREF ON ARDUINO and enable this line.  Audio samples are 'cleaner' at 3.3V.
   // COMMENT OUT THIS LINE FOR 3.3V ARDUINOS (FLORA, ETC.):
-  analogReference(EXTERNAL);             											// MAKE SURE AREF IS CONNECTED TO 3.3V IF USING THE MEMS MICROPHONE.
+  analogReference(EXTERNAL);                                  // MAKE SURE AREF IS CONNECTED TO 3.3V IF USING THE MEMS MICROPHONE.
 
-  Serial.begin(SERIAL_BAUDRATE);        											// SETUP HARDWARE SERIAL (USB)
+  Serial.begin(SERIAL_BAUDRATE);                              // SETUP HARDWARE SERIAL (USB)
   Serial.setTimeout(SERIAL_TIMEOUT);
 
-  pinMode(buttonPin, INPUT);            											// Pushbutton (used to select next mode)
+  pinMode(buttonPin, INPUT_PULLUP);                           // Debounced pushbutton with internal pullup (used to select next mode)
 
-  LEDS.setBrightness(max_bright);       											// Set the generic maximum brightness value.
+  LEDS.setBrightness(max_bright);                             // Set the generic maximum brightness value.
 
-//  LEDS.addLeds<WS2801, LED_CK, LED_DT, BGR, DATA_RATE_MHZ(1)>(leds, NUM_LEDS); 	 // WS2801 definition
-	LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER >(leds, NUM_LEDS); // WS2811 definition
+  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER >(leds, NUM_LEDS); // WS2811 definition
 
-  set_max_power_in_volts_and_milliamps(5, 2000); 						//5v 500mA
+  set_max_power_in_volts_and_milliamps(5, 500);                //5V, 500mA
+
+  random16_set_seed(4832);                                     // Awesome randomizer
+  random16_add_entropy(analogRead(2));
 
   Serial.println("---SETUP COMPLETE---");
-
-  change_mode(ledMode);                  											// Initialize the first sequence
-  show_at_max_brightness_for_power();
-
+  change_mode(ledMode);                                        // Initialize the first sequence
 } // setup()
 
 
-//------------------MAIN LOOP------------------
+
+//------------------MAIN LOOP---------------------------------------------------------------
 void loop() {
-
-  readbutton();                  // Button press increases the ledMode up to last contiguous mode and then starts over at 0.
-
-  switch (ledMode) {              // Looping through (and not initializing) the current mode. Don't initialize variables here, as we are just going through loop again.
-    case 999: break;
-    case   0: break;              // ALL OFF
-    case   1: break;              // ALL ON
-    case   2: rainbow_fade(); break;
-    case   3: rainbow_march(); break;
-    case   4: random_color_pop(); break;
-    case   5: ems_lightsONE(); break;
-    case   6: pulse_one_color_all(); break;
-    case   7: twinkle();break;
-    case   8: mynoise(); break;
-    case   9: rainbow_vertical(); break;                      
-
-    // TEST MODES
-
-    // SOUND RESPONSIVE MODES
-    case  20: memsmic(); break;
-
-    // DEMO MODES
-    case 888: demo_modeA(); break;                            // This is the standard demo mode.
-
-  } // switch
+  readbutton();                                               // Button press increases the ledMode up to last contiguous mode and then starts over at 0.
+  readkeyboard();                                             // Get keyboard input.
+  strobemode();
+  show_at_max_brightness_for_power();                         // Power managed display of LED's.
+  delay_at_max_brightness_for_power(2.5*thisdelay);           // Power managed FastLED delay.
+//  LEDS.countFPS();                                            // Display frames per second in the serial monitor. Disable the delay in order to see how fast/efficient your sequence is.
+} // loop()
 
 
-  // PROCESS HARDWARE SERIAL COMMANDS AND ARGS
+
+void change_mode(int newMode){
+  fill_solid(leds,NUM_LEDS,CRGB(0,0,0));                      // Clean up the array for the first time through. Don't show display though, so you may have a smooth transition.
+
+  switch (newMode) {                                          // First time through a new mode, so let's initialize the variables for a given display.
+
+    case  0: fill_solid(leds,NUM_LEDS,CRGB(0,0,0)); LEDS.show(); break;              // All off, not animated.
+    case  1: fill_solid(leds, NUM_LEDS,CRGB(255,255,255)); LEDS.show(); break;        // All on, not animated.
+    case  2: thisdelay=20; twinkrate=NUM_LEDS; thishue=0; thissat=255; thisbright=255; thisfade=64; break;
+    case  3: thisdelay=10; thisrot=1; thatrot=1; break;                         // two_sin
+    case  4: thisdelay=10; thisrot=0; thisdir=1; break;                                                        // two_sin
+    case  5: thisdelay=10; thatrot=0; thishue=255; thathue=255;break;                          // two_sin
+    case  6: thisdelay=10; allfreq=16; thathue=128; break;                                       // two_sin
+    case  7: thisdelay=10; thiscutoff=96; thishue=196; thatcutoff=240; break;                                 // two_sin
+    case  8: thisdelay=10; thiscutoff=96; thatcutoff=96; thisrot=1; break;                     // two_sin
+    case  9: thisdelay=10; thisspeed= -4; thatspeed= -4;break;                                       // two_sin
+    case 10: thisdelay=10; thiscutoff=128; thatcutoff=128; wavebright=64; break;               // two_sin
+    case 11: thisdelay=10; wavebright=128; thisspeed=3; break;                                         // two_sin
+    case 12: thisdelay=10; thisspeed=3; thatspeed=-3; break;                                         // two_sin
+    case 13: thisdelay=30; thishue=95; break;                                             // matrix
+    case 14: thisdelay=30; thisdir=1; break;                                                            // matrix
+    case 15: thisdelay=30; thishue=random8(); break;                                                    // matrix
+    case 16: thisdelay=20; thisrot=1; thiscutoff=254; allfreq=8; break;                // one_sin
+    case 17: thisdelay=20; thisrot=0; break;                                                        // one_sin
+    case 18: thisdelay=20; thishue=255; break;                                                        // one_sin
+    case 19: thisdelay=20; allfreq=16; break;                                                        // one_sin
+    case 20: thisdelay=20; thiscutoff=96; break;                                                        // one_sin
+    case 21: thisdelay=20; thiscutoff=128; wavebright=64; break;                                    // one_sin
+    case 22: thisdelay=40; colours[0]=0xffffff; numcolours=1; boolcolours=0; maxbar=1; break;       // pop_fade
+    case 23: thisdelay=40; colours[1]=0xff0000; numcolours=2; boolcolours=0; maxbar=4; break;       // pop_fade
+    case 24: thisdelay=40; fadeval=192; break;                                                        // pop_fade
+    case 25: thisdelay=40; boolcolours=1; maxbar=1; break;                                              // pop_fade
+    case 26: thisdelay=40; fadeval=128; break;                                                        // pop_fade
+    case 27: thisdelay=40; colours[2]= 0x0000ff; boolcolours=0; numcolours=3; fadeval=192; maxbar=6; break; //pop_fade
+    case 28: thisdelay=20; mul1=20; mul2=25; mul3=22; break;                      // three_sin
+    case 29: thisdelay=20; mul1=5; mul2=8; mul3=7; break;                                         // three_sin
+    case 30: thisdelay=20; lvl1=220; lvl2=220; lvl3=220; break;                                   // three_sin
+    case 31: thisdelay=10; thisrot=1; deltahue=5; break;                                // rainbow_march
+    case 32: thisdelay=10; thisdir=-1; deltahue=10; break;                                              // rainbow_march
+    case 33: thisdelay=10; thisrot=5; break;                                                          // rainbow_march
+    case 34: thisdelay=10; thisrot=5; thisdir=-1; deltahue=20; break;                                   // rainbow_march
+    case 35: thisdelay=10; deltahue=30; break;                                                           // rainbow_march
+    case 36: thisdelay=10; deltahue=2; thisrot=5; break;                                                  // rainbow_march
+    case 37: thisdelay=20; octaves=1; hue_octaves=2; hxy=6000; x=5000; xscale=3000; hue_scale=50; hue_speed=15; x_speed=100; break; // noise16
+    case 38: thisdelay=20; octaves=random16(1,3); hue_octaves=random16(1,5); hue_scale=random16(10, 50);  x=random16(); xscale=random16(); hxy= random16(); hue_time=random16(); hue_speed=random16(1,3); x_speed=random16(1,30); break; // noise16
+
+    // DEMO MODE
+    case 99: break;                                           // Standard demos
+
+  } // switch newMode
+
+  ledMode = newMode;
+  Serial.print("Mode is: ");
+  Serial.println(ledMode);
+} // change_mode()
+
+
+
+//----------------- Hardware Support Functions ---------------------------------------------
+
+void strobemode() {
+  switch (ledMode) {                                          // Looping through (and not initializing) the current mode. Don't initialize variables here, as we are just going through loop again.
+    case   0: break;                                          // All off, not animated.
+    case   1: break;                                          // All on, not animated.
+    case   2: twinkle();        break;                        // I kept twinkle for old time's sake. Pop_fade does everything it does and more.
+    case   3: two_sin();        break;
+    case   4: two_sin();        break;
+    case   5: two_sin();        break;
+    case   6: two_sin();        break;
+    case   7: two_sin();        break;
+    case   8: two_sin();        break;
+    case   9: two_sin();        break;
+    case  10: two_sin();        break;
+    case  11: two_sin();        break;
+    case  12: two_sin();        break;
+    case  13: matrix();         break;
+    case  14: matrix();         break; 
+    case  15: matrix();         break;
+    case  16: one_sin();        break;
+    case  17: one_sin();        break;
+    case  18: one_sin();        break;
+    case  19: one_sin();        break;
+    case  20: one_sin();        break;
+    case  21: one_sin();        break;
+    case  22: pop_fade();       break;
+    case  23: pop_fade();       break;
+    case  24: pop_fade();       break;
+    case  25: pop_fade();       break;
+    case  26: pop_fade();       break;
+    case  27: pop_fade();       break;
+    case  28: three_sin();      break;
+    case  29: three_sin();      break;
+    case  30: three_sin();      break;
+    case  31: rainbow_march();  break;
+    case  32: rainbow_march();  break;
+    case  33: rainbow_march();  break;
+    case  34: rainbow_march();  break;
+    case  35: rainbow_march();  break;
+    case  36: rainbow_march();  break;
+    case  37: noise16();        break;
+    case  38: noise16();        break;
+
+    // DEMO MODE
+    case 99: demo_modeA();      break;                                // This is the standard demo mode.
+
+  } // switch ledMode
+} // strobemode()
+
+
+
+void readkeyboard() {                                         // PROCESS HARDWARE SERIAL COMMANDS AND ARGS
   while (Serial.available() > 0) {
   
     inbyte = Serial.read();                                   // READ SINGLE BYTE COMMAND
@@ -336,8 +493,9 @@ void loop() {
 
       case 97:                                                // "a" - SET ALL TO ONE COLOR BY HSV 0-255
         thisarg = Serial.parseInt();
+        thissat = 255;
         thisbright = 255;
-        one_color_allHSV(thisarg, thisbright);
+        fill_solid_HSV(thisarg, thissat, thisbright);
         break;
 
       case 98:                                                // "b" - SET MAX BRIGHTNESS to #
@@ -346,7 +504,7 @@ void loop() {
         break;
 
       case 99:                                                // "c" - CLEAR STRIP
-        one_color_all(0,0,0);
+        fill_solid(leds,NUM_LEDS,CRGB(0,0,0));
         break;
 
       case 100:                                               // "d" - SET DELAY VAR to #
@@ -364,18 +522,6 @@ void loop() {
         thisarg = Serial.parseInt();
         thishue = thisarg;
         break;
-
-/*      case 108:                                               // "l" - SET SINGLE LED VALUE RGB
-        thisindex = Serial.parseInt();
-        thisRED = Serial.parseInt();
-        thisGRN = Serial.parseInt();
-        thisBLU = Serial.parseInt();
-        if (ledMode != 999) {
-          ledMode = 999;
-          one_color_all(0,0,0);}
-          leds[thisindex].setRGB( thisRED, thisGRN, thisBLU);
-        break;
-*/
 
       case 109:                                               // "m" - SET MODE to #
         thisarg = Serial.parseInt();
@@ -403,15 +549,8 @@ void loop() {
         thisarg = Serial.parseInt();
         if (thisarg == 1) max_bright=max_bright/2; else max_bright=max_bright*2;
         max_bright = constrain(max_bright, 1, 255);
-/*      if (max_bright == 0) max_bright=1;
-        if (max_bright > 255) max_bright=255; */
         LEDS.setBrightness(max_bright);
         show_at_max_brightness_for_power();
-        break;
-
-      case 115:                                               // "s" - SET STEP VAR to #
-        thisarg = Serial.parseInt();
-        thisstep = thisarg;
         break;
 
       case 116:                                               // "t" - SET SATURATION VAR to #
@@ -425,107 +564,40 @@ void loop() {
         show_at_max_brightness_for_power();
         break;
 
-/*      case 118:                                               // "v" - SET SINGLE LED VALUE HSV
-        thisindex = Serial.parseInt();
-        thishue = Serial.parseInt();
-        thissat = Serial.parseInt();
-        //thisVAL = Serial.parseInt();
-        if (ledMode != 999) {
-          ledMode = 999;
-          one_color_all(0,0,0);
-        }
-        leds[thisindex] = CHSV(thishue, thissat, 255);
-        break;
-*/
       case 122:                                               // "z" - COMMAND TO 'SHOW' LEDS
         show_at_max_brightness_for_power();
         break;
-
     } // switch inbyte
   } // while Serial.available
-} // loop()
-
-
-void change_mode(int newmode){
-  one_color_all(0,0,0);                          // Clean up the array for the first time through. Don't show display though, so you may have a smooth transition.
-
-  switch (newmode) {                             // First time through a new mode, so let's initialize the variables for a given display.
-
-    case  0: one_color_all(0,0,0); LEDS.show(); break;              // ALL OFF, NOT ANIMATED
-    case  1: one_color_all(255,255,255); LEDS.show(); break;        // ALL ON, NOT ANIMATED
-    case  2: thisdelay=20; break;                                   // STRIP RAINBOW FADE
-    case  3: thisdir=0; thisdelay=5; break;                         // RAINBOW MARCH
-    case  4: thisdelay=20; break;                                   // RANDOM COLOR POP
-    case  5: thisdir=0; thisdelay=40; thishue=0; break;             // EMS LIGHTS ONE
-    case  6: thisbounce=0; thisdelay=5; thishue=90; break;          // PULSE COLOR BRIGHTNESS
-    case  7: thishue=50; thisdelay=8; break;                        // TWINKLE
-    case  8: thisdir=0; thisdelay=20; hxy=4630; octaves=4; hue_octaves=2; xscale=30; hue_scale=50; hue_speed=5; x_speed=5; break;       // NOISY
-    case  9: thisdelay=50; thisstep=15; break;                      // RAINBOW VERTICAL
-
-    // TEST MODES
-
-    // SOUND ENABLED MODES
-    case 20: break;                                                 // MEMSMIC
-
-    // DEMO MODES
-    case 888: break;                                                // Standard demos (no sound)
-
-  } // switch
-
-  ledMode = newmode;
-  Serial.print("Mode is: ");
-  Serial.println(ledMode);
-} // change_mode()
+} // readkeyboard()
 
 
 
-
-//----------------- Hardware Support Functions -----------------------------
-
-void readbutton() {                            								// Read the button and increase the mode
+void readbutton() {                                            // Read the button and increase the mode
   buttonState = digitalRead(buttonPin);
   if (buttonState != lastButtonState) {
     if (buttonState == LOW) {
-      ledMode = ledMode > 8 ? 0 : ledMode+1;        					// Reset to 0 only during a mode change
+      ledMode = ledMode > 38 ? 0 : ledMode+1;                  // Reset to 0 only during a mode change
       change_mode(ledMode);
     }
   }
   lastButtonState = buttonState;
-}
-
-//---------------------- LED Utility Functions -----------------
+} // readbutton()
 
 
-// FIND INDEX OF HORIZONAL OPPOSITE LED
-int horizontal_index(int i) {
-  // ONLY WORKS WITH INDEX < TOPINDEX
-  if (i == BOTTOM_INDEX) {return BOTTOM_INDEX;}
-  if (i == TOP_INDEX && EVENODD == 1) {return TOP_INDEX + 1;}
-  if (i == TOP_INDEX && EVENODD == 0) {return TOP_INDEX;}
-  return NUM_LEDS - i;
-}
 
-// FIND INDEX OF ANTIPODAL OPPOSITE LED
-  int antipodal_index(int i) {
-  int iN = i + TOP_INDEX;
-  if (i >= TOP_INDEX) {iN = ( i + TOP_INDEX ) % NUM_LEDS; }
-  return iN;
-}
-
-
-void drawIntegerBar( int intpos, int width, uint8_t hue)
-{
-  int i = intpos; // start drawing at "I"
-  for( int n = 0; n < width; n++) {
-    leds[i] += CHSV( hue, 255, 255);
-    i++;
-    if( i == NUM_LEDS) i = 0; // wrap around
-  }
-}
-
+//---------------------- LED Utility Functions ---------------------------------------------
  
 int wrap(int step) {
   if(step < 0) return NUM_LEDS + step;
   if(step > NUM_LEDS - 1) return step - NUM_LEDS;
   return step;
-}
+} // wrap()
+
+
+
+void fill_solid_HSV(uint8_t ahue, uint8_t asat, uint8_t abright) {  // Set all LED's to an HSV value.
+  for(int i = 0 ; i < NUM_LEDS; i++ ) {
+    leds[i] = CHSV(ahue, asat, abright);
+  }
+}  // fill_solid_HSV()

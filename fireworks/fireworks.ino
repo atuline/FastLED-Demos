@@ -1,29 +1,32 @@
 
-// Fireworks
-//
-// By: Andrew Tuline
-//
-// Date: Sep, 2014
-//
-// Non-bouncing one dimensional fireworks demonstration with FastLED 2.1.
-//
-// The variables are tuned to a pretty short LED strip. You'll need to play around for a longer strip.
-//
-// There are no inputs for this demo.
-// 
-// FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
-//
+/* Fireworks for FastLED 2.1
+
+By: Andrew Tuline
+
+Date: Oct, 2014
+
+Non-bouncing one dimensional fireworks demonstration.
+
+The variables are tuned to a pretty short LED strip. You'll need to play around for a longer strip.
+
+FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
+
+*/
 
 
-#include <FastLED.h>                                          // FastLED library
+#include "FastLED.h"                                          // FastLED library. Preferably the latest copy of FastLED 2.1.
  
-#define LED_DT 13                                             // Data pin                                                 ********* CHANGE ME **************
-#define NUM_LEDS 15                                           // Number of LED's                                          ********* CHANGE ME **************
-#define COLOR_ORDER GRB                                       // Change the order as necessary                            ********* CHANGE ME **************
-#define LED_TYPE WS2811                                       // What kind of strip are you using?                        ********* CHANGE ME **************
-#define BRIGHTNESS  128                                       // How bright do we want to go                              ********* CHANGE ME **************
+// Fixed definitions cannot change on the fly.
+#define LED_DT 13                                             // Serial data pin for WS2812B or WS2801
+#define COLOR_ORDER GRB                                       // Are they RGB, GRB or what??
+#define LED_TYPE WS2811                                       // What kind of strip are you using?
+#define NUM_LEDS 24                                           // Number of LED's
 
-struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array
+// Initialize changeable global variables.
+uint8_t max_bright = 255;                                      // Overall brightness definition. It can be changed on the fly.
+
+struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
+
 
 
 // Initialize global variables for sequences
@@ -33,7 +36,7 @@ int thissat = 255;                                            // Standard fully 
 int thisbright = 255;                                         // Standard fully bright LED
 
 // GRAVBALL VARIABLES
-int gravity = -15;                                            // Gravity                                                 ********* CHANGE ME **************
+int gravity = -8;                                             // Gravity                                                 ********* CHANGE ME **************
 int drag = 0;                                                 // Not required due to losses in 16 bit math. Not used.
 int timeinc = 2;                                              // A time increment.
 int maxcount = 100;                                           // Maximum number of explosion frames.
@@ -41,8 +44,8 @@ int mycount = 0;                                              // Repeat the expl
 
 
 // Inital speed variables can be changed to make it go HIGHER!!!
-int streamervelocity = 750;                                   // Velocity of the initial streamer that goes into the air. ********* CHANGE ME **************
-int explosionvelocity = 750;                                  // Maximum velocity of the explosion.                       ********* CHANGE ME **************
+int streamervelocity = 500;                                   // Velocity of the initial streamer that goes into the air. ********* CHANGE ME **************
+int explosionvelocity = 500;                                  // Maximum velocity of the explosion.                       ********* CHANGE ME **************
 
 
 uint8_t thisstatus = 0;                                       // Used to determine which state our finite state machine is in.
@@ -50,7 +53,7 @@ uint8_t thisstatus = 0;                                       // Used to determi
 #define numgravs 6                                            // How many gravs we are using. The first one is our streamer.  ********* CHANGE ME **************
 
 typedef struct {                                              // Define a structure for the gravs.
-      long distold;                                           // I defined this as 'long' so that it'll work with longer strips
+      long distold;                                           // I defined this as 'long' so that it'll work with longer strips.
       long distance;                                          // Ditto.
       int velold;
       int velocity;
@@ -64,17 +67,19 @@ gravs mygravs[numgravs];
 
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(57600);
   LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
-  FastLED.setBrightness(BRIGHTNESS);                          // Too bright chews up a lot of current and is overkill at nighttime.
+  FastLED.setBrightness(max_bright);                          // Too bright chews up a lot of current and is overkill at nighttime.
   set_max_power_in_volts_and_milliamps(5, 500);               // FastLED 2.1 Power management set at 5V, 500mA.
-  
-  } // setup()
+} // setup()
 
 
 
 void loop () {
   fire();                                                     // It's really a finite state machine, so no huge 'for' loops.
+  show_at_max_brightness_for_power();                         // Display the LED's
+  delay_at_max_brightness_for_power(thisdelay*2.5);           // And delay
+  LEDS.countFPS();
 } // loop()
 
 
@@ -109,7 +114,6 @@ void fireup() {                                               // Shoot fireworks
   mygravs[0].velocity = mygravs[0].velold + gravity*timeinc;  // Split gravity math into two lines for simplicity.
   mygravs[0].distance = mygravs[0].distold + mygravs[0].velocity*timeinc;
 
-//  Serial.println(mygravs[0].distance);
   int i = map(mygravs[0].distance, 0, 32767, 0, NUM_LEDS);
     
   mygravs[0].velold = mygravs[0].velocity;                    // Capture the current velocity/distance.
@@ -125,14 +129,10 @@ void fireup() {                                               // Shoot fireworks
       leds[i-3] = CHSV(mygravs[0].thishue, random8(100, 200), mygravs[0].thisbright);  // Add a bit more saturation to the colour.
     }
   }
-  show_at_max_brightness_for_power();                         // Display the LED's
-  delay_at_max_brightness_for_power(thisdelay*2.5);           // And delay
 } // fireup()
 
 
 void explodeinit () {
-//    Serial.println(mygravs[0].distance);                      // At 750, it goes up to 18000
-
   for (int k=1; k< numgravs; k++) {
     mygravs[k].distold = mygravs[0].distance;                 // We start off with a height where the original element stopped.
     mygravs[k].distance = mygravs[0].distance;
@@ -144,7 +144,7 @@ void explodeinit () {
   }
   mycount = 0;                                                // This is a counter for the # of times to go through the exploding loop.
   thisstatus = 3;                                             // Once done initializing, let's move onto the next step of exploding.
-}
+} // explodeinit()
 
 
 void explode() {
@@ -156,7 +156,6 @@ void explode() {
     mygravs[k].velocity = mygravs[k].velold + gravity*timeinc;               // Split gravity math into two lines for simplicity
     mygravs[k].distance = mygravs[k].distold + mygravs[k].velocity*timeinc;
 
-//    Serial.println(mygravs[k].distance);
     int i = map(mygravs[k].distance, 0, 32767, 0, NUM_LEDS);
     
     mygravs[k].velold = mygravs[k].velocity;                                 // Capture the current velocity/distance
@@ -166,8 +165,5 @@ void explode() {
     
     if (i < NUM_LEDS && i >= 0) leds[i] += CHSV(mygravs[k].thishue, thissat, thisbright);    // Let's get ready to display it, but be careful of limits.
   }
-
-  show_at_max_brightness_for_power();
   for (int j = 0; j < NUM_LEDS; j++) leds[j].fadeToBlackBy(16);              // Fade everything over time. I could also use nscale8(224) or thereabouts.
-  delay_at_max_brightness_for_power(thisdelay*2.5);
-}
+} // explode()

@@ -1,63 +1,88 @@
 
-// FastLED Display Template
-//
-// By: Andrew Tuline
-//
-// Date: Sep, 2014
-//
-// This is a simple FastLED (2.1 and greater) display sequence template.
-//
-// FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
-//
-// Note: If you receive compile errors (as I have in the Stino add-on for Sublime Text), set the compiler to 'Full Compilation'.
-//
+/* Display Template for FastLED 2.1
+
+By: Andrew Tuline
+
+Date: Oct, 2014
+
+This is a simple FastLED (2.1 and greater) display sequence template. This template also includes a time (rather than loop) based demo sequencer as well as a frame rate counter.
+
+FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
+
+Note: If you receive compile errors (as I have in the Stino add-on for Sublime Text), set the compiler to 'Full Compilation'.
+
+*/
 
 
-
-#include <FastLED.h>                                           // FastLED library
+#include "FastLED.h"                                          // FastLED library. Preferably the latest copy of FastLED 2.1.
  
-#define LED_DT 13                                              // Data pin
-#define NUM_LEDS 24                                            // Number of LED's
-#define COLOR_ORDER GRB                                        // Change the order as necessary
-#define LED_TYPE WS2811                                        // What kind of strip are you using?
-#define BRIGHTNESS  196                                        // How bright do we want to go
+// Fixed definitions cannot change on the fly.
+#define LED_DT 13                                             // Serial data pin for WS2812B or WS2801.
+#define COLOR_ORDER GRB                                       // Are they RGB, GRB or what??
+#define LED_TYPE WS2811                                       // What kind of strip are you using?
+#define NUM_LEDS 24                                           // Number of LED's.
 
-struct CRGB leds[NUM_LEDS];                                    // Initializxe our array
+// Initialize changeable global variables.
+uint8_t max_bright = 255;                                      // Overall brightness definition. It can be changed on the fly.
+
+struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
 
 
-// Initialize global variables for sequences
-uint8_t thisdelay = 8;                                         // A delay value for the sequence(s)
+// Define variables used by the sequences.
+int      twinkrate = 100;                                      // The higher the value, the lower the number of twinkles.
+uint8_t  thisdelay =  20;                                      // A delay value for the sequence(s).
+uint8_t   thisfade =   8;                                      // How quickly does it fade? Lower = slower fade rate.
+uint8_t    thishue =  50;                                      // The hue.
+uint8_t    thissat = 100;                                      // The saturation, where 255 = brilliant colours.
+uint8_t    thisbri = 255;                                      // Brightness of a sequence.
 
-// Non-blocking delay timers
-volatile long previousMillis = 0;
 
 
 void setup() {
-  Serial.begin(9600);
+  delay(1000);                                                 // Power-up safety delay or something like that.
+  Serial.begin(57600);
   LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
-  FastLED.setBrightness(BRIGHTNESS);
-  set_max_power_in_volts_and_milliamps(5, 500);                // FastLED 2.1 Power management set at 5V, 500mA
+  FastLED.setBrightness(max_bright);
+  set_max_power_in_volts_and_milliamps(5, 500);               // FastLED 2.1 Power management set at 5V, 500mA.
 } // setup()
 
 
+
 void loop () {
-
- twinkle();                                                    // Call our sequence
-
+  ChangeMe();                                                 // Check the demo loop for changes to the variables.
+  twinkle();                                                  // Call our sequence.
+  show_at_max_brightness_for_power();                         // Power managed display of LED's.
+  delay_at_max_brightness_for_power(2.5*thisdelay);           // Power managed FastLED delay.
+  LEDS.countFPS();                                            // Display frames per second on the serial monitor. Disable the delay in order to see how fast/efficient your sequence is.
 } // loop()
 
 
+
 void twinkle() {
-
-  int i = random8();													                 // A random number. Higher number => fewer twinkles. Use random16() for values >255.
-  if (i < NUM_LEDS) leds[i] = CHSV(50, 100, 255);              // Only the lowest probability twinkles will do. You could even randomize the hue/saturation. .
-  for (int j = 0; j < NUM_LEDS; j++) leds[j].fadeToBlackBy(8); // Use a FastLED 2.1 fade
-
-  show_at_max_brightness_for_power();                          // Power managed display of LED's
-//  LEDS.show();                                               // Standard FastLED display
-
-//  FastLED.delay(thisdelay*2.5);                              // Non power managed FastLED delay.
-  delay_at_max_brightness_for_power(thisdelay*2.5);            // Power managed FastLED delay.
-//  delay(thisdelay);                                          // The standard delay. Use this if the others don't work.
-
+  if (twinkrate < NUM_LEDS) twinkrate = NUM_LEDS;             // Makes sure the twinkrate will cover ALL of the LED's as it's used as the maximum LED index value.
+  int i = random16(twinkrate);													      // A random number based on twinkrate. Higher number => fewer twinkles.
+  if (i < NUM_LEDS) leds[i] = CHSV(thishue, thissat, thisbri); // Only the lowest probability twinkles will do. You could even randomize the hue/saturation.
+  for (int j = 0; j < NUM_LEDS; j++) leds[j].fadeToBlackBy(thisfade); // Use the FastLED 2.1 fade method.
 } // twinkle()
+
+
+
+void ChangeMe() {                                             // A time (rather than loop) based demo sequencer. This gives us full control over the length of each sequence.
+  uint8_t secondHand = (millis() / 1000) % 15;                // Change '60' to a different value to change length of the loop.
+  static uint8_t lastSecond = 99;                             // Static variable, means it's only defined once. This is our 'debounce' variable.
+  if (lastSecond != secondHand) {                             // Debounce to make sure we're not repeating an assignment.
+    lastSecond = secondHand;
+    if (secondHand ==  0)  {thisdelay = 20; thishue=0; thissat=255; thisfade=16; thisdelay=50; twinkrate=20;}  // You can change values here, one at a time , or all together.
+    if (secondHand ==  5)  {thisdelay = 20; thishue=128; thisfade=64; thisdelay=10; twinkrate=100;}
+    if (secondHand == 10)  {thisdelay = 20; thishue=random16(0,64); twinkrate=40;}                             // Only gets called once, and not continuously for the next several seconds. Therefore, no rainbows.
+    if (secondHand == 15)  {}
+    if (secondHand == 20)  {}
+    if (secondHand == 25)  {}
+    if (secondHand == 30)  {}
+    if (secondHand == 35)  {}
+    if (secondHand == 40)  {}
+    if (secondHand == 45)  {}
+    if (secondHand == 50)  {}
+    if (secondHand == 55)  {}
+  }
+} // ChangeMe()

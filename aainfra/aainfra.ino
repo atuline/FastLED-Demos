@@ -13,12 +13,12 @@ AAINFRA FOR AALIGHT LED EFFECTS
 
 Introduction
 
-This program is for an Arduino that receives IR signals, decodes them and serially transmits a command to an Arduino
+This program is for a second Arduino that receives IR signals, decodes them and serially transmits a command to an Arduino
 that is controlling a WS2812B LED strip with FastLED. This is a MUCH more reliable method of using IR functionality than
-with a single Arduino running FastLED.
+with a single Arduino running FastLED (it doesn't work).
 
 
-IR Commands on 2nd Arduino
+Commands Supported
 
 The following section provides a list of commands that are sent to the main Arduino.
 
@@ -34,8 +34,8 @@ Serial (below) is the string being sent over the Tx line to the Arduino performi
 
 Serial    Command                       IR Button location
 ------    --------                      ------------------
-m889      Set mode 889                        F4 
-m888      Set mode 888                        E4
+m99       Set mode 99                         F4 
+m98       Set mode 98                         E4
 m1        Set mode 1                          A3
 m0        Set mode 0                          A4
 e1, e2    Increase/Decrease delay             C2, C3
@@ -50,29 +50,27 @@ y         Increase/decrease # of LED's        B1, with A1, A2
 
 */
 
-#include <IRremote.h>
+#include "IRremote.h"
 
 int RECV_PIN = 9;                                     // Standard IR pin and data setup
 IRrecv irrecv(RECV_PIN);
-decode_results results;
-String command;
-boolean understood = false;
+decode_results results;                               // The string sequence received by IR.
+String command;                                       // We'll be sending strings and not single characters to Tx.
+boolean understood = false;                           // Was the IR sequence received valid or not.
 
-void setup()
-{
-  Serial.begin(9600);
+
+void setup() {
+  Serial.begin(57600);
   irrecv.enableIRIn();                                // Start the receiver
-}
+} // setup()
+
 
 void loop() {
-
   getir();
-
 } // loop()
 
 
 void getir() {
-
  if (irrecv.decode(&results)) {                      // Read the IR Receiver
     understood = true;
     switch (results.value) {
@@ -100,18 +98,16 @@ void getir() {
       case 16189687:  command = "m18";  break;        // e1
       case 16222327:  command = "n0";   break;        // e2
       case 16206007:  command = "n1";   break;        // e3
-      case 16238647:  command = "m888"; break;        // e4
+      case 16238647:  command = "m98";  break;        // e4
 
       case 16197847:  command = "m22";  break;        // f1
       case 16230487:  command = "u1";   break;        // f2
       case 16214167:  command = "u2";   break;        // f3
-      case 16246807:  command = "m889"; break;        // f4
+      case 16246807:  command = "m99";  break;        // f4
 
       default:        understood = false;             // We could do something by default
     } // switch
-
     if (understood) Serial.println(command);
     irrecv.resume();                                  // Receive the next value
-
   } // if irrecv
 } // getir()

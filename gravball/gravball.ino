@@ -3,7 +3,7 @@
 //
 // By: Andrew Tuline
 //
-// Date: Aug, 2014
+// Date: Oct, 2014
 //
 // Multiple bouncing balls. For whatever reason, I call them gravs.
 // 
@@ -11,15 +11,18 @@
 //
 
 
-#include <FastLED.h>                                           // FastLED library
+#include "FastLED.h"                                          // FastLED library. Preferably the latest copy of FastLED 2.1.
  
-#define LED_DT 13                                              // Data pin
-#define NUM_LEDS 24                                            // Number of LED's
-#define COLOR_ORDER GRB                                        // Change the order as necessary
-#define LED_TYPE WS2811                                        // What kind of strip are you using?
-#define BRIGHTNESS  196                                        // How bright do we want to go
+// Fixed definitions cannot change on the fly.
+#define LED_DT 13                                             // Serial data pin for WS2812B or WS2801
+#define COLOR_ORDER GRB                                       // Are they RGB, GRB or what??
+#define LED_TYPE WS2811                                       // What kind of strip are you using?
+#define NUM_LEDS 24                                           // Number of LED's
 
-struct CRGB leds[NUM_LEDS];                                    // Initializxe our array
+// Initialize changeable global variables.
+uint8_t max_bright = 128;                                      // Overall brightness definition. It can be changed on the fly.
+
+struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
 
 
 // Initialize global variables for sequences
@@ -47,23 +50,25 @@ gravs mygravs[numgravs];
 
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(57600);
   LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
-  FastLED.setBrightness(BRIGHTNESS);
+  FastLED.setBrightness(max_bright);
   set_max_power_in_volts_and_milliamps(5, 500);               // FastLED 2.1 Power management set at 5V, 500mA
 } // setup()
 
 
+
 void loop () {
   gravball();
+  show_at_max_brightness_for_power();
+  delay_at_max_brightness_for_power(thisdelay*2.5);
+  LEDS.countFPS();
 } // loop()
 
 
 
 void gravball() {
-
   fill_solid(leds, NUM_LEDS, CRGB::Black);
-   
   for (int k=0; k < numgravs; k++) {
 
     mygravs[k].velocity = mygravs[k].velold + gravity*timeinc;               // Split gravity math into two lines for simplicity
@@ -78,10 +83,4 @@ void gravball() {
     if (i <= 1 && mygravs[k].velold<0) {mygravs[k].velold = -mygravs[k].velold;}         // Bounce!!!
     leds[i] += CHSV(mygravs[k].thishue, thissat, thisbright);          // Let's get ready to display it.
   }
-  show_at_max_brightness_for_power();
-  
-//  FastLED.delay(thisdelay*2.5);
-  delay_at_max_brightness_for_power(thisdelay*2.5);
-//  delay(thisdelay);
-
 } // gravball()
