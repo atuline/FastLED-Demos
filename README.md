@@ -1,11 +1,11 @@
-FastLED-Demos
-=============
+#FastLED-Demos
 
-By: Andrew Tuline
 
-Email: atuline@gmail.com
+**By:** Andrew Tuline
 
-Date: October, 2014
+**Email:** atuline@gmail.com
+
+**Date:** October, 2014
 
 !!!!!!!!!!!!! WARNING !!!!!!!!!!!!!
 
@@ -15,7 +15,7 @@ https://github.com/FastLED/FastLED/tree/FastLED2.1
 
 
 
-Introduction
+##Introduction
 
 Here's several COMPLETELY re-written display sequences for FastLED 2.1 (and above) for a single strand of RGB LED's, such as WS2811 or WS2812B. Each should compile and run separately and have been tested on an Arduino UNO and Nano 3.0, but not the Teensy.
 
@@ -26,18 +26,18 @@ The new sequences are now designed to be loop/non-blocking delay friendly. They 
 In addition to several standalone demos, I have included a display template as well as aalight and aainfra, which support multiple display sequences, a demo mode, keyboard, IR remote and updated pushbutton control.
 
 
-aatemplate.ino - A standard display template which can be re-used.
+**aatemplate.ino** - A standard display template which can be re-used.
 
-aalight.ino - Runs on an Arduino connected to an LED strip. Compile aalight.ino, and it will include the other ino files in the directory. The structure for this code is based on funkboxing LED.
+**aalight.ino** - Runs on an Arduino connected to an LED strip. Compile aalight.ino, and it will include the other ino files in the directory. The structure for this code is based on funkboxing LED.
 
-aainfra.ino - Runs on a 2nd Arduino with an IR sensor attached. Compile aainfra.ino and connect Tx of the 2nd Arduino to Rx of the first one. You will need to disconnect that in order to program the Arduinos.
+**aainfra.ino** - Runs on a 2nd Arduino with an IR sensor attached. Compile aainfra.ino and connect Tx of the 2nd Arduino to Rx of the first one. You will need to disconnect that in order to program the Arduinos.
 
 See aalight.ino comment section for more information on how to use this. Also see aalight.png for a breadboard layout.
 
 
-The awesome FastLED Library is available from: http://fastled.io/
+The awesome FastLED Library is available from: [fastled.io](http://fastled.io/)
 
-Download FastLED 2.1 from: https://github.com/FastLED/FastLED/tree/FastLED2.1.
+Download FastLED 2.1 from: [github.com/FastLED/FastLED/tree/FastLED2.1](https://github.com/FastLED/FastLED/tree/FastLED2.1)
 
 
 ----------------------------------------------------------

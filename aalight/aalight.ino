@@ -205,7 +205,7 @@ y         Save of LED's to flash                B1                     // Not ye
 // Fixed definitions cannot change on the fly.
 #define LED_DT 13                                             // Serial data pin for WS2812B or WS2801.
 #define COLOR_ORDER GRB                                       // Are they RGB, GRB or what??
-#define LED_TYPE WS2811                                       // What kind of strip are you using?
+#define LED_TYPE WS2812B                                       // What kind of strip are you using?
 #define NUM_LEDS 24                                           // Number of LED's.
 
 // Initialize changeable global variables.

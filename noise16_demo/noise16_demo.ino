@@ -23,7 +23,7 @@ Note: If you receive compile errors (as I have in the Stino add-on for Sublime T
 #define LED_DT 13                                             // Data pin
 #define NUM_LEDS 15                                           // Number of LED's
 #define COLOR_ORDER GRB                                       // Change the order as necessary
-#define LED_TYPE WS2811                                       // What kind of strip are you using?
+#define LED_TYPE WS2812B                                       // What kind of strip are you using?
 
 
 struct CRGB leds[NUM_LEDS];                                   // Initializxe our array
