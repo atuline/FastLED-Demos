@@ -1,7 +1,7 @@
 
 void noise16() {
   fill_noise16(leds, NUM_LEDS, octaves, x, xscale, hue_octaves, hxy, hue_scale, hue_time);
-  if (thisdir == 0) {hxy+=3; x += x_speed; hue_time+= hue_speed;} else { hxy-=3; x -= x_speed; hue_time -= hue_speed;}
+  if (thisdir == 0) {hxy+=hxyinc; x += x_speed; hue_time+= hue_speed;} else { hxy-=hxyinc; x -= x_speed; hue_time -= hue_speed;}
 
 //  for (int i=0; i<NUM_LEDS; i++) {                            // We can filter, we can invert, we can do all sorts of things.
 //    leds[i].r = 0;                                            // Filter out red

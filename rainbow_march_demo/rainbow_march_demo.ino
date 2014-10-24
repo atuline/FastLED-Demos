@@ -1,14 +1,15 @@
 
-// Rainbow March
-//
-// By: Andrew Tuline
-//
-// Date: Oct, 2014
-//
-// Rainbow marching up the strand. Pretty basic, but oh so popular, and we get a few options as well.
-// 
-// FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
-//
+/* rainbow_march_demo for FastLED 2.1 or greater
+
+By: Andrew Tuline
+Date: Oct, 2014
+
+Rainbow marching up the strand. Pretty basic, but oh so popular, and we get a few options as well.
+
+FastLED is available at https://github.com/FastLED/FastLED
+
+*/
+
 
 
 #include "FastLED.h"                                          // FastLED library. Preferably the latest copy of FastLED 2.1.
@@ -46,7 +47,7 @@ void loop () {
   rainbow_march();
   show_at_max_brightness_for_power();                         // Power managed display of LED's.
   delay_at_max_brightness_for_power(2.5*thisdelay);           // Power managed FastLED delay.
-  LEDS.countFPS();                                            // Display frames per second in the serial monitor. Disable the delay in order to see how fast/efficient your sequence is.
+  Serial.println(LEDS.getFPS());                            // Display frames per second in the serial monitor. Disable the delay in order to see how fast/efficient your sequence is.
 } // loop()
 
 

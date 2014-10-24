@@ -1,5 +1,5 @@
 
-/* noise16_demo for FastLED 2.1
+/* noise16_demo for FastLED 2.1 or greater
 
 By: Andrew Tuline
 
@@ -7,7 +7,7 @@ Date: Oct, 2014
 
 This is a simple FastLED (2.1 and greater) display sequence utilizing the FastLED noise function. This is one of those 'wait for a while' and see what it does routines. Very unpredictable and very cool.
 
-FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
+FastLED is available at https://github.com/FastLED/FastLED
 
 Note: If you receive compile errors (as I have in the Stino add-on for Sublime Text), set the compiler to 'Full Compilation'.
 
@@ -43,7 +43,7 @@ uint32_t hxy = 43213;    //43213                              // not sure about 
 int hue_scale=20;        //1                                  // the 'distance' between points for the hue noise
 int hue_speed = 1;       //31                                 // how fast we move through hue noise
 uint8_t x_speed = 0;     //331                                // adjust this value to move along the x axis between frames
-
+int8_t hxyinc = 3;
 uint8_t wavebright= 128;                                      // Usesd by qsub to set a fixed value to LED's depending on their current value
 
 
@@ -64,14 +64,14 @@ void loop () {
   noise16();
   show_at_max_brightness_for_power();
   delay_at_max_brightness_for_power(thisdelay*2.5);
-  LEDS.countFPS();
+  Serial.println(LEDS.getFPS());
 } // loop()
 
 
 
 void noise16() {
   fill_noise16(leds, NUM_LEDS, octaves, x, xscale, hue_octaves, hxy, hue_scale, hue_time);
-  if (thisdir == 0) {hxy+=3; x += x_speed; hue_time+= hue_speed;} else { hxy-=3; x -= x_speed; hue_time -= hue_speed;}
+  if (thisdir == 0) {hxy+=hxyinc; x += x_speed; hue_time+= hue_speed;} else { hxy-=hxyinc; x -= x_speed; hue_time -= hue_speed;}
 
 //  for (int i=0; i<NUM_LEDS; i++) {                            // We can filter, we can invert, we can do all sorts of things.
 //    leds[i].r = 0;                                          // Totally filter out red.
@@ -92,11 +92,11 @@ void ChangeMe() {
   
   if( lastSecond != secondHand) {
     lastSecond = secondHand;
-    if (secondHand == 0)  {octaves = 1; hue_octaves = 2; hxy = 6000; x = 5000; xscale=3000; hue_scale=50; hue_speed=15; x_speed=100; }
-    if (secondHand == 10)   {octaves=random16(1,3); hue_octaves=random16(1,5); hue_scale=random16(10, 50);  x = random16(); xscale=random16(); hxy= random16(); hue_time = random16(); hue_speed = random16(1,3); x_speed = random16(1,30); }
-    if (secondHand == 20)  {}
-    if (secondHand == 30)  {}
-    if (secondHand == 40)  {}
-    if (secondHand == 50)  {}
+    if (secondHand == 0)  {hxyinc = 3; octaves = 1; hue_octaves = 2; hxy = 6000; x = 5000; xscale=3000; hue_scale=50; hue_speed=15; x_speed=100; }
+    if (secondHand == 10) {hxyinc = random16(1,15); octaves=random16(1,3); hue_octaves=random16(1,5); hue_scale=random16(10, 50);  x = random16(); xscale=random16(); hxy= random16(); hue_time = random16(); hue_speed = random16(1,3); x_speed = random16(1,30); }
+    if (secondHand == 20) {}
+    if (secondHand == 30) {}
+    if (secondHand == 40) {}
+    if (secondHand == 50) {}
   }
 } // ChangeMe()

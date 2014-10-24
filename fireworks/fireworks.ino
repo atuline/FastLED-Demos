@@ -1,5 +1,5 @@
 
-/* Fireworks for FastLED 2.1
+/* Fireworks for FastLED 2.1 or greater
 
 By: Andrew Tuline
 
@@ -9,7 +9,7 @@ Non-bouncing one dimensional fireworks demonstration.
 
 The variables are tuned to a pretty short LED strip. You'll need to play around for a longer strip.
 
-FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
+FastLED is available at https://github.com/FastLED/FastLED
 
 */
 
@@ -79,7 +79,7 @@ void loop () {
   fire();                                                     // It's really a finite state machine, so no huge 'for' loops.
   show_at_max_brightness_for_power();                         // Display the LED's
   delay_at_max_brightness_for_power(thisdelay*2.5);           // And delay
-  LEDS.countFPS();
+  Serial.println(LEDS.getFPS());
 } // loop()
 
 

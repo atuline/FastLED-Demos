@@ -1,5 +1,5 @@
 
-/* three_sin demo
+/* three_sin demo for FastLED 2.1 or greater
 
 By: Andrew Tuline
 
@@ -7,7 +7,7 @@ Date: Oct, 2014
 
 3 sine waves, one for each colour. I'm already doing a lot with 2 sine waves, so I didn't take this far.
 
-FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
+FastLED is available at https://github.com/FastLED/FastLED
 
 Note: If you receive compile errors (as I have in the Stino add-on for Sublime Text), set the compiler to 'Full Compilation'.
 
@@ -67,7 +67,7 @@ void loop () {
   three_sin();                                                  // Improved method of using non-blocking delay
   show_at_max_brightness_for_power();                         // Power managed display of LED's 
   delay_at_max_brightness_for_power(thisdelay*2.5);
-  LEDS.countFPS();
+  Serial.println(LEDS.getFPS());
 } // loop()
 
 

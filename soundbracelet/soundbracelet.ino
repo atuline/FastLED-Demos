@@ -1,5 +1,5 @@
 
-/* soundbracelet for FastLED 2.1
+/* soundbracelet for FastLED 2.1 or greater
 
 Converted by: Andrew Tuline
 
@@ -21,7 +21,7 @@ You may need to only use battery power as noise from the USB can affect the sign
 
 Plug Vcc of the microphone into 3.3V of Arduino. Connect 3.3V of Arduino to aref pin, and gnd to gnd.
 
-FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
+FastLED is available at https://github.com/FastLED/FastLED
 
 */
 
@@ -80,7 +80,7 @@ void setup() {
 void loop() {
   soundbracelet();
   show_at_max_brightness_for_power();                         // Power managed FastLED display
-  LEDS.countFPS(); 
+  Serial.println(LEDS.getFPS()); 
 } // loop()
 
 

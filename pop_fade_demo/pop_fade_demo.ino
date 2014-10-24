@@ -1,6 +1,4 @@
-/*
-
-pop_fade_demo
+/* pop_fade_demo for FastLED 2.1 or greater
 
 By: Andrew Tuline
 www.tuline.com
@@ -18,7 +16,8 @@ A demo showing the flexibility of individual LED pop fades across the HSV range.
 You can set an LED with HSV values, but you can't query those values and increment/decrement them unless you maintain
 a separate array. In addtion, there are no HSV methods/functions available yet in FastLED. As a result, I'm not doing any HSV modifications,
 such as changing the saturation (which doesn't look at that cool anyway).
-FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
+
+FastLED is available at https://github.com/FastLED/FastLED
 
 Note: If you receive compile errors (as I have in the Stino add-on for Sublime Text), set the compiler to 'Full Compilation'.
 
@@ -68,7 +67,7 @@ void loop() {
   pop_fade();                                                 // Simple call to the routine.
   show_at_max_brightness_for_power();
   delay_at_max_brightness_for_power(thisdelay*2.5);
-  LEDS.countFPS();
+  Serial.println(LEDS.getFPS());
 } // loop()
 
 

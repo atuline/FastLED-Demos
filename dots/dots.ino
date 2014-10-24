@@ -1,5 +1,5 @@
 
-/* Moving Dots for FastLED 2.1
+/* Moving Dots for FastLED 2.1 or greater
 
 By: John Burroughs
 
@@ -9,7 +9,7 @@ Date: Oct, 2014
 
 This sequence moves LED's at different rates across the strip.
 
-FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
+FastLED is available at https://github.com/FastLED/FastLED
 
 Note: If you receive compile errors (as I have in the Stino add-on for Sublime Text), set the compiler to 'Full Compilation'.
 
@@ -51,7 +51,7 @@ void loop () {
   dots();
   show_at_max_brightness_for_power();
   delay_at_max_brightness_for_power(thisdelay*2.5);
-  LEDS.countFPS();
+  Serial.println(LEDS.getFPS());
 } // loop()
 
 

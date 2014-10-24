@@ -1,4 +1,4 @@
-/* two_sin_demo
+/* two_sin_demo for FastLED 2.1 or greater
 
 By: Andrew Tuline
 
@@ -9,7 +9,7 @@ A demo showing the flexibility of using two sine waves. A little code and lots o
 
 Oh, and those twinkle overlays for Mark Kriegsman are still there.
 
-FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
+FastLED is available at https://github.com/FastLED/FastLED
 
 Note: If you receive compile errors (as I have in the Stino add-on for Sublime Text), set the compiler to 'Full Compilation'.
 
@@ -81,7 +81,7 @@ void loop() {
   if(twinkrun == 1) twinkleover();                            // You can keep or lose the twinkles.
   show_at_max_brightness_for_power();
   delay_at_max_brightness_for_power(thisdelay*2.5);
-  LEDS.countFPS();
+  Serial.println(LEDS.getFPS());
 } // loop()
 
 

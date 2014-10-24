@@ -1,5 +1,5 @@
 
-/* ripple for FastLED 2.1
+/* ripple for FastLED 2.1 or greater
 
 Converted and significantly modified by: Andrew Tuline
 
@@ -7,7 +7,7 @@ Date: Oct, 2014
 
 A cool ripple effect for an WS2812B LED strip that's been re-written from the Neopixel version https://gist.github.com/suhajdab/9716635
 
-FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
+FastLED 2.1 is available at https://github.com/FastLED/FastLED
 
 */
 
@@ -50,7 +50,7 @@ void loop () {
   ripple();
   show_at_max_brightness_for_power();
   delay_at_max_brightness_for_power(thisdelay*2.5);
-  LEDS.countFPS();
+  Serial.println(LEDS.getFPS());
 } // loop()
 
 

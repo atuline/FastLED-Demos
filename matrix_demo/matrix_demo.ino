@@ -1,5 +1,5 @@
 
-/* Matrix for FastLED 2.1
+/* Matrix for FastLED 2.1 or greater
 
 By: funkboxing LED and significantly modified by Andrew Tuline
 
@@ -7,7 +7,7 @@ Date: Oct, 2014
 
 Green (or other coloured) characters going up/down the strand, a la 'The Matrix'.
 
-FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
+FastLED is available at https://github.com/FastLED/FastLED
 
 */
 
@@ -48,7 +48,7 @@ void loop () {
   matrix();
   show_at_max_brightness_for_power();
   delay_at_max_brightness_for_power(thisdelay*2.5);
-  LEDS.countFPS();
+  Serial.println(LEDS.getFPS());
 } // loop()
 
 

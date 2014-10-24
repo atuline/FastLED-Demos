@@ -69,9 +69,9 @@ LED's by providing too high of a voltage with noisy regulators.
 
 Libraries Required
 
-- FastLED library (v2.1) from https://github.com/FastLED/FastLED/tree/FastLED2.1
+- FastLED library (v3.0) from https://github.com/FastLED/FastLED
 - Ken Shiriff's IR library from https://github.com/shirriff/Arduino-IRremote
-
+- JChristensen's Button Library from https://github.com/JChristensen/Button
 
 
 LED Strand Configuration
@@ -101,8 +101,9 @@ to map the codes to the modes in the getir(); routine.
 
 Push Button Operation
 
-If connected, the physical button should always work and selects the next display mode, up to the last contiguous display mode and then
-loops back to 0. It does not support test, sound responsive or demo modes, but that's easily changed.
+Unless in demonstration mode, a simple push/release moves to the next display mode and loops back to 0 when done.
+
+Unless in demonstration mode, a long push/release resets back to display mode 0.
 
 
 
@@ -201,12 +202,13 @@ y         Save of LED's to flash                B1                     // Not ye
 #define VERSION_NUMBER 2.0
 
 #include "FastLED.h"                                          // FastLED library. Preferably the latest copy of FastLED 2.1.
+#include "Button.h"                                           // Button library. Includes press, long press, double press detection.
  
 // Fixed definitions cannot change on the fly.
 #define LED_DT 13                                             // Serial data pin for WS2812B or WS2801.
 #define COLOR_ORDER GRB                                       // Are they RGB, GRB or what??
 #define LED_TYPE WS2812B                                       // What kind of strip are you using?
-#define NUM_LEDS 24                                           // Number of LED's.
+#define NUM_LEDS 8                                           // Number of LED's.
 
 // Initialize changeable global variables.
 uint8_t max_bright = 255;                                     // Overall brightness definition. It can be changed on the fly.
@@ -214,13 +216,14 @@ uint8_t max_bright = 255;                                     // Overall brightn
 struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
 
 
-int ledMode = 99;                                             // Starting mode is typically 0. Use 99 if no controls available. ###### CHANGE ME #########
+int ledMode = 0;                                             // Starting mode is typically 0. Use 99 if no controls available. ###### CHANGE ME #########
 
 
 // PUSHBUTTON SETUP STUFF
 const int buttonPin = 6;                                      // Digital pin used for debounced pushbutton
-int buttonState = 0;
-int lastButtonState = 0;
+// int buttonState = 0;
+// int lastButtonState = 0;
+Button myBtn(buttonPin, true, true, 50);                      // Declare the button
 
 
 // MICROPHONE SETUP STUFF
@@ -324,6 +327,7 @@ uint32_t hxy = 43213;    //43213                              // not sure about 
 int hue_scale=20;        //1                                  // the 'distance' between points for the hue noise
 int hue_speed = 1;       //31                                 // how fast we move through hue noise
 uint8_t x_speed = 0;     //331                                // adjust this value to move along the x axis between frames
+int8_t hxyinc = 3;       //3
 
 // uint8_t wavebright= 128;                                      // Usesd by qsub to set a fixed value to LED's depending on their current value
 
@@ -343,7 +347,7 @@ void setup() {
   Serial.begin(SERIAL_BAUDRATE);                              // SETUP HARDWARE SERIAL (USB)
   Serial.setTimeout(SERIAL_TIMEOUT);
 
-  pinMode(buttonPin, INPUT_PULLUP);                           // Debounced pushbutton with internal pullup (used to select next mode)
+  //pinMode(buttonPin, INPUT_PULLUP);                           // Debounced pushbutton with internal pullup (used to select next mode)
 
   LEDS.setBrightness(max_bright);                             // Set the generic maximum brightness value.
 
@@ -367,7 +371,7 @@ void loop() {
   strobemode();
   show_at_max_brightness_for_power();                         // Power managed display of LED's.
   delay_at_max_brightness_for_power(2.5*thisdelay);           // Power managed FastLED delay.
-//  LEDS.countFPS();                                            // Display frames per second in the serial monitor. Disable the delay in order to see how fast/efficient your sequence is.
+  Serial.println(LEDS.getFPS());                                            // Display frames per second in the serial monitor. Disable the delay in order to see how fast/efficient your sequence is.
 } // loop()
 
 
@@ -415,7 +419,7 @@ void change_mode(int newMode){
     case 35: thisdelay=10; deltahue=30; break;                                                           // rainbow_march
     case 36: thisdelay=10; deltahue=2; thisrot=5; break;                                                  // rainbow_march
     case 37: thisdelay=20; octaves=1; hue_octaves=2; hxy=6000; x=5000; xscale=3000; hue_scale=50; hue_speed=15; x_speed=100; break; // noise16
-    case 38: thisdelay=20; octaves=random16(1,3); hue_octaves=random16(1,5); hue_scale=random16(10, 50);  x=random16(); xscale=random16(); hxy= random16(); hue_time=random16(); hue_speed=random16(1,3); x_speed=random16(1,30); break; // noise16
+    case 38: thisdelay=20; hxyinc = random16(1,15); octaves=random16(1,3); hue_octaves=random16(1,5); hue_scale=random16(10, 50);  x=random16(); xscale=random16(); hxy= random16(); hue_time=random16(); hue_speed=random16(1,3); x_speed=random16(1,30); break; // noise16
 
     // DEMO MODE
     case 99: break;                                           // Standard demos
@@ -572,18 +576,17 @@ void readkeyboard() {                                         // PROCESS HARDWAR
 } // readkeyboard()
 
 
-
 void readbutton() {                                            // Read the button and increase the mode
-  buttonState = digitalRead(buttonPin);
-  if (buttonState != lastButtonState) {
-    if (buttonState == LOW) {
-      ledMode = ledMode > 38 ? 0 : ledMode+1;                  // Reset to 0 only during a mode change
-      change_mode(ledMode);
-    }
+  myBtn.read();
+  if(myBtn.wasReleased()) {
+    ledMode = ledMode > 38 ? 0 : ledMode+1;                  // Reset to 0 only during a mode change
+    change_mode(ledMode);
   }
-  lastButtonState = buttonState;
+  if(myBtn.pressedFor(1000)) {
+    ledMode = 255;
+    change_mode(ledMode);
+  }
 } // readbutton()
-
 
 
 //---------------------- LED Utility Functions ---------------------------------------------

@@ -1,13 +1,13 @@
 
-/* Display Template for FastLED 2.1
+/* Display Template for FastLED 2.1 or greater
 
 By: Andrew Tuline
 
 Date: Oct, 2014
 
-This is a simple FastLED (2.1 and greater) display sequence template. This template also includes a time (rather than loop) based demo sequencer as well as a frame rate counter.
+This is a simple FastLED display sequence template. This template also includes a time (rather than loop) based demo sequencer as well as a frame rate counter.
 
-FastLED 2.1 is available at https://github.com/FastLED/FastLED/tree/FastLED2.1
+FastLED 3.0 is available at https://github.com/FastLED/FastLED
 
 Note: If you receive compile errors (as I have in the Stino add-on for Sublime Text), set the compiler to 'Full Compilation'.
 
@@ -54,7 +54,7 @@ void loop () {
   twinkle();                                                  // Call our sequence.
   show_at_max_brightness_for_power();                         // Power managed display of LED's.
   delay_at_max_brightness_for_power(2.5*thisdelay);           // Power managed FastLED delay.
-  LEDS.countFPS();                                            // Display frames per second on the serial monitor. Disable the delay in order to see how fast/efficient your sequence is.
+  Serial.println(LEDS.getFPS());                            // Display frames per second on the serial monitor. Disable the delay in order to see how fast/efficient your sequence is.
 } // loop()
 
 
