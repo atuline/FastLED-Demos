@@ -26,6 +26,9 @@ The new sequences are now designed to be loop/non-blocking delay friendly. They 
 
 In addition to several standalone demos, I have included a display template as well as aalight and aainfra, which support multiple display sequences, a demo mode, keyboard, IR remote and updated pushbutton control.
 
+I have also included fht_log, which uses the Sparkfun MEMS microphone and the FHT (Fast Hartley Transform) library to respond to sound in the frequency domain. Very cool
+
+
 
 **aatemplate.ino** - A standard display template which can be re-used.
 
