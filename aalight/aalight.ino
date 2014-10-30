@@ -35,7 +35,7 @@ Hardware Setup
 - For a hardware debounced pushbutton, solder an electrolytic capacitor (between .1uf to 10uf) between the two leads of a pushbutton.
 - Connect the positive end to pin 6 of the Arduino.
 - Connect the negative end to ground. We will then program an internal pullup resistor on the Arduino.
-- WS2812B LED strip with data line connected to pin 13 (other pins are connected to Vin and Gnd of the Arduino).
+- WS2812B LED strip with data line connected to pin 12 (other pins are connected to Vin and Gnd of the Arduino).
 - Sparkfun INMP401 MEMS microphone (a mic+opamp) with power connected to Arduino 3.3V supply, output to A5 of Arduino.
 - Connect Arduino 3.3V output to the AREF pin on the Arduino (for the 3.3V MEMS microphone).
 
@@ -205,10 +205,10 @@ y         Save of LED's to flash                B1                     // Not ye
 #include "Button.h"                                           // Button library. Includes press, long press, double press detection.
  
 // Fixed definitions cannot change on the fly.
-#define LED_DT 13                                             // Serial data pin for WS2812B or WS2801.
+#define LED_DT 12                                             // Serial data pin for WS2812B or WS2801.
 #define COLOR_ORDER GRB                                       // Are they RGB, GRB or what??
-#define LED_TYPE WS2812B                                       // What kind of strip are you using?
-#define NUM_LEDS 8                                           // Number of LED's.
+#define LED_TYPE WS2812B                                      // What kind of strip are you using?
+#define NUM_LEDS 8                                            // Number of LED's.
 
 // Initialize changeable global variables.
 uint8_t max_bright = 255;                                     // Overall brightness definition. It can be changed on the fly.
@@ -371,7 +371,7 @@ void loop() {
   strobemode();
   show_at_max_brightness_for_power();                         // Power managed display of LED's.
   delay_at_max_brightness_for_power(2.5*thisdelay);           // Power managed FastLED delay.
-  Serial.println(LEDS.getFPS());                                            // Display frames per second in the serial monitor. Disable the delay in order to see how fast/efficient your sequence is.
+  Serial.println(LEDS.getFPS());                              // Display frames per second in the serial monitor. Disable the delay in order to see how fast/efficient your sequence is.
 } // loop()
 
 
@@ -385,7 +385,7 @@ void change_mode(int newMode){
     case  1: fill_solid(leds, NUM_LEDS,CRGB(255,255,255)); LEDS.show(); break;        // All on, not animated.
     case  2: thisdelay=20; twinkrate=NUM_LEDS; thishue=0; thissat=255; thisbright=255; thisfade=64; break;
     case  3: thisdelay=10; thisrot=1; thatrot=1; break;                         // two_sin
-    case  4: thisdelay=10; thisrot=0; thisdir=1; break;                                                        // two_sin
+    case  4: thisdelay=10; thisrot=0; thisdir=1; break;                                  // two_sin
     case  5: thisdelay=10; thatrot=0; thishue=255; thathue=255;break;                          // two_sin
     case  6: thisdelay=10; allfreq=16; thathue=128; break;                                       // two_sin
     case  7: thisdelay=10; thiscutoff=96; thishue=196; thatcutoff=240; break;                                 // two_sin
@@ -478,7 +478,7 @@ void strobemode() {
     case  38: noise16();        break;
 
     // DEMO MODE
-    case 99: demo_modeA();      break;                                // This is the standard demo mode.
+    case 99: demo_modeA();      break;                        // This is the standard demo mode.
 
   } // switch ledMode
 } // strobemode()

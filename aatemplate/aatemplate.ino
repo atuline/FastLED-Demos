@@ -17,9 +17,9 @@ Note: If you receive compile errors (as I have in the Stino add-on for Sublime T
 #include "FastLED.h"                                          // FastLED library. Preferably the latest copy of FastLED 2.1.
  
 // Fixed definitions cannot change on the fly.
-#define LED_DT 13                                             // Data pin to connect to the strip.
+#define LED_DT 12                                             // Data pin to connect to the strip.
 #define COLOR_ORDER GRB                                       // Are they RGB, GRB or what??
-#define LED_TYPE WS2812B                                       // What kind of strip are you using?
+#define LED_TYPE WS2812B                                      // What kind of strip are you using?
 #define NUM_LEDS 24                                           // Number of LED's.
 
 // Initialize changeable global variables.
@@ -42,7 +42,7 @@ bool       randhue =   0;                                     // Do we want rand
 void setup() {
   delay(1000);                                                 // Power-up safety delay or something like that.
   Serial.begin(57600);
-  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);
   FastLED.setBrightness(max_bright);
   set_max_power_in_volts_and_milliamps(5, 500);               // FastLED 2.1 Power management set at 5V, 500mA.
 } // setup()

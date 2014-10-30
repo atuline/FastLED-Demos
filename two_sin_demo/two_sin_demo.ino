@@ -22,7 +22,7 @@ Note: If you receive compile errors (as I have in the Stino add-on for Sublime T
 #include "FastLED.h"                                          // FastLED library. Preferably the latest copy of FastLED 2.1.
  
 // Fixed definitions cannot change on the fly.
-#define LED_DT 13                                             // Serial data pin for WS2812B or WS2801
+#define LED_DT 12                                             // Serial data pin for WS2812B or WS2801
 #define COLOR_ORDER GRB                                       // Are they RGB, GRB or what??
 #define LED_TYPE WS2812B                                       // What kind of strip are you using?
 #define NUM_LEDS 24
@@ -68,7 +68,7 @@ twinks mytwinks[numtwinks];                                   // The structure i
 void setup() {
   delay(1000);                                                // Power-up safety delay or something like that.
   Serial.begin(57600);
-  FastLED.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
+  FastLED.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);
   set_max_power_in_volts_and_milliamps(5, 500);               // FastLED 2.1 Power management set at 5V, 500mA
   FastLED.setBrightness(max_bright);
 } // setup()

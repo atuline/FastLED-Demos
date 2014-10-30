@@ -15,7 +15,7 @@ FastLED 2.1 is available at https://github.com/FastLED/FastLED
 #include "FastLED.h"                                          // FastLED library. Preferably the latest copy of FastLED 2.1.
  
 // Fixed definitions cannot change on the fly.
-#define LED_DT 13                                             // Serial data pin for WS2812B or WS2801.
+#define LED_DT 12                                             // Serial data pin for WS2812B or WS2801.
 #define COLOR_ORDER GRB                                       // Are they RGB, GRB or what??
 #define LED_TYPE WS2812B                                       // What kind of strip are you using?
 #define NUM_LEDS 15                                           // Number of LED's.
@@ -39,7 +39,7 @@ int thisdelay = 50;                                           // Standard delay 
  
 void setup() {
   Serial.begin(57600);
-  LEDS.addLeds<LED_TYPE, LED_DT, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+  LEDS.addLeds<LED_TYPE, LED_DT, GRB>(leds, NUM_LEDS);
   FastLED.setBrightness(max_bright);
   set_max_power_in_volts_and_milliamps(5, 500);
 } // setup()

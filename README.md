@@ -50,6 +50,7 @@ My original pushbutton was wired to a resistor and a capacitor for hardware debo
 
 I now use an internal pullup resistor and have added a button library (which includes debouncing), thus eliminating the need for a capacitor.
 
+Changed data pin from 13 to 12 in order not to conflict with any routines that utilize the built-in LED.
 
 ----------------------------------------------------------
 
