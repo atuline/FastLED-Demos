@@ -1,5 +1,5 @@
 
-/* Matrix for FastLED 2.1 or greater
+/* Matrix for FastLED 3.0 or greater
 
 By: funkboxing LED and significantly modified by Andrew Tuline
 

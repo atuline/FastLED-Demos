@@ -1,5 +1,5 @@
 
-/* Fast Hartley Transform with FastLED
+/* Fast Hartley Transform with FastLED 3.0 or greater
 
 By: Andrew Tuline
 

@@ -1,11 +1,11 @@
 
-/* noise16_demo for FastLED 2.1 or greater
+/* noise16_demo for FastLED 3.0 or greater
 
 By: Andrew Tuline
 
 Date: Oct, 2014
 
-This is a simple FastLED (2.1 and greater) display sequence utilizing the FastLED noise function. This is one of those 'wait for a while' and see what it does routines. Very unpredictable and very cool.
+This is a simple FastLED display sequence utilizing the FastLED noise function. This is one of those 'wait for a while' and see what it does routines. Very unpredictable and very cool.
 
 FastLED is available at https://github.com/FastLED/FastLED
 

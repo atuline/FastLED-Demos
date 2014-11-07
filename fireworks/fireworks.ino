@@ -1,5 +1,5 @@
 
-/* Fireworks for FastLED 2.1 or greater
+/* Fireworks for FastLED 3.0 or greater
 
 By: Andrew Tuline
 

@@ -1,5 +1,5 @@
 
-/* three_sin demo for FastLED 2.1 or greater
+/* three_sin demo for FastLED 3.0 or greater
 
 By: Andrew Tuline
 

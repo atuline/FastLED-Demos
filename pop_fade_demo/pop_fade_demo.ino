@@ -1,4 +1,4 @@
-/* pop_fade_demo for FastLED 2.1 or greater
+/* pop_fade_demo for FastLED 3.0 or greater
 
 By: Andrew Tuline
 www.tuline.com

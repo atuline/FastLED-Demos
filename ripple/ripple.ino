@@ -1,5 +1,5 @@
 
-/* ripple for FastLED 2.1 or greater
+/* ripple for FastLED 3.0 or greater
 
 Converted and significantly modified by: Andrew Tuline
 
@@ -7,7 +7,7 @@ Date: Oct, 2014
 
 A cool ripple effect for an WS2812B LED strip that's been re-written from the Neopixel version https://gist.github.com/suhajdab/9716635
 
-FastLED 2.1 is available at https://github.com/FastLED/FastLED
+FastLED is available at https://github.com/FastLED/FastLED
 
 */
 

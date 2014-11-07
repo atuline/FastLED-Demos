@@ -1,5 +1,5 @@
 
-/* Display Template for FastLED 2.1 or greater
+/* Display Template for FastLED 3.0 or greater
 
 By: Andrew Tuline
 

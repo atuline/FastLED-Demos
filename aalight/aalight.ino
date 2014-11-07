@@ -1,6 +1,6 @@
 /*
 
-AALIGHT LED EFFECTS
+aalight led lighting effects for FastLED 3.0 or greater.
 
       By: Andrew Tuline
      URL: www.tuline.com
@@ -208,7 +208,7 @@ y         Save of LED's to flash                B1                     // Not ye
 #define LED_DT 12                                             // Serial data pin for WS2812B or WS2801.
 #define COLOR_ORDER GRB                                       // Are they RGB, GRB or what??
 #define LED_TYPE WS2812B                                      // What kind of strip are you using?
-#define NUM_LEDS 8                                            // Number of LED's.
+#define NUM_LEDS 20                                            // Number of LED's.
 
 // Initialize changeable global variables.
 uint8_t max_bright = 255;                                     // Overall brightness definition. It can be changed on the fly.
@@ -216,7 +216,7 @@ uint8_t max_bright = 255;                                     // Overall brightn
 struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
 
 
-int ledMode = 0;                                             // Starting mode is typically 0. Use 99 if no controls available. ###### CHANGE ME #########
+int ledMode = 99;                                             // Starting mode is typically 0. Use 99 if no controls available. ###### CHANGE ME #########
 
 
 // PUSHBUTTON SETUP STUFF
@@ -353,7 +353,7 @@ void setup() {
 
   LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER >(leds, NUM_LEDS); // WS2811 definition
 
-  set_max_power_in_volts_and_milliamps(5, 500);                //5V, 500mA
+  set_max_power_in_volts_and_milliamps(5, 200);                //5V, 500mA
 
   random16_set_seed(4832);                                     // Awesome randomizer
   random16_add_entropy(analogRead(2));
