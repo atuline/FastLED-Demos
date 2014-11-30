@@ -10,6 +10,6 @@ void pop_fade() {
     for (int i = 0; i <barlen; i++) 
       if (idex+i < NUM_LEDS) leds[idex+i] = thiscolour;                           // Make sure we don't overshoot the array.
   }
-  for (int i = 0; i <NUM_LEDS; i++) leds[i].nscale8(fadeval); // Go through the array and reduce each RGB value by a percentage.
+     nscale8(leds,NUM_LEDS,fadeval);                          // Fade the entire array. Or for just a few LED's, use  nscale8(&leds[2], 5, fadeval);
 }
 

@@ -17,12 +17,6 @@ This program is for a second Arduino that receives IR signals, decodes them and 
 that is controlling an LED strip with FastLED running aalight.ino.
 
 
-Library Required
-
-https://github.com/NicoHood/IRLremote
-
-
-
 Commands Supported
 
 The following section provides a list of commands that are sent to the main Arduino.
@@ -55,29 +49,30 @@ y         Increase/decrease # of LED's        B1, with A1, A2
 
 */
 
-#include "IRLremote.h"
+#include "IRremote.h"
 
-const int interruptIR = 0;                            // This is pin D2 on an UNO.
-
+int RECV_PIN = 9;                                     // Standard IR pin and data setup
+IRrecv irrecv(RECV_PIN);
+decode_results results;                               // The string sequence received by IR.
 String command;                                       // We'll be sending strings and not single characters to Tx.
 boolean understood = false;                           // Was the IR sequence received valid or not.
 
 
 void setup() {
   Serial.begin(57600);
-  IRLbegin<IR_ALL>(interruptIR);
+  irrecv.enableIRIn();                                // Start the receiver
 } // setup()
 
 
 void loop() {
-  getirl();
+  getir();
 } // loop()
 
 
-void getirl() {
- if (IRLavailable()) {                      // Read the IR Receiver
+void getir() {
+ if (irrecv.decode(&results)) {                      // Read the IR Receiver
     understood = true;
-    switch(IRLgetCommand()) {
+    switch (results.value) {
                                                       // Button pressed
       case 16187647:  command = "r2";   break;        // a1
       case 16220287:  command = "r1";   break;        // a2
@@ -112,6 +107,6 @@ void getirl() {
       default:        understood = false;             // We could do something by default
     } // switch
     if (understood) Serial.println(command);
-    IRLreset();                                  // Receive the next value
+    irrecv.resume();                                  // Receive the next value
   } // if irrecv
-} // getirl()
+} // getir()

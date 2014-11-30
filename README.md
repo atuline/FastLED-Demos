@@ -5,7 +5,7 @@
 
 **Email:** atuline@gmail.com
 
-**Date:** October, 2014
+**Date:** November, 2014
 
 !!!!!!!!!!!!! WARNING !!!!!!!!!!!!!
 
@@ -18,7 +18,7 @@ https://github.com/FastLED/FastLED
 
 ##Introduction
 
-Here's several COMPLETELY re-written display sequences for FastLED 2.1 (and above) for a single strand of RGB LED's, such as WS2811 or WS2812B. Each should compile and run separately and have been tested on an Arduino UNO and Nano 3.0.
+Here's several COMPLETELY re-written display sequences for FastLED for a single strand of RGB LED's, such as Neopixels, WS2812B or APA102. Each should compile and run separately and have been tested on an Arduino UNO and Nano 3.0.
 
 In my previous version, I had several demos that used nested for loops, required a lot of code, weren't highly customizable, or could be replicated by a more flexible routine. Except for some really cool ones, most of those have now been replaced. For instance, two_sin() replaces several 'marching' type sequences and supports several variables to change colour, phase, direction, brightness and so on. Likewise, pop_fade_demo replaces several twinkling sequences.
 
@@ -26,13 +26,13 @@ The new sequences are now designed to be loop/non-blocking delay friendly. They 
 
 In addition to several standalone demos, I have included a display template as well as aalight and aainfra, which support multiple display sequences, a demo mode, keyboard, IR remote and updated pushbutton control.
 
-I have also included fht_log, which uses the Sparkfun MEMS microphone and the FHT (Fast Hartley Transform) library to respond to sound in the frequency domain. Very cool
+I have also included fht_log, which uses the Sparkfun MEMS microphone and the FHT (Fast Hartley Transform) library to respond to sound in the frequency domain. Very cool.
 
 
 
 **aatemplate.ino** - A standard display template which can be re-used.
 
-**aalight.ino** - Runs on an Arduino connected to an LED strip. Compile aalight.ino, and it will include the other ino files in the directory. The structure for this code is based on funkboxing LED. In addition, to the FastLED library, it also requires a couple of other 3rd party libraries.
+**aalight.ino** - Runs on an Arduino connected to an LED strip. Compile aalight.ino, and it will include the other ino files in the directory. The structure for this code is based on funkboxing LED. In addition, to the FastLED library, it also requires a couple of other 3rd party libraries to support pushbutton and IR remote control.
 
 **aainfra.ino** - Runs on a 2nd Arduino with an IR sensor attached. Compile aainfra.ino and connect Tx of the 2nd Arduino to Rx of the first one. You will need to disconnect that in order to program the Arduinos.
 

@@ -25,28 +25,25 @@ This is built upon code from several sources, but mainly:
 
 - FastLED as found at http://fastled.io
 - funkboxing LED for general layout as found at http://funkboxing.com/wordpress/?p=1366
-- IR programmability as found at http://industriumvita.com/arduino-ir-remote-controled-ws2811-addressable-leds/)
+- IR programmability as found at http://industriumvita.com/arduino-ir-remote-controled-ws2811-addressable-leds/
 
 
 
 Hardware Setup
 
 - 1 (or optionally 2) Arduino UNO or Nano 3.0 (is what I've been using).
-- For a hardware debounced pushbutton, solder an electrolytic capacitor (between .1uf to 10uf) between the two leads of a pushbutton.
-- Connect the positive end to pin 6 of the Arduino.
+- Connect the positive end of the pushbutton to pin 6 of the Arduino.
 - Connect the negative end to ground. We will then program an internal pullup resistor on the Arduino.
-- WS2812B LED strip with data line connected to pin 12 (other pins are connected to Vin and Gnd of the Arduino).
+- WS2812B or APA102 LED strip with data line connected to pin 12 (other pins are connected to Vin and Gnd of the Arduino). Data would be connected to pin 11.
 - Sparkfun INMP401 MEMS microphone (a mic+opamp) with power connected to Arduino 3.3V supply, output to A5 of Arduino.
 - Connect Arduino 3.3V output to the AREF pin on the Arduino (for the 3.3V MEMS microphone).
 
-I could use the SoftwareSerial library and use alternate pins for serial communications, but decided not to.
-
-On a second Arduino:
+On a second Arduino (if using WS2812B's and want IR capability):
 
 - TSOP34838 IR receiver with data connected to pin 9 (other pins are 5V and Gnd).
 - Connect ground of the second Arduino to the first Arduino.
 - Connect Tx of the second Arduino to Rx of first Arduino.
-
+- Disconnect them when programming the Arduino's.
 
 Microphone Note: If you use a different microphone, you will need to re-calculate the offset as well as amplitude variables. If
 using a 5V microphone, then remove the AREF wire.
@@ -61,16 +58,16 @@ Power Supplies Tested
 - 5-6VDC adapter. Be careful, as some are noisy and may damage the LED strip (been there, done that).
 - 7.4V battery pack (2 x 3.7V rechargeable 18650 batteries)
 - 6V battery pack (4 x 'AA' batteries)
+- A short strand of LED's an connect to 5V output of the Arduino. Otherwise, use a dedicated 5V power supply or a 5V buck conv3rter.
 
 Note: If the LED strip is plugged into Vin (or directly to the power supply), get a 5V power supply for it. I have blown up several
 LED's by providing too high of a voltage with noisy regulators.
 
 
-
 Libraries Required
 
 - FastLED library (v3.0) from https://github.com/FastLED/FastLED
-- Ken Shiriff's IR library from https://github.com/shirriff/Arduino-IRremote
+- Nico Hood's IRL library from https://github.com/NicoHood/IRLremote
 - JChristensen's Button Library from https://github.com/JChristensen/Button
 
 
@@ -85,6 +82,9 @@ library examples with other types of strands.
 
 IR Operation
 
+
+You can use the IR either on the main Arduino or with a 2nd Arduino attached serially to the first.
+
 Use of a second Arduino that receives IR input and serially transmits commands to the first Arduino is supported as follows:
 
 - Select specific modes (such as mode 0, 1, 99)
@@ -94,8 +94,10 @@ Use of a second Arduino that receives IR input and serially transmits commands t
 - Select next/prev mode
 - Change brightness
 
+If you are using IR on the main Arduino, then it will NOT support 3 pin LED's such as the WS2812's or Neopixels.
+
 I'm using a 24 button IR remote like the ones provided with 5V LED strands from China. If you use a different one, you'll need
-to map the codes to the modes in the getir(); routine.
+to map the codes to the modes in the getirl(); routine. I've provided getirl.ino to test this out with.
 
 
 
@@ -203,20 +205,25 @@ y         Save of LED's to flash                B1                     // Not ye
 
 #include "FastLED.h"                                          // FastLED library. Preferably the latest copy of FastLED 2.1.
 #include "Button.h"                                           // Button library. Includes press, long press, double press detection.
+#include "IRLremote.h"
+
+const int interruptIR = 0;                                    // Meaning, pin 2 on an UNO.
  
 // Fixed definitions cannot change on the fly.
-#define LED_DT 12                                             // Serial data pin for WS2812B or WS2801.
+#define LED_DT 12                                             // Serial data pin.
+#define LED_CK 11                                             // Serial clock pin for WS2801 or APA102.
 #define COLOR_ORDER GRB                                       // Are they RGB, GRB or what??
-#define LED_TYPE WS2812B                                      // What kind of strip are you using?
-#define NUM_LEDS 20                                            // Number of LED's.
+#define LED_TYPE APA102
+// #define LED_TYPE WS2812B                                      // What kind of strip are you using?
+#define NUM_LEDS 12                                            // Number of LED's.
 
 // Initialize changeable global variables.
-uint8_t max_bright = 255;                                     // Overall brightness definition. It can be changed on the fly.
+uint8_t max_bright = 64;                                     // Overall brightness definition. It can be changed on the fly.
 
 struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
 
 
-int ledMode = 99;                                             // Starting mode is typically 0. Use 99 if no controls available. ###### CHANGE ME #########
+int ledMode = 0;                                             // Starting mode is typically 0. Use 99 if no controls available. ###### CHANGE ME #########
 
 
 // PUSHBUTTON SETUP STUFF
@@ -245,7 +252,7 @@ uint8_t thisdelay = 0;                                        // Standard delay
 uint8_t thishue = 0;                                          // Standard hue
 uint8_t thissat = 255;                                        // Standard saturation
 int thisbright = 0;                                           // Standard brightness
-uint8_t thisfade = 8;                                         // Standard fade rate
+uint8_t thisfade = 224;                                         // Standard fade rate
 bool thisdir = 0;                                             // Standard direction
 
 
@@ -347,12 +354,15 @@ void setup() {
   Serial.begin(SERIAL_BAUDRATE);                              // SETUP HARDWARE SERIAL (USB)
   Serial.setTimeout(SERIAL_TIMEOUT);
 
+  IRLbegin<IR_ALL>(interruptIR);                                // IR setup
+  
   //pinMode(buttonPin, INPUT_PULLUP);                           // Debounced pushbutton with internal pullup (used to select next mode)
 
   LEDS.setBrightness(max_bright);                             // Set the generic maximum brightness value.
 
-  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER >(leds, NUM_LEDS); // WS2811 definition
-
+//  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER >(leds, NUM_LEDS); // WS2812B definition
+  LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER >(leds, NUM_LEDS); // APA102 definition
+  
   set_max_power_in_volts_and_milliamps(5, 200);                //5V, 500mA
 
   random16_set_seed(4832);                                     // Awesome randomizer
@@ -366,12 +376,13 @@ void setup() {
 
 //------------------MAIN LOOP---------------------------------------------------------------
 void loop() {
+  getirl();
   readbutton();                                               // Button press increases the ledMode up to last contiguous mode and then starts over at 0.
   readkeyboard();                                             // Get keyboard input.
   strobemode();
   show_at_max_brightness_for_power();                         // Power managed display of LED's.
   delay_at_max_brightness_for_power(2.5*thisdelay);           // Power managed FastLED delay.
-  Serial.println(LEDS.getFPS());                              // Display frames per second in the serial monitor. Disable the delay in order to see how fast/efficient your sequence is.
+//  Serial.println(LEDS.getFPS());                              // Display frames per second in the serial monitor. Disable the delay in order to see how fast/efficient your sequence is.
 } // loop()
 
 
@@ -437,8 +448,8 @@ void change_mode(int newMode){
 
 void strobemode() {
   switch (ledMode) {                                          // Looping through (and not initializing) the current mode. Don't initialize variables here, as we are just going through loop again.
-    case   0: break;                                          // All off, not animated.
-    case   1: break;                                          // All on, not animated.
+    case   0: LEDS.show();      break;                        // All off, not animated.
+    case   1: LEDS.show();      break;                        // All on, not animated.
     case   2: twinkle();        break;                        // I kept twinkle for old time's sake. Pop_fade does everything it does and more.
     case   3: two_sin();        break;
     case   4: two_sin();        break;
@@ -482,6 +493,51 @@ void strobemode() {
 
   } // switch ledMode
 } // strobemode()
+
+
+void getirl() {                                       // This is the built-in IR function that just selects a mode.
+  if (IRLavailable()) {                              // Read the IR receiver. Result are poor if using 3 pin strands such as WS2812B.
+    Serial.print("Command:");
+    Serial.println(IRLgetCommand());
+    switch(IRLgetCommand()) {
+
+      case 65280:  max_bright++;      break;          //a1 - max_bright++;
+      case 65025:  max_bright--;      break;          //a2 - max_bright--;
+      case 64770:  change_mode(1);    break;          //a3 - change_mode(1);
+      case 64515:  change_mode(0);    break;          //a4 - change_mode(0);
+
+      case 64260:  change_mode(5);    break;          //b1 - 
+      case 64005:  change_mode(6);    break;          //b2 - 
+      case 63750:  change_mode(7);    break;          //b3 - 
+      case 63495:  change_mode(8);    break;          //b4 - 
+
+      case 63240:  change_mode(9);    break;          //c1 - 
+      case 62985:  thisdelay++;       break;          //c2 - thisdelay++;
+      case 62730:  thisdelay--;       break;          //c3 - thisdelay--;
+      case 62475:  change_mode(12);   break;          //c4
+
+      case 62220:  change_mode(13);   break;          //d1
+      case 61965:  ledMode--; change_mode(ledMode);  break;    //d2 - change_mode(ledMode--);
+      case 61710:  ledMode++; change_mode(ledMode);  break;    //d3 - change_mode(ledMode++);
+      case 61455:  change_mode(16);   break;          //d4
+
+      case 61200:  change_mode(17);   break;          //e1 -
+      case 60945:  thisdir = 1;       break;          //e2 - thisdir = 1;
+      case 60690:  thisdir = 0;       break;          //e3 - thisdir = 0;
+      case 60435:  change_mode(20);   break;          //e4
+
+      case 60180:  change_mode(21);   break;          //f1
+      case 59925:  thishue-=5;         break;          //f2 - thishue--;
+      case 59670:  thishue+=5;         break;          //f3 - thishue++;
+      case 59415:  change_mode(99);   break;          //f4
+
+      default: break;                                // We could do something by default
+    } // switch
+    IRLreset();
+  } // if IRLavailable()
+} // getir()
+
+
 
 
 

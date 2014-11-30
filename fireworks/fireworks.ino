@@ -165,5 +165,5 @@ void explode() {
     
     if (i < NUM_LEDS && i >= 0) leds[i] += CHSV(mygravs[k].thishue, thissat, thisbright);    // Let's get ready to display it, but be careful of limits.
   }
-  for (int j = 0; j < NUM_LEDS; j++) leds[j].fadeToBlackBy(16);              // Fade everything over time. I could also use nscale8(224) or thereabouts.
+  nscale8(leds,NUM_LEDS,224);                          // Fade the entire array. Or for just a few LED's, use  nscale8(&leds[2], 5, fadeval);
 } // explode()

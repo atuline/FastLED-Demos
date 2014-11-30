@@ -34,7 +34,7 @@ struct CRGB leds[NUM_LEDS];                                   // Initialize our 
 // Define variables used by the sequences.
 int thisdelay = 4;                                            // A delay value for the sequence(s)
 uint8_t count;                                                // Count up to 255 and then reverts to 0
-uint8_t fader = 16;                                           // Trail behind the LED's. Higher => faster fade.
+uint8_t fadeval = 224;                                           // Trail behind the LED's. Lower => faster fade.
 
 
 void setup() {
@@ -73,5 +73,5 @@ void dots() {
   leds[side] = CRGB::Blue;
   leds[other] = CRGB::Aqua;
 
-  for (uint8_t i = 0; i < NUM_LEDS; i++) leds[i].fadeToBlackBy(fader);  // A nice trailing effect.
+  nscale8(leds,NUM_LEDS,fadeval);                          // Fade the entire array. Or for just a few LED's, use  nscale8(&leds[2], 5, fadeval);
 } // dots()
