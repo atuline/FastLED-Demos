@@ -215,15 +215,15 @@ const int interruptIR = 0;                                    // Meaning, pin 2 
 #define COLOR_ORDER GRB                                       // Are they RGB, GRB or what??
 #define LED_TYPE APA102
 // #define LED_TYPE WS2812B                                      // What kind of strip are you using?
-#define NUM_LEDS 12                                            // Number of LED's.
+#define NUM_LEDS 20                                            // Number of LED's.
 
 // Initialize changeable global variables.
-uint8_t max_bright = 64;                                     // Overall brightness definition. It can be changed on the fly.
+uint8_t max_bright = 128;                                     // Overall brightness definition. It can be changed on the fly.
 
 struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
 
 
-int ledMode = 0;                                             // Starting mode is typically 0. Use 99 if no controls available. ###### CHANGE ME #########
+int ledMode = 99;                                             // Starting mode is typically 0. Use 99 if no controls available. ###### CHANGE ME #########
 
 
 // PUSHBUTTON SETUP STUFF
@@ -361,9 +361,9 @@ void setup() {
   LEDS.setBrightness(max_bright);                             // Set the generic maximum brightness value.
 
 //  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER >(leds, NUM_LEDS); // WS2812B definition
-  LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER >(leds, NUM_LEDS); // APA102 definition
+  LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER >(leds, NUM_LEDS); // APA102 or WS2801 definition
   
-  set_max_power_in_volts_and_milliamps(5, 200);                //5V, 500mA
+  set_max_power_in_volts_and_milliamps(5, 500);                //5V, 500mA
 
   random16_set_seed(4832);                                     // Awesome randomizer
   random16_add_entropy(analogRead(2));

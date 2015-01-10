@@ -16,22 +16,21 @@ Note: If you receive compile errors (as I have in the Stino add-on for Sublime T
 #define qsuba(x, b)  ((x>b)?x-b:0)                          // Analog Unsigned subtraction macro. if result <0, then => 0
 
 
-#include "FastLED.h"                                          // FastLED library. Preferably the latest copy of FastLED 2.1.
+#include "FastLED.h"                                          // FastLED library.
  
 // Fixed definitions cannot change on the fly.
-#define LED_DT 12                                             // Serial data pin for WS2812B or WS2801
+#define LED_DT 12                                             // Data pin to connect to the strip.
+#define LED_CK 11
 #define COLOR_ORDER GRB                                       // Are they RGB, GRB or what??
-#define LED_TYPE WS2812B                                       // What kind of strip are you using?
-#define NUM_LEDS 24                                           // Number of LED's
+#define LED_TYPE APA102                                       // What kind of strip are you using (WS2801, WS2812B or APA102)?
+#define NUM_LEDS 20                                           // Number of LED's.
 
 // Initialize changeable global variables.
-uint8_t max_bright = 255;                                     // Overall brightness definition. It can be changed on the fly.
+uint8_t max_bright = 128;                                     // Overall brightness definition. It can be changed on the fly.
 
 struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
 
-
 // Most of these variables can be mucked around with. Better yet, add some form of variable input or routine to change them on the fly. 1970's here I come. . 
-
 
 // Don't forget to update resetvar() definitions if you change these.
 uint8_t wavebright = 128;                                     // You can change the brightness of the waves/bars rolling across the screen. Best to make them not as bright as the sparkles.
@@ -63,7 +62,10 @@ twinks mytwinks[numtwinks];                                   // The structure i
 void setup() {
   delay(1000);                                                // Power-up safety delay or something like that.
   Serial.begin(57600);
-  FastLED.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);
+
+//  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);          // Use this for WS2812B
+  LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);  // Use this for WS2801 or APA102
+
   set_max_power_in_volts_and_milliamps(5, 500);               // FastLED 2.1 Power management set at 5V, 500mA
   FastLED.setBrightness(max_bright);
 } // setup()

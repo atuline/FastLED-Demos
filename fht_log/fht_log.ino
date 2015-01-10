@@ -34,9 +34,10 @@ Note: If you receive compile errors (as I have in the Stino add-on for Sublime T
  
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Data pin to connect to the strip.
+#define LED_CK 11                                             // Clock pin for APA102 or WS2801
 #define COLOR_ORDER GRB                                       // Are they RGB, GRB or what??
-#define LED_TYPE WS2812B                                       // What kind of strip are you using?
-#define NUM_LEDS 15                                           // Number of LED's.
+#define LED_TYPE APA102                                       // What kind of strip are you using (APA102, WS2801 or WS2812B)
+#define NUM_LEDS 20                                           // Number of LED's.
 
 // Initialize changeable global variables.
 uint8_t max_bright = 128;                                     // Overall brightness definition. It can be changed on the fly.
@@ -65,7 +66,10 @@ uint8_t micmult = 10;
 void setup() {
   analogReference(EXTERNAL);                                  // Connect 3.3V to AREF pin for any microphones using 3.3V
   Serial.begin(57600);                                        // use the serial port
-  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);
+  
+//  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);
+  LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);
+
   FastLED.setBrightness(max_bright);
 
   for (int k = 0; k<12; k++) {                                // Let's get some initial FHT samples.

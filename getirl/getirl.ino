@@ -22,11 +22,12 @@ Note: 3 pin LED strips running FastLED won't work with IRLRemote or Ken Shiriff'
 
 const int interruptIR = 0;
 
-#define LED_DT 12
-#define LED_CK 11
-#define COLOR_ORDER GRB
-#define LED_TYPE WS2812B
-#define NUM_LEDS 12
+// Fixed definitions cannot change on the fly.
+#define LED_DT 12                                             // Serial data pin
+#define LED_CK 11                                             // Clock pin for WS2801 or APA102
+#define COLOR_ORDER GRB                                       // Are they RGB, GRB or what??
+#define LED_TYPE APA102                                       // What kind of strip are you using (APA102, WS2801 or WS2812B)?
+#define NUM_LEDS 20                                           // Number of LED's
 
 struct CRGB leds[NUM_LEDS];
 
@@ -35,16 +36,15 @@ void setup() {
   Serial.begin(57600);
   IRLbegin<IR_ALL>(interruptIR);
 
-//  LEDS.addLeds<WS2812B, LED_DT, COLOR_ORDER >(leds, NUM_LEDS);             // Does not work at all.
-//  LEDS.addLeds<WS2801, LED_DT, LED_CK, COLOR_ORDER >(leds, NUM_LEDS);      // Works
-  LEDS.addLeds<APA102, LED_DT, LED_CK, COLOR_ORDER >(leds, NUM_LEDS);      // Works
+//  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);      // For WS2812B - Does not work due to 3 pin configuration.
+  LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);   // For APA102 or WS2801
 }
 
 void loop() {
    for(int whiteLed = 0; whiteLed < NUM_LEDS; whiteLed = whiteLed + 1) {
       leds[whiteLed] = CRGB::White;
       FastLED.show();
-//      FastLED.delay(10);                // This is a bad practice.
+//      FastLED.delay(10);                // This is a bad practice
       leds[whiteLed] = CRGB::Black;
    } // for()
 
