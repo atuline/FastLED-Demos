@@ -9,7 +9,7 @@
 
 !!!!!!!!!!!!! WARNING !!!!!!!!!!!!!
 
-Before attempting to use these demos, you should compile and run the demos found with the latest version of the FastLED library, available at:
+Before attempting to use these demos, you should compile and run the examples found with the latest version of the FastLED library, available at:
 
 
 https://github.com/FastLED/FastLED
@@ -18,7 +18,7 @@ https://github.com/FastLED/FastLED
 
 ##Introduction
 
-Here's several COMPLETELY re-written display sequences for FastLED for a single strand of RGB LED's, such as Neopixels, WS2812B or APA102. Each should compile and run separately and have been tested on an Arduino UNO and Nano 3.0.
+Here's several COMPLETELY re-written display sequences for FastLED for a single strand of RGB LED's, such as Neopixels, WS2812B, WS2801 or APA102. Each should compile and run separately and have been tested on an Arduino UNO and Nano 3.0.
 
 In my previous version, I had several demos that used nested for loops, required a lot of code, weren't highly customizable, or could be replicated by a more flexible routine. Except for some really cool ones, most of those have now been replaced. For instance, two_sin() replaces several 'marching' type sequences and supports several variables to change colour, phase, direction, brightness and so on. Likewise, pop_fade_demo replaces several twinkling sequences.
 

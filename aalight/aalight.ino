@@ -338,7 +338,17 @@ int8_t hxyinc = 3;       //3
 
 // uint8_t wavebright= 128;                                      // Usesd by qsub to set a fixed value to LED's depending on their current value
 
+// Display functions
 
+#include "matrix.h"
+#include "noise16.h"
+#include "one_sin.h"
+#include "pop_fade.h"
+#include "rainbow_march.h"
+#include "three_sin.h"
+#include "twinkle.h"
+#include "two_sin.h"
+#include "demo_modeA.h"
 
 /*------------------------------------------------------------------------------------------
 --------------------------------------- Start of code --------------------------------------
