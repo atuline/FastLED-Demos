@@ -22,7 +22,7 @@ Note: If you receive compile errors (as I have in the Stino add-on for Sublime T
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Serial data pin
 #define LED_CK 11                                             // Serial clock pin for APA102 or WS2801
-#define COLOR_ORDER GRB                                       // Are they RGB, GRB or what??
+#define COLOR_ORDER BGR                                       // It's GRB for WS2812B
 #define LED_TYPE APA102                                       // What kind of strip are you using (APA102, WS2801 or WS@2812B
 #define NUM_LEDS 20                                           // Number of LED's
 

@@ -10,8 +10,8 @@ void two_sin() {                                                              //
   thathue = thathue + thatrot;                                                // It's also fun for thatwave.
   
   for (int k=0; k<NUM_LEDS-1; k++) {
-    int thisbright = qsubd(cubicwave8((k*allfreq)+thisphase), thiscutoff);     // qsub sets a minimum value called thiscutoff. If < thiscutoff, then bright = 0. Otherwise, bright = 128 (as defined in qsub)..
-    int thatbright = qsubd(cubicwave8((k*allfreq)+128+thatphase), thatcutoff); // This wave is 180 degrees out of phase (with the value of 128).
+    int thisbright = qsuba(cubicwave8((k*allfreq)+thisphase), thiscutoff);     // qsub sets a minimum value called thiscutoff. If < thiscutoff, then bright = 0. Otherwise, bright = 128 (as defined in qsub)..
+    int thatbright = qsuba(cubicwave8((k*allfreq)+128+thatphase), thatcutoff); // This wave is 180 degrees out of phase (with the value of 128).
 
     leds[k] = CHSV(thishue, allsat, thisbright);                              // Assigning hues and brightness to the led array.
     leds[k] += CHSV(thathue, allsat, thatbright);                      

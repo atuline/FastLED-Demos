@@ -57,13 +57,13 @@ void demo_modeA(){
     if( secondHand == 165) {smode=6; thisdelay=20; thisrot=1; thatrot=1;}                                             // Both rotating hues
     if( secondHand == 170) {smode=6; thisdelay=20; thisrot=0;}                                                          // Just 1 rotating hue
     if( secondHand == 175) {smode=6; thisdelay=20; thatrot=0; thishue=255; thathue=255;}                           // No rotating hues, all red.
-    if( secondHand == 180) {smode=6; thisdelay=20;}                                                        // Enough with the damn twinkles.
-    if( secondHand == 185) {smode=6; thisdelay=20; allfreq=16; thathue=128;}                                         // Time to make a wider bar.
+    if( secondHand == 180) {smode=6; thisdelay=20; thatrot = 5;}
+    if( secondHand == 185) {smode=6; thisdelay=20; thisrot = 4; allfreq=16; thathue=128;}                                         // Time to make a wider bar.
     if( secondHand == 190) {smode=6; thisdelay=20; thiscutoff=96; thatcutoff=240;}                                   // Change width of bars.
     if( secondHand == 195) {smode=6; thisdelay=20; thiscutoff=96; thatcutoff=96; thisrot=1;}                       // Make those bars overlap, and rotate a hue
     if( secondHand == 200) {smode=6; thisdelay=20; thisspeed=-4; thatspeed=-4;}                                        // Change direction                                      // Change the direction.
-    if( secondHand == 205) {smode=6; thisdelay=20; thiscutoff=128; thatcutoff=128; wavebright=64;}   // Yet more changes
-    if( secondHand == 210) {smode=6; thisdelay=20; wavebright=128; thisspeed=3;}                       // Now, we change speeds.
+    if( secondHand == 205) {smode=6; thisdelay=20; thisspeed = 3; thiscutoff=128; thatcutoff=128; wavebright=64;}   // Yet more changes
+    if( secondHand == 210) {smode=6; thisdelay=20; wavebright=128; thisspeed=5; thatspeed=3;}                       // Now, we change speeds.
     if( secondHand == 215) {smode=6; thisdelay=20; thisspeed=3; thatspeed=-3;}                            // Opposite directions
   } // if lastSecond
 

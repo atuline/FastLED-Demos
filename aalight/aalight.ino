@@ -10,23 +10,20 @@ Pastebin: http://pastebin.com/u/atuline
  Youtube: https://www.youtube.com/user/atuline/videos
 
 
-Date: September, 2014
+Date: January, 2015
 
 
 Introduction:
 
-These limited number of effects/visualizations are designed for a single strand/loop of individually addressable WS2801 or WS2812 LED's using the
-FastLED library. The framework is based on the funkboxing LED project.
+These effects/visualizations are designed for a single strand/loop of individually addressable LED's using the FastLED library.
 
-Several modes of input are supported, such as local and remote IR support, a debounced button as well as keyboard. This also support for a demo mode,
-however it could be improved by converting it to be time based, rather than loop based.
+Several modes of input are supported, such as local and remote IR support, a debounced button as well as keyboard. This also support for a demo mode.
 
 This is built upon code from several sources, but mainly:
 
-- FastLED as found at http://fastled.io
+- FastLED library and some examples as found at http://fastled.io
 - funkboxing LED for general layout as found at http://funkboxing.com/wordpress/?p=1366
-- IR programmability as found at http://industriumvita.com/arduino-ir-remote-controled-ws2811-addressable-leds/
-
+- IR programmability as found at https://github.com/NicoHood/IRLremote
 
 
 Hardware Setup
@@ -52,16 +49,15 @@ Compiling Note: When compiling or using the serial monitor, disconnect Tx/Rx bet
 
 
 
-Power Supplies Tested
+Power Supplies I've Used
 
-- USB connection to computer (for <24 LED strands)
-- 5-6VDC adapter. Be careful, as some are noisy and may damage the LED strip (been there, done that).
-- 7.4V battery pack (2 x 3.7V rechargeable 18650 batteries)
-- 6V battery pack (4 x 'AA' batteries)
-- A short strand of LED's an connect to 5V output of the Arduino. Otherwise, use a dedicated 5V power supply or a 5V buck conv3rter.
+- USB connection to computer for shorter strands.
+- 7.4V battery pack (2 x 3.7V rechargeable 18650 batteries) for shorter strands.
+- 6V battery pack (4 x 'AA' batteries) for shorter strands.
+- A short strand of LED's can connect to 5V output of the Arduino. Otherwise, use a dedicated 5V power supply or a 5V buck converter.
+- USB based battery pack, again for shorter strands.
 
-Note: If the LED strip is plugged into Vin (or directly to the power supply), get a 5V power supply for it. I have blown up several
-LED's by providing too high of a voltage with noisy regulators.
+For short strands, connect the LED strip to 5V of the Arduino. For longer strands, get a dedicated 5V power supply, and make sure ALL grounds are connected.
 
 
 Libraries Required
@@ -73,15 +69,15 @@ Libraries Required
 
 LED Strand Configuration
 
-This is currently configured for 24 LED's. Change the definition of NUM_LEDS to match the length of your strand.
+This is currently configured for 20 APA102 LED's. Change the TYPE and NUM_LEDS to match that of your strand.
 
-I'm currently using WS2812B LED's. You'll need to change the LEDS.addLeds definition for different types of strands. See the FastLED
+I'm currently using 20 APA102 LED's. You'll need to change the LED_TYPE, the NUM_LEDS's and LEDS.addLeds definition for different types of strands. See the FastLED
 library examples with other types of strands.
 
 
 
-IR Operation
 
+IR Operation
 
 You can use the IR either on the main Arduino or with a 2nd Arduino attached serially to the first.
 
@@ -103,15 +99,14 @@ to map the codes to the modes in the getirl(); routine. I've provided getirl.ino
 
 Push Button Operation
 
-Unless in demonstration mode, a simple push/release moves to the next display mode and loops back to 0 when done.
-
-Unless in demonstration mode, a long push/release resets back to display mode 0.
+We are starting out in mode '99', or the demonstration mode. Pushing the button sets to mode '0' and will continue to step to the next mode.
+A long push/release resets back to display mode 0.
 
 
 
 If No Controls Are Available
 
-If no controls are available, then it is recommended that you set the starting mode to the demo mode '99'.
+If no controls are available, then it stays in demonstration mode '99'.
 
 
 
@@ -210,9 +205,9 @@ y         Save of LED's to flash                B1                     // Not ye
 const int interruptIR = 0;                                    // Meaning, pin 2 on an UNO.
  
 // Fixed definitions cannot change on the fly.
-#define LED_DT 12                                             // Serial data pin.
+#define LED_DT 12                                             // Serial data pin for WS2801, WS2811, WS2812B or APA102
 #define LED_CK 11                                             // Serial clock pin for WS2801 or APA102.
-#define COLOR_ORDER GRB                                       // Are they RGB, GRB or what??
+#define COLOR_ORDER BGR                                       // It's GRB for WS2812B
 #define LED_TYPE APA102
 // #define LED_TYPE WS2812B                                      // What kind of strip are you using?
 #define NUM_LEDS 20                                            // Number of LED's.
@@ -224,10 +219,11 @@ struct CRGB leds[NUM_LEDS];                                   // Initialize our 
 
 
 int ledMode = 99;                                             // Starting mode is typically 0. Use 99 if no controls available. ###### CHANGE ME #########
-
+int maxMode;                                                  // Maximum number of modes is set later.
 
 // PUSHBUTTON SETUP STUFF
 const int buttonPin = 6;                                      // Digital pin used for debounced pushbutton
+
 // int buttonState = 0;
 // int lastButtonState = 0;
 Button myBtn(buttonPin, true, true, 50);                      // Declare the button
@@ -348,6 +344,9 @@ int8_t hxyinc = 3;       //3
 #include "three_sin.h"
 #include "twinkle.h"
 #include "two_sin.h"
+#include "confetti.h"
+#include "sinelon.h"
+#include "juggle.h"
 #include "demo_modeA.h"
 
 /*------------------------------------------------------------------------------------------
@@ -441,6 +440,9 @@ void change_mode(int newMode){
     case 36: thisdelay=10; deltahue=2; thisrot=5; break;                                                  // rainbow_march
     case 37: thisdelay=20; octaves=1; hue_octaves=2; hxy=6000; x=5000; xscale=3000; hue_scale=50; hue_speed=15; x_speed=100; break; // noise16
     case 38: thisdelay=20; hxyinc = random16(1,15); octaves=random16(1,3); hue_octaves=random16(1,5); hue_scale=random16(10, 50);  x=random16(); xscale=random16(); hxy= random16(); hue_time=random16(); hue_speed=random16(1,3); x_speed=random16(1,30); break; // noise16
+    case 39: thisdelay = 20; thishue = 20; // confetti
+    case 40: thisdelay = 20; thishue = 50; // sinelon
+    case 41: thisdelay = 10; // juggle
 
     // DEMO MODE
     case 99: break;                                           // Standard demos
@@ -457,6 +459,7 @@ void change_mode(int newMode){
 //----------------- Hardware Support Functions ---------------------------------------------
 
 void strobemode() {
+  maxMode = 41;
   switch (ledMode) {                                          // Looping through (and not initializing) the current mode. Don't initialize variables here, as we are just going through loop again.
     case   0: LEDS.show();      break;                        // All off, not animated.
     case   1: LEDS.show();      break;                        // All on, not animated.
@@ -497,10 +500,12 @@ void strobemode() {
     case  36: rainbow_march();  break;
     case  37: noise16();        break;
     case  38: noise16();        break;
+    case  39: confetti();       break;
+    case  40: sinelon();        break;
+    case  41: juggle();         break;
 
     // DEMO MODE
     case 99: demo_modeA();      break;                        // This is the standard demo mode.
-
   } // switch ledMode
 } // strobemode()
 
@@ -645,7 +650,7 @@ void readkeyboard() {                                         // PROCESS HARDWAR
 void readbutton() {                                            // Read the button and increase the mode
   myBtn.read();
   if(myBtn.wasReleased()) {
-    ledMode = ledMode > 38 ? 0 : ledMode+1;                  // Reset to 0 only during a mode change
+    ledMode = ledMode > maxMode ? 0 : ledMode+1;                  // Reset to 0 only during a mode change
     change_mode(ledMode);
   }
   if(myBtn.pressedFor(1000)) {
