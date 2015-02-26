@@ -15,7 +15,11 @@ Note: If you receive compile errors (as I have in the Stino add-on for Sublime T
 
 
 #include "FastLED.h"                                          // FastLED library. Preferably the latest copy of FastLED 2.1.
- 
+
+#if FASTLED_VERSION < 3001000
+#error "Requires FastLED 3.1 or later; check github for latest code."
+#endif 
+
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Data pin to connect to the strip.
 #define LED_CK 11
@@ -30,13 +34,12 @@ struct CRGB leds[NUM_LEDS];                                   // Initialize our 
 
 
 // Define variables used by the sequences.
-uint8_t   thisbeat = 23;
-uint8_t   thatbeat = 28;
+uint8_t   thisbeat =  23;
+uint8_t   thatbeat =  28;
 uint8_t   thisfade =   2;                                     // How quickly does it fade? Lower = slower fade rate.
 uint8_t    thissat = 255;                                     // The saturation, where 255 = brilliant colours.
 uint8_t    thisbri = 255;                                     // Brightness of a sequence.
 int          myhue =   0;
-
 
 
 void setup() {

@@ -15,9 +15,6 @@ Note: If you receive compile errors (as I have in the Stino add-on for Sublime T
 
 #include "FastLED.h"                                          // FastLED library. Preferably the latest copy of FastLED 2.1.
 
-#if FASTLED_VERSION < 3001000
-#error "Requires FastLED 3.1 or later; check github for latest code."
-#endif
 
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Data pin to connect to the strip.
