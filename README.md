@@ -44,13 +44,9 @@ The awesome FastLED Library is available from: [fastled.io](http://fastled.io/)
 Download FastLED from: [github.com/FastLED/FastLED](https://github.com/FastLED/FastLED)
 
 
-## Hardware Update
+## Update
 
-My original pushbutton was wired to a resistor and a capacitor for hardware debouncing. 
-
-I now use an internal pullup resistor and have added a button library (which includes debouncing), thus eliminating the need for a capacitor.
-
-Changed data pin from 13 to 12 in order not to conflict with any routines that utilize the built-in LED.
+I've removed some clunky routines and replaced them some simple ones.
 
 ----------------------------------------------------------
 
