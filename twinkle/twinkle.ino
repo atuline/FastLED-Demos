@@ -1,12 +1,10 @@
-/* twinkle for FastLED
+/* twinkle
 
 By: Andrew Tuline
-www.tuline.com
-atuline@gmail.com
 
 Date: Nov, 2014
 
-A quick demo showing twinkles.
+A quick demo showing fading LED's. It's easy to start a twinkle at maximum brightness and then fade out. It's a whole other ball game to fade in as well.
 
 */
 

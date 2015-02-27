@@ -1,23 +1,16 @@
 
 /* mover
 
-A simple pixel moving routine.
-
 By: Andrew Tuline
 
 Date: February 2015
 
- This is a simple routine for those of you that just like to count pixels on a strand. I prefer to use sine waves as they
- provide a LOT of flexibility with less code for moving pixels around.
+ This is a simple pixel moving routine for those of you that just like to count pixels on a strand.
+ I prefer to use sine waves as they provide a LOT of flexibility with less code for moving pixels around.
 
 You should be able to add more variables, such as hues, hue rotation, direction and so forth.
 
-FastLED 3.0 is available at https://github.com/FastLED/FastLED
-
-Note: If you receive compile errors (as I have in the Stino add-on for Sublime Text), set the compiler to 'Full Compilation'.
-
 */
-
 
 
 #include "FastLED.h"                                          // FastLED library. Preferably the latest copy of FastLED 2.1.
@@ -67,7 +60,7 @@ void mover() {
     leds[(i+10) % NUM_LEDS] += CHSV(hue+170, 255, 255);       // Same here.
     FastLED.show(); 
     fadeToBlackBy(leds, NUM_LEDS, thisfade);                  // Low values = slower fade.
-    FastLED.delay(thisdelay);
+    delay_at_max_brightness_for_power(2.5*thisdelay);
   }
 } // mover()
 

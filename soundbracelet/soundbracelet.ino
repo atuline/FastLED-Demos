@@ -1,7 +1,9 @@
 
-/* soundbracelet for FastLED 3.0 or greater
+/* soundbracelet
 
-Converted by: Andrew Tuline
+By: John Burroughs
+
+Converted to FastLED by: Andrew Tuline
 
 Date: Oct, 2014
 
@@ -15,13 +17,11 @@ That was based on the Adafruit LED Ampli-tie project at:
 
 https://learn.adafruit.com/led-ampli-tie/overview
 
-This was written for a Sparkfun INMP401 MEMS microphone/pre-amp. In this case, it's plugged into A5 of the Arduino.
+This version was written for a Sparkfun INMP401 MEMS microphone/pre-amp. In this case, it's plugged into A5 of the Arduino.
 
 You may need to only use battery power as noise from the USB can affect the signals.
 
 Plug Vcc of the microphone into 3.3V of Arduino. Connect 3.3V of Arduino to aref pin, and gnd to gnd.
-
-FastLED is available at https://github.com/FastLED/FastLED
 
 */
 
@@ -84,7 +84,6 @@ void setup() {
 void loop() {
   soundbracelet();
   show_at_max_brightness_for_power();                         // Power managed FastLED display
-  Serial.println(LEDS.getFPS()); 
 } // loop()
 
 

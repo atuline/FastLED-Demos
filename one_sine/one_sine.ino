@@ -1,5 +1,5 @@
 
-/* one_sine for FastLED 3.1 and above
+/* one_sine
 
 By: Andrew Tuline
 
@@ -48,13 +48,14 @@ void setup() {
   Serial.begin(57600);
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);
   FastLED.setBrightness(max_bright);
+  set_max_power_in_volts_and_milliamps(5, 500);                // FastLED 2.1 Power management set at 5V, 500mA
 } // setup()
 
 
 void loop () {
   one_sine();
-  FastLED.delay(loopdelay);
-  FastLED.show();                                                             // Let's display it now
+  show_at_max_brightness_for_power();
+  delay_at_max_brightness_for_power(loopdelay);
 } // loop()
 
 

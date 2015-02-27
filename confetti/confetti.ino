@@ -7,9 +7,7 @@ Modified By: Andrew Tuline
 
 Date: February 2015
 
-Confetti has been modified to support a few variables. It's a simple, but great looking routine.
-
-Note: If you receive compile errors (as I have in the Stino add-on for Sublime Text), set the compiler to 'Full Compilation'.
+Confetti flashes colours within a limited hue. It's been modified from Mark's original to support a few variables. It's a simple, but great looking routine.
 
 */
 
@@ -53,7 +51,7 @@ void setup() {
 void loop () {
   ChangeMe();                                                 // Check the demo loop for changes to the variables.
   confetti();                                                 // Call our sequence.
-  FastLED.delay(thisdelay);
+  delay_at_max_brightness_for_power(thisdelay*2.5);
   show_at_max_brightness_for_power();                         // Power managed display of LED's.
 } // loop()
 

@@ -1,13 +1,11 @@
 
-/* soundmems for FastLED 3.0 or greater
+/* soundmems
 
 By: Andrew Tuline
 
 Date: Oct, 2014
 
 Basic code to read from the Sparkfun INMP401 microphone and display CHSV output. You may need to only use battery power as noise from the USB can affect the signals.
-
-FastLED is available at https://github.com/FastLED/FastLED
 
 */
 
@@ -47,18 +45,15 @@ void setup() {
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);  // Use this for WS2801 or APA102
 
   FastLED.setBrightness(max_bright);
-  set_max_power_in_volts_and_milliamps(5, 1000);
+  set_max_power_in_volts_and_milliamps(5, 500);
 } // setup()
-
 
 
 void loop() {
   soundmems();
   show_at_max_brightness_for_power();
   delay_at_max_brightness_for_power(thisdelay*2.5);
-  Serial.println(LEDS.getFPS());
 } // loop()
-
 
 
 void soundmems() {

@@ -2,11 +2,10 @@
 /* rainbow_march for FastLED
 
 By: Andrew Tuline
+
 Date: Nov, 2014
 
 Rainbow marching up the strand. Pretty basic, but oh so popular.
-
-FastLED is available at https://github.com/FastLED/FastLED
 
 */
 

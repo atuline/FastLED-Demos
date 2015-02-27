@@ -20,8 +20,6 @@ https://github.com/TJC/arduino/blob/master/fhttest/fhttest.cpp
 
 Note: If you are using a microphone powered by the 3.3V signal, such as the Sparkfun MEMS microphone, then connect 3.3V to the AREF pin.
 
-Note: If you receive compile errors (as I have in the Stino add-on for Sublime Text), set the compiler to 'Full Compilation'.
-
 */
 
 

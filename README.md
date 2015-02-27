@@ -5,14 +5,15 @@
 
 **Email:** atuline@gmail.com
 
-**Date:** November, 2014
+**Date:** February, 2015
 
 !!!!!!!!!!!!! WARNING !!!!!!!!!!!!!
 
 Before attempting to use these demos, you should compile and run the examples found with the latest version of the FastLED library, available at:
 
-
 https://github.com/FastLED/FastLED
+
+In some cases, you may need to use the latest development version of FastLED.
 
 
 

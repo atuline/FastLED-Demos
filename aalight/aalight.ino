@@ -31,7 +31,8 @@ Hardware Setup
 - 1 (or optionally 2) Arduino UNO or Nano 3.0 (is what I've been using).
 - Connect the positive end of the pushbutton to pin 6 of the Arduino.
 - Connect the negative end to ground. We will then program an internal pullup resistor on the Arduino.
-- WS2812B or APA102 LED strip with data line connected to pin 12 (other pins are connected to Vin and Gnd of the Arduino). Data would be connected to pin 11.
+- WS2812B or (preferably) APA102 LED strip with data line connected to pin 12 (other pins are connected to Vin and Gnd of the Arduino). 
+- The clock line is connected to pin 11.
 - Sparkfun INMP401 MEMS microphone (a mic+opamp) with power connected to Arduino 3.3V supply, output to A5 of Arduino.
 - Connect Arduino 3.3V output to the AREF pin on the Arduino (for the 3.3V MEMS microphone).
 
@@ -45,7 +46,7 @@ On a second Arduino (if using WS2812B's and want IR capability):
 Microphone Note: If you use a different microphone, you will need to re-calculate the offset as well as amplitude variables. If
 using a 5V microphone, then remove the AREF wire.
 
-Compiling Note: When compiling or using the serial monitor, disconnect Tx/Rx between the Arduino's.
+Compiling Note: When compiling or using the serial monitor, disconnect Tx/Rx between the Arduino's. Otherwise, you may damage one.
 
 
 
@@ -69,17 +70,16 @@ Libraries Required
 
 LED Strand Configuration
 
-This is currently configured for 20 APA102 LED's. Change the TYPE and NUM_LEDS to match that of your strand.
-
-I'm currently using 20 APA102 LED's. You'll need to change the LED_TYPE, the NUM_LEDS's and LEDS.addLeds definition for different types of strands. See the FastLED
-library examples with other types of strands.
+I'm currently using 20 APA102 LED's. You'll need to change the LED_TYPE, the NUM_LEDS's and LEDS.addLeds definition for different types of strands.
+See the FastLED library examples with other types of strands.
 
 
 
 
 IR Operation
 
-You can use the IR either on the main Arduino or with a 2nd Arduino attached serially to the first.
+You can use the IR either on the main Arduino if using APA102 or other 4 pin strips. In the case of WS2811 or WS2812's,
+you will need to use a 2nd Arduino attached serially to the first.
 
 Use of a second Arduino that receives IR input and serially transmits commands to the first Arduino is supported as follows:
 
@@ -89,8 +89,6 @@ Use of a second Arduino that receives IR input and serially transmits commands t
 - Change speed
 - Select next/prev mode
 - Change brightness
-
-If you are using IR on the main Arduino, then it will NOT support 3 pin LED's such as the WS2812's or Neopixels.
 
 I'm using a 24 button IR remote like the ones provided with 5V LED strands from China. If you use a different one, you'll need
 to map the codes to the modes in the getirl(); routine. I've provided getirl.ino to test this out with.
@@ -125,7 +123,7 @@ d     Set delay variable (0-??)           yes
 e     Increase/decrease delay (1/2)       yes
 h     Set hue variable (0-255)            yes
 l     Set single LED value rgb            no  (commented out)
-m     Set mode (0-??)                     yes
+m     Set mode (0-99)                     yes
 n     Reverse/forward direction (1/2)     yes
 o     Decrease/increase mode (1/2)        yes
 Q     Return version number               no
@@ -201,6 +199,11 @@ y         Save of LED's to flash                B1                     // Not ye
 #include "FastLED.h"                                          // FastLED library. Preferably the latest copy of FastLED 2.1.
 #include "Button.h"                                           // Button library. Includes press, long press, double press detection.
 #include "IRLremote.h"
+
+#if FASTLED_VERSION < 3001000
+#error "Requires FastLED 3.1 or later; check github for latest code."
+#endif
+
 
 const int interruptIR = 0;                                    // Meaning, pin 2 on an UNO.
  

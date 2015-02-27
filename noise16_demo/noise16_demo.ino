@@ -1,15 +1,11 @@
 
-/* noise16_demo for FastLED 3.0 or greater
+/* noise16_demo
 
 By: Andrew Tuline
 
 Date: Oct, 2014
 
 This is a simple FastLED display sequence utilizing the FastLED noise function. This is one of those 'wait for a while' and see what it does routines. Very unpredictable and very cool.
-
-FastLED is available at https://github.com/FastLED/FastLED
-
-Note: If you receive compile errors (as I have in the Stino add-on for Sublime Text), set the compiler to 'Full Compilation'.
 
 */
 

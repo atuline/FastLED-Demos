@@ -6,9 +6,7 @@ Modified By: Andrew Tuline
 
 Date: February 2015
 
-Juggle just moves some balls back and forth.
-
-Note: If you receive compile errors (as I have in the Stino add-on for Sublime Text), set the compiler to 'Full Compilation'.
+Juggle just moves some balls back and forth. A single ball could be a Cylon effect. I've added several variables to this simple routine.
 
 */
 
@@ -32,8 +30,16 @@ uint8_t max_bright = 64;                                      // Overall brightn
 
 struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
 
-uint8_t hue = 0;
-uint8_t thisdelay = 10;
+// Routine specific variables
+uint8_t numdots = 4;                                          // Number of dots in use.
+uint8_t faderate = 2;                                         // How long should the trails be. Very low value = longer trails.
+uint8_t hueinc = 16;                                          // Incremental change in hue between each dot.
+uint8_t thishue = 0;                                          // Starting hue.
+uint8_t curhue = 0;                                           // The current hue
+uint8_t thissat = 255;                                        // Saturation of the colour.
+uint8_t thisbright = 255;                                     // How bright should the LED/display be.
+uint8_t basebeat = 5;                                         // Higher = faster movement.
+
 
 void setup() {
   delay(1000);                                                // Power-up safety delay or something like that.
@@ -48,18 +54,31 @@ void setup() {
 
   
 void loop() {
+  ChangeMe();
   juggle();
   show_at_max_brightness_for_power();                         // Power managed display of LED's.
-  FastLED.delay(thisdelay);
 } // loop()
 
 
-void juggle() {                                               // eight colored dots, weaving in and out of sync with each other
-  fadeToBlackBy(leds, NUM_LEDS, 192);
-  byte dothue = 0;
-  for( int i = 0; i < 7; i++) {
-    leds[beatsin16(i+7,0,NUM_LEDS)] += CHSV(dothue, 200, 255);   //beat16 is a FastLED 3.1 function
-    dothue += 32;
+void juggle() {                                               // Several colored dots, weaving in and out of sync with each other
+  curhue = thishue;                                          // Reset the hue values.
+  fadeToBlackBy(leds, NUM_LEDS, faderate);
+  for( int i = 0; i < numdots; i++) {
+    leds[beatsin16(basebeat+i+numdots,0,NUM_LEDS)] += CHSV(curhue, thissat, thisbright);   //beat16 is a FastLED 3.1 function
+    curhue += hueinc;
   }
 } // juggle()
+
+
+void ChangeMe() {                                             // A time (rather than loop) based demo sequencer. This gives us full control over the length of each sequence.
+  uint8_t secondHand = (millis() / 1000) % 30;                // IMPORTANT!!! Change '30' to a different value to change duration of the loop.
+  static uint8_t lastSecond = 99;                             // Static variable, means it's only defined once. This is our 'debounce' variable.
+  if (lastSecond != secondHand) {                             // Debounce to make sure we're not repeating an assignment.
+    lastSecond = secondHand;
+    if (secondHand ==  0)  {numdots=1; faderate=2;}  // You can change values here, one at a time , or altogether.
+    if (secondHand == 10)  {numdots=4; thishue=128; faderate=8;}
+    if (secondHand == 20)  {hueinc=48; thishue=random8();}                               // Only gets called once, and not continuously for the next several seconds. Therefore, no rainbows.
+  }
+} // ChangeMe()
+
 

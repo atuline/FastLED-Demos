@@ -1,15 +1,15 @@
 
-/* Sinelon is a modification of one used by Mark Kriegsman
+/* Sinelon
 
-By: Andrew Tuline
+By: Mark Kriegsman
+
+Modified by: Andrew Tuline
 
 Date: February 2015
 
 This uses the built in beat in FastLED to move a dot back and forth. In this case, it uses two beats added together for more fun.
 
 Please use FastLED 3.1 or greater.
-
-Note: If you receive compile errors (as I have in the Stino add-on for Sublime Text), set the compiler to 'Full Compilation'.
 
 */
 
@@ -47,6 +47,7 @@ void setup() {
   Serial.begin(57600);
 //  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);          // Use this for WS2812B
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);  // Use this for WS2801 or APA102
+  
   FastLED.setBrightness(max_bright);
   set_max_power_in_volts_and_milliamps(5, 500);               // FastLED 2.1 Power management set at 5V, 500mA.
 } // setup()
@@ -55,7 +56,6 @@ void setup() {
 void loop () {
   sinelon();                                                  // Call our sequence.
   show_at_max_brightness_for_power();                         // Power managed display of LED's.
-  Serial.println(LEDS.getFPS());                            // Display frames per second on the serial monitor. Disable the delay in order to see how fast/efficient your sequence is.
 } // loop()
 
 

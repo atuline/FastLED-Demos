@@ -1,13 +1,11 @@
 
-/* Matrix for FastLED 3.0 or greater
+/* Matrix
 
 By: funkboxing LED and significantly modified by Andrew Tuline
 
 Date: Oct, 2014
 
 Green (or other coloured) characters going up/down the strand, a la 'The Matrix'.
-
-FastLED is available at https://github.com/FastLED/FastLED
 
 */
 

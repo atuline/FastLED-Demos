@@ -1,15 +1,11 @@
 
-/* Display Template for FastLED 3.0 or greater
+/* Display Template for FastLED
 
 By: Andrew Tuline
 
 Date: Oct, 2014
 
 This is a simple FastLED display sequence template. This template also includes a time (rather than loop) based demo sequencer as well as a frame rate counter.
-
-FastLED 3.0 is available at https://github.com/FastLED/FastLED
-
-Note: If you receive compile errors (as I have in the Stino add-on for Sublime Text), set the compiler to 'Full Compilation'.
 
 */
 

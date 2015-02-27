@@ -1,14 +1,10 @@
-/* one_sine_demo for FastLED 3.0 or greater
+/* one_sine_demo
 
 By: Andrew Tuline
 
 Date: Oct, 2014
 
 A demo showing the flexibility of just using a single sine wave. A little code and a lot of variables can go a long way. This includes an optional twinkle overlay for Mark Kriegsman.
-
-FastLED 2.1 is available at https://github.com/FastLED/FastLED
-
-Note: If you receive compile errors (as I have in the Stino add-on for Sublime Text), set the compiler to 'Full Compilation'.
 
 */
 

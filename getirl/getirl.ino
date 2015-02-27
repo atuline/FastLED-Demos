@@ -4,7 +4,6 @@ By: Andrew Tuline
 
 Date: Nov, 2014
 
-
 This is a test program for IRLRemote and FastLED.
 
 Libraries required:
@@ -12,7 +11,7 @@ Libraries required:
 https://github.com/NicoHood/IRLremote
 https://github.com/FastLED/FastLED
 
-Note: 3 pin LED strips running FastLED won't work with IRLRemote or Ken Shiriff's IR library.
+Note: 3 pin LED strips such as WS2812B running FastLED won't work with IRLRemote or Ken Shiriff's IR library.
 */
 
 
@@ -136,9 +135,3 @@ void change_mode(int newmode) {
   Serial.print("New mode: ");
   Serial.println(newmode);
 }
-
-
-
-
-
-

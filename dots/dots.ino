@@ -1,5 +1,5 @@
 
-/* Moving Dots for FastLED 3.0 or greater
+/* Moving Dots
 
 By: John Burroughs
 
@@ -7,11 +7,7 @@ Modified by: Andrew Tuline
 
 Date: Oct, 2014
 
-This sequence moves LED's at different rates across the strip.
-
-FastLED is available at https://github.com/FastLED/FastLED
-
-Note: If you receive compile errors (as I have in the Stino add-on for Sublime Text), set the compiler to 'Full Compilation'.
+This sequence moves a few LED's at different distances across the strip.
 
 */
 
