@@ -17,7 +17,7 @@ Date: Oct, 2014
 #define LED_CK 11
 #define COLOR_ORDER BGR                                       // Are they RGB, GRB or what??
 #define LED_TYPE APA102                                       // What kind of strip are you using?
-#define NUM_LEDS  12                                           // Number of LED's
+#define NUM_LEDS  20                                           // Number of LED's
 
 // Initialize changeable global variables.
 uint8_t max_bright = 64;                                      // Overall brightness definition. It can be changed on the fly.
