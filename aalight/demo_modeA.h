@@ -10,9 +10,9 @@ void demo_modeA(){
     lastSecond = secondHand;
 
 // matrix
-    if (secondHand ==  0)  {smode=0; thisdelay=30; thishue=95;}
-    if (secondHand ==  5)  {smode=0; thisdelay=30; thisdir=1;}
-    if (secondHand == 10)  {smode=0; thisdelay=10; thishue=0;}
+    if (secondHand ==  0)  {smode=0; bgclr = 0; bgbri = 10; thisdelay=30; thishue=95;}
+    if (secondHand ==  5)  {smode=0; bgclr = 100; bgbri = 20; thisdelay=30; thisdir=1;}
+    if (secondHand == 10)  {smode=0; bgclr = 0; bgbri = 50; thisdelay=10; thishue=0;}
     if (secondHand == 15)  {smode=0; thisdelay=20; thishue=random8(); huerot=1;}
 
 // noise16

@@ -8,7 +8,9 @@ void matrix() {                                               // One line matrix
   if (random16(90) > 80) {
     if (thisdir == 0) leds[0] = CHSV(thishue, thissat, 255); else leds[NUM_LEDS-1] = CHSV(thishue, thissat, 255);
   }
-  else {leds[0] = CHSV(thishue, thissat, 0);}
+  else {
+    if (thisdir ==0) leds[0] = CHSV(bgclr, thissat, bgbri); else leds[NUM_LEDS-1] = CHSV(bgclr, thissat, bgbri);
+  }
 
   if (thisdir == 0) {
     for (int i = NUM_LEDS-1; i >0 ; i-- ) leds[i] = leds[i-1];

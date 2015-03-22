@@ -31,10 +31,11 @@ Hardware Setup
 - 1 (or optionally 2) Arduino UNO or Nano 3.0 (is what I've been using).
 - Connect the positive end of the pushbutton to pin 6 of the Arduino.
 - Connect the negative end to ground. We will then program an internal pullup resistor on the Arduino.
-- WS2812B or (preferably) APA102 LED strip with data line connected to pin 12 (other pins are connected to Vin and Gnd of the Arduino). 
+- WS2812B or (preferably) APA102 LED strip with data line connected to pin 12. 
 - The clock line is connected to pin 11.
 - Sparkfun INMP401 MEMS microphone (a mic+opamp) with power connected to Arduino 3.3V supply, output to A5 of Arduino.
 - Connect Arduino 3.3V output to the AREF pin on the Arduino (for the 3.3V MEMS microphone).
+- If using APA102's (or other 4 pin strip) and want IR capability then connect the TSOP34838 IR receiver to pin 9 (other pins are 5V and Gnd).
 
 On a second Arduino (if using WS2812B's and want IR capability):
 
@@ -53,17 +54,17 @@ Compiling Note: When compiling or using the serial monitor, disconnect Tx/Rx bet
 Power Supplies I've Used
 
 - USB connection to computer for shorter strands.
-- 7.4V battery pack (2 x 3.7V rechargeable 18650 batteries) for shorter strands.
-- 6V battery pack (4 x 'AA' batteries) for shorter strands.
-- A short strand of LED's can connect to 5V output of the Arduino. Otherwise, use a dedicated 5V power supply or a 5V buck converter.
+- 7.4V battery pack (2 x 3.7V rechargeable 18650 batteries) for shorter strands connected to the power plug of the Arduino.
 - USB based battery pack, again for shorter strands.
+- 6V battery pack (4 x 'AA' batteries) for shorter strands connected to the power plug of the Arduino.
+- 7.4 DC power supply connected to Arduino and DC-DC converter to provide 5V and >500mA to a medium length strip.
 
 For short strands, connect the LED strip to 5V of the Arduino. For longer strands, get a dedicated 5V power supply, and make sure ALL grounds are connected.
 
 
 Libraries Required
 
-- FastLED library (v3.0) from https://github.com/FastLED/FastLED
+- FastLED library from https://github.com/FastLED/FastLED
 - Nico Hood's IRL library from https://github.com/NicoHood/IRLremote
 - JChristensen's Button Library from https://github.com/JChristensen/Button
 
@@ -104,7 +105,7 @@ A long push/release resets back to display mode 0.
 
 If No Controls Are Available
 
-If no controls are available, then it stays in demonstration mode '99'.
+If no controls are available, then the routine defaults to demonstration mode '99'.
 
 
 
@@ -286,6 +287,7 @@ int twinkrate = 100;
 
 // bool thisdir = 0;
 uint8_t bgclr = 0;
+uint8_t bgbri = 0;
 
 
 // pop_fade variables ----------------------------------------------------------------------
@@ -417,9 +419,9 @@ void change_mode(int newMode){
     case 10: thisdelay=10; thiscutoff=128; thatcutoff=128; wavebright=64; break;               // two_sin
     case 11: thisdelay=10; wavebright=128; thisspeed=3; break;                                         // two_sin
     case 12: thisdelay=10; thisspeed=3; thatspeed=-3; break;                                         // two_sin
-    case 13: thisdelay=30; thishue=95; break;                                             // matrix
-    case 14: thisdelay=30; thisdir=1; break;                                                            // matrix
-    case 15: thisdelay=30; thishue=random8(); break;                                                    // matrix
+    case 13: thisdelay=30; thishue=95; bgclr=100; bgbri=10; break;                                             // matrix
+    case 14: thisdelay=30; thishue=40; thisdir=1; bgclr=75; break;                                                            // matrix
+    case 15: thisdelay=30; thishue=random8(); huerot=1; bgbri=0; break;                                                    // matrix
     case 16: thisdelay=20; thisrot=1; thiscutoff=254; allfreq=8; break;                // one_sin
     case 17: thisdelay=20; thisrot=0; break;                                                        // one_sin
     case 18: thisdelay=20; thishue=255; break;                                                        // one_sin
