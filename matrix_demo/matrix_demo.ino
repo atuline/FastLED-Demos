@@ -31,6 +31,8 @@ int thishue = 95;
 int thissat = 255;
 int thisdir = 0;
 bool huerot = 0;                                               // Does the hue rotate? 1 = yes
+uint8_t bgclr = 0;
+uint8_t bgbri = 0;
 
 
 void setup() {
@@ -58,11 +60,13 @@ void loop () {
 void matrix() {                                               // One line matrix
 
   if (huerot) thishue=thishue+5;
-
+  
   if (random16(90) > 80) {
     if (thisdir == 0) leds[0] = CHSV(thishue, thissat, 255); else leds[NUM_LEDS-1] = CHSV(thishue, thissat, 255);
   }
-  else {leds[0] = CHSV(thishue, thissat, 0);}
+  else {
+    if (thisdir ==0) leds[0] = CHSV(bgclr, thissat, bgbri); else leds[NUM_LEDS-1] = CHSV(bgclr, thissat, bgbri);
+  }
 
   if (thisdir == 0) {
     for (int i = NUM_LEDS-1; i >0 ; i-- ) leds[i] = leds[i-1];
@@ -78,10 +82,10 @@ void ChangeMe() {                                             // A time (rather 
   static uint8_t lastSecond = 99;                             // Static variable, means it's only defined once. This is our 'debounce' variable.
   if (lastSecond != secondHand) {                             // Debounce to make sure we're not repeating an assignment.
     lastSecond = secondHand;
-    if (secondHand ==  0)  {thisdelay=30; thishue=95; huerot=0;}
-    if (secondHand ==  5)  {thisdir=1; huerot=1;}
-    if (secondHand == 10)  {thisdelay=10; thishue=0; huerot=0;}
-    if (secondHand == 15)  {thisdelay=20; thishue=random8();}
+    if (secondHand ==  0)  {thisdelay=30; thishue=95; bgclr=0; bgbri=10; huerot=0;}
+    if (secondHand ==  5)  {thisdir=1; bgbri=0; huerot=1;}
+    if (secondHand == 10)  {thisdelay=10; thishue=0; bgclr=50; bgbri=10; huerot=0;}
+    if (secondHand == 15)  {thisdelay=20; bgbri = 0; thishue=random8();}
     if (secondHand == 20)  {thishue=random8(); huerot=1;}
     if (secondHand == 25)  { }
     if (secondHand == 30)  { }
