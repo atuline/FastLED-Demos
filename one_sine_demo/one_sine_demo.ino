@@ -42,6 +42,7 @@ int loopdelay = 10;                                           // You can change 
 uint8_t twinkrun = 1;                                         // Enable/disable twinkles.
 
 uint8_t bgclr = 0;                                            // A rotating background colour.
+uint8_t bgbri = 0;
 // End of resetvar() redefinitions.
 
 
@@ -88,12 +89,12 @@ void ChangeMe()
   // You can change variables, but remember to set them back in the next demo, or they will stay as is.
   if( lastSecond != secondHand) {
     lastSecond = secondHand;
-    if (secondHand ==  0)  {twinkrun = 1; thisrot = 1; thiscutoff=254; allfreq=8;}                                                         // Both rotating hues
+    if (secondHand ==  0)  {twinkrun = 1; thisrot = 1; thiscutoff=254; allfreq=8; bgclr = 50; bgbri=10; }                                                         // Both rotating hues
     if (secondHand ==  5)  {thisrot = 0; thisdir=1;}                            // Just 1 rotating hue
-    if (secondHand == 10)  {thishue = 255;}                                     // No rotating hues, all red.
+    if (secondHand == 10)  {thishue = 255; bgclr=20; bgbri=10;}                                     // No rotating hues, all red.
     if (secondHand == 15)  {twinkrun = 0;}                                      // Enough with the damn twinkles.
-    if (secondHand == 20)  {allfreq = 16;}                                      // Time to make a wider bar.
-    if (secondHand == 25)  {thiscutoff = 96;}                                   // Change width of bars.
+    if (secondHand == 20)  {allfreq = 16;bgclr=50;}                                      // Time to make a wider bar.
+    if (secondHand == 25)  {thishue=100; thiscutoff = 96; bgclr=20; bgbri=20;}                                   // Change width of bars.
     if (secondHand == 30)  {thiscutoff = 96; thisrot = 1;}                      // Make those bars overlap, and rotate a hue
     if (secondHand == 35)  {thisdir = 1;}                                       // Change the direction.
     if (secondHand == 40)  {thiscutoff = 128; wavebright = 64; twinkrun = 1;}   // Yet more changes
@@ -110,7 +111,7 @@ void one_sin() {                                                                
     thishue = thishue + thisrot;                                                // Hue rotation is fun for thiswave.
   for (int k=0; k<NUM_LEDS-1; k++) {
     int thisbright = qsubd(cubicwave8((k*allfreq)+thisphase), thiscutoff);      // qsub sets a minimum value called thiscutoff. If < thiscutoff, then bright = 0. Otherwise, bright = 128 (as defined in qsub)..
-    leds[k] = CHSV(bgclr, 255, 40);
+    leds[k] = CHSV(bgclr, 255, bgbri);
     leds[k] += CHSV(thishue, allsat, thisbright);                               // Assigning hues and brightness to the led array.
   }
   bgclr++;
@@ -143,4 +144,6 @@ void resetvar() {                                             // Reset the varia
   thiscutoff = 192;                                           // You can change the cutoff value to display this wave. Lower value = longer wave.
   loopdelay = 10;                                             // You can change the delay. Also you can change the allspeed variable above. 
   twinkrun = 1;                                               // Enable/disable twinkles.
+  bgbri = 0;
+  bgclr = 0;
 } // resetvar()

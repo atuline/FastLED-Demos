@@ -261,6 +261,8 @@ bool thisdir = 0;                                             // Standard direct
 // Matrix variables
 
 bool huerot = 0;
+uint8_t bgclr = 0;
+uint8_t bgbri = 0;
 
 // Two_sin variables-------------------------------------------------------------------------
 uint8_t wavebright = 128;                                     // You can change the brightness of the waves/bars rolling across the screen. Best to make them not as bright as the sparkles.
@@ -286,8 +288,8 @@ int twinkrate = 100;
 // One_sin variables -----------------------------------------------------------------------
 
 // bool thisdir = 0;
-uint8_t bgclr = 0;
-uint8_t bgbri = 0;
+// uint8_t bgclr = 0;
+// uint8_t bgbri = 0;
 
 
 // pop_fade variables ----------------------------------------------------------------------
@@ -422,11 +424,11 @@ void change_mode(int newMode){
     case 13: thisdelay=30; thishue=95; bgclr=100; bgbri=10; break;                                             // matrix
     case 14: thisdelay=30; thishue=40; thisdir=1; bgclr=75; break;                                                            // matrix
     case 15: thisdelay=30; thishue=random8(); huerot=1; bgbri=0; break;                                                    // matrix
-    case 16: thisdelay=20; thisrot=1; thiscutoff=254; allfreq=8; break;                // one_sin
-    case 17: thisdelay=20; thisrot=0; break;                                                        // one_sin
-    case 18: thisdelay=20; thishue=255; break;                                                        // one_sin
-    case 19: thisdelay=20; allfreq=16; break;                                                        // one_sin
-    case 20: thisdelay=20; thiscutoff=96; break;                                                        // one_sin
+    case 16: thisdelay=20; thisrot=1; thiscutoff=254; allfreq=8; bgclr=0; bgbri=10; break;                // one_sin
+    case 17: thisdelay=20; thisrot=0; bgclr=50; break;                                                        // one_sin
+    case 18: thisdelay=20; thishue=255; bgclr=100; bgbri=40; break;                                                        // one_sin
+    case 19: thisdelay=20; allfreq=16; bgbri=0; break;                                                        // one_sin
+    case 20: thisdelay=20; thiscutoff=96; bgclr=200; bgbri=20; break;                                                        // one_sin
     case 21: thisdelay=20; thiscutoff=128; wavebright=64; break;                                    // one_sin
     case 22: thisdelay=40; colours[0]=0xffffff; numcolours=1; boolcolours=0; maxbar=1; break;       // pop_fade
     case 23: thisdelay=40; colours[1]=0xff0000; numcolours=2; boolcolours=0; maxbar=4; break;       // pop_fade

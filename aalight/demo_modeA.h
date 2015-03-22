@@ -21,15 +21,15 @@ void demo_modeA(){
 
 // one_sin
     if( secondHand ==  35)  {smode=2; thisdelay=20; thisrot=1; thiscutoff=254; allfreq=8;}                               // Both rotating hues
-    if( secondHand == 40)  {smode=2; thisdelay=20; thisrot=0;}                                                          // Just 1 rotating hue
-    if( secondHand == 45)  {smode=2; thisdelay=20; thishue=255;}                                                      // No rotating hues, all red.
+    if( secondHand == 40)  {smode=2; thisdelay=20; thisrot=0; bgclr=0; bgbri=10;}                                                          // Just 1 rotating hue
+    if( secondHand == 45)  {smode=2; thisdelay=20; thishue=255; bgclr=50;bgbri=5;}                                                      // No rotating hues, all red.
     if( secondHand == 50)  {smode=2; thisdelay=20;}                                                        // Enough with the damn twinkles.
     if( secondHand == 55)  {smode=2; thisdelay=20; allfreq=16;}                                                        // Time to make a wider bar.
-    if( secondHand == 60)  {smode=2; thisdelay=20; thiscutoff=96;}                                                     // Change width of bars.
-    if( secondHand == 65)  {smode=2; thisdelay=20; thiscutoff=96; thisrot=1;}                                        // Make those bars overlap, and rotate a hue
+    if( secondHand == 60)  {smode=2; thisdelay=20; thiscutoff=96; bgclr=100; bgbri=10;}                                                     // Change width of bars.
+    if( secondHand == 65)  {smode=2; thisdelay=20; thiscutoff=96; thisrot=1;bgclr=150;}                                        // Make those bars overlap, and rotate a hue
     if( secondHand == 70)  {smode=2; thisdelay=20; thisdir=1;}                                                          // Change the direction.
-    if( secondHand == 75)  {smode=2; thisdelay=20; thiscutoff=128; wavebright=64;}                     // Yet more changes
-    if( secondHand == 80)  {smode=2; thisdelay=20; wavebright=128; thisspeed=3;}                       // Now, we change speeds.
+    if( secondHand == 75)  {smode=2; thisdelay=20; thiscutoff=128; wavebright=64; bgclr=175;}                     // Yet more changes
+    if( secondHand == 80)  {smode=2; thisdelay=20; wavebright=128; thisspeed=3; bgclr=200;}                       // Now, we change speeds.
     if( secondHand == 85)  {smode=2; thisdelay=20; thisdir=0;}                                            // Opposite directions
 
 // pop_fade

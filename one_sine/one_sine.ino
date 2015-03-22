@@ -40,7 +40,7 @@ int thisphase = 0;                                            // Phase change va
 uint8_t thiscutoff = 192;                                     // You can change the cutoff value to display this wave. Lower value = longer wave.
 int loopdelay = 10;                                           // You can change the delay. Also you can change the allspeed variable above. 
 uint8_t bgclr = 0;                                            // A rotating background colour.
-uint8_t bgbright = 10;                                        // Brightness of background colour
+uint8_t bgbri = 10;                                           // Brightness of background colour
 
 
 
@@ -64,7 +64,7 @@ void one_sine() {                                                              /
   thishue = thishue + thisrot;                                                // Hue rotation is fun for thiswave.
   for (int k=0; k<NUM_LEDS-1; k++) {                                          // For each of the LED's in the strand, set a brightness based on a wave as follows:
     int thisbright = qsubd(cubicwave8((k*allfreq)+thisphase), thiscutoff);    // qsub sets a minimum value called thiscutoff. If < thiscutoff, then bright = 0. Otherwise, bright = 128 (as defined in qsub)..
-    leds[k] = CHSV(bgclr, 255, bgbright);                                     // First set a background colour, but fully saturated.
+    leds[k] = CHSV(bgclr, 255, bgbri);                                     // First set a background colour, but fully saturated.
     leds[k] += CHSV(thishue, allsat, thisbright);                             // Then assign a hue to any that are bright enough.
   }
   bgclr++;                                                                    // You can change the background colour or remove this and leave it fixed.
