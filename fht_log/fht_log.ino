@@ -1,17 +1,14 @@
 
-/* Fast Hartley Transform with FastLED 3.0 or greater
+/* Fast Hartley Transform
 
 By: Andrew Tuline
 
 Date: Oct, 2014
 
 
-This is an implementation of the FHT library with FastLED 3.0
+This is an implementation of the FHT library with FastLED
 
-FastLED is available at https://github.com/FastLED/FastLED
-
-FHT is available at http://wiki.openmusiclabs.com/wiki/ArduinoFHT
-
+The FHT library is available at http://wiki.openmusiclabs.com/wiki/ArduinoFHT
 
 The example I started off with was:
 
@@ -41,7 +38,6 @@ Note: If you are using a microphone powered by the 3.3V signal, such as the Spar
 uint8_t max_bright = 128;                                     // Overall brightness definition. It can be changed on the fly.
 
 struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
-
 
 
 #define LOG_OUT 1
@@ -74,10 +70,7 @@ void setup() {
     GetFHT();                                                 // Get 'em fast
     for (int i=0; i<NUM_LEDS; i++){
       D[i][k] = fht_log_out[2*i+2];                           // Get every 2nd array element starting with the 2nd one.
-//      D[i][k] = fht_oct_out[2*i+2];
 //      Serial.print(fht_log_out[2*i+2]);
-//      Serial.print(fht_oct_out[2*i+2]);
-//      Serial.print(", ");
     }
 //    Serial.println();
   }

@@ -98,11 +98,6 @@ void ChangeMe() {
       case 20: thisdelay = 50; fadeval = 128; break;                                                             // Slow down the fade
       case 25: thisdelay = 50; colours[2]= 0x0000ff; boolcolours=0; numcolours=3; fadeval = 192; maxbar = 6; break; 
       case 30: break;
-      case 35: break;
-      case 40: break;
-      case 45: break;
-      case 50: break;
-      case 55: break;
     }
   } // if lastSecond
 } // ChangeMe()

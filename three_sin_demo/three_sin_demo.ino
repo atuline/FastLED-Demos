@@ -28,19 +28,19 @@ struct CRGB leds[NUM_LEDS];                                   // Initialize our 
 // Initialize global variables for sequences
 uint8_t thisdelay = 20;                                       // A delay value for the sequence(s)
 
-int wave1=0;                                            // Current phase is calculated.
+int wave1=0;                                                  // Current phase is calculated.
 int wave2=0;
 int wave3=0;
 
-uint8_t inc1 = 2;                                       // Phase shift. Keep it low, as this is the speed at which the waves move.
+uint8_t inc1 = 2;                                             // Phase shift. Keep it low, as this is the speed at which the waves move.
 uint8_t inc2 = 1;
 uint8_t inc3 = -2;
 
-uint8_t lvl1 = 80;                                      // Any result below this value is displayed as 0.
+uint8_t lvl1 = 80;                                            // Any result below this value is displayed as 0.
 uint8_t lvl2 = 80;
 uint8_t lvl3 = 80;
 
-uint8_t mul1 = 20;                                      // Frequency, thus the distance between waves
+uint8_t mul1 = 20;                                            // Frequency, thus the distance between waves
 uint8_t mul2 = 25;
 uint8_t mul3 = 22;
 
@@ -52,7 +52,7 @@ void setup() {
   FastLED.setBrightness(max_bright);
   set_max_power_in_volts_and_milliamps(5, 500);               // FastLED 2.1 Power management set at 5V, 500mA
 
-  random16_set_seed(4832);                                     // Awesome randomizer (which we don't yet need here.)
+  random16_set_seed(4832);                                    // Awesome randomizer (which we don't yet need here.)
   random16_add_entropy(analogRead(2));
 
 } // setup()
@@ -61,11 +61,10 @@ void setup() {
 
 void loop () {
   ChangeMe();
-  three_sin();                                                  // Improved method of using non-blocking delay
+  three_sin();                                                // Improved method of using non-blocking delay
   show_at_max_brightness_for_power();                         // Power managed display of LED's 
   delay_at_max_brightness_for_power(thisdelay*2.5);
 } // loop()
-
 
 
 void three_sin() {
@@ -73,12 +72,11 @@ void three_sin() {
   wave2 += inc2;
   wave3 += inc3;
   for (int k=0; k<NUM_LEDS; k++) {
-    leds[k].r = qsub8(sin8(mul1*k + wave1/128), lvl1);         // Another fixed frequency, variable phase sine wave with lowered level
-    leds[k].g = qsub8(sin8(mul2*k + wave2/128), lvl2);         // A fixed frequency, variable phase sine wave with lowered level
-    leds[k].b = qsub8(sin8(mul3*k + wave3/128), lvl3);         // A fixed frequency, variable phase sine wave with lowered level
+    leds[k].r = qsub8(sin8(mul1*k + wave1/128), lvl1);        // Another fixed frequency, variable phase sine wave with lowered level
+    leds[k].g = qsub8(sin8(mul2*k + wave2/128), lvl2);        // A fixed frequency, variable phase sine wave with lowered level
+    leds[k].b = qsub8(sin8(mul3*k + wave3/128), lvl3);        // A fixed frequency, variable phase sine wave with lowered level
   }
 } // three_sin()
-
 
 
 void ChangeMe()

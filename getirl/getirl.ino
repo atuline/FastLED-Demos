@@ -4,7 +4,9 @@ By: Andrew Tuline
 
 Date: Nov, 2014
 
-This is a test program for IRLRemote and FastLED.
+This is a test program for IRLRemote and FastLED to ensure they work together with the strip you're using. It's also a good routine to test IR mapping.
+
+I'm using the TSOP4838 IR receiver an an el cheapo aliexpress IR transmitter.
 
 Libraries required:
 
@@ -12,6 +14,7 @@ https://github.com/NicoHood/IRLremote
 https://github.com/FastLED/FastLED
 
 Note: 3 pin LED strips such as WS2812B running FastLED won't work with IRLRemote or Ken Shiriff's IR library.
+
 */
 
 
@@ -43,48 +46,13 @@ void loop() {
    for(int whiteLed = 0; whiteLed < NUM_LEDS; whiteLed = whiteLed + 1) {
       leds[whiteLed] = CRGB::White;
       FastLED.show();
-//      FastLED.delay(10);                // This is a bad practice
+      FastLED.delay(10);
       leds[whiteLed] = CRGB::Black;
    } // for()
 
 //  FastLED.delay(20);
   getirl();
 } // loop()
-
-
-/*
-IR Commands on 2nd Arduino
-
-The following section provides a list of commands that are sent to the main Arduino.
-
-I'm using a 24 pin IR controller from Aliexpress. IR button locations are defined as follows:
-
-- letters correspond to rows
-- numbers corresponding to columns
-
-For example, A1 = top left, A4 = top right, and F4 = bottom right.
-
-Serial (below) is the string being sent over the Tx line to the Arduino performing the display.
-
-
-Serial    Command                       IR Button location
-------    --------                      ------------------
-m889      Set mode 889                        F4 
-m888      Set mode 888                        E4
-m1        Set mode 1                          A3
-m0        Set mode 0                          A4
-e1, e2    Increase/Decrease delay             C2, C3
-n0, n1    Direction reverse/forward           E2, E3
-o1, o2    Decrease/Increase mode              D2, D3
-r1, r2    Increase/Decrease brightness        A1, A2
-u1, u2    Decrease/Increase hue               F2, F3
-
-Not yet implemented
-y         Increase/decrease # of LED's        B1, with A1, A2
-          Save # of LED's to flash            B1
-
-*/
-
 
 
 void getirl() {                                       // This is the built-in IR function that just selects a mode.

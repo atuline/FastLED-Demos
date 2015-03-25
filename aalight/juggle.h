@@ -6,9 +6,9 @@
 
 void juggle() {
   // eight colored dots, weaving in and out of sync with each other
-  fadeToBlackBy( leds, NUM_LEDS, 20);
+  fadeToBlackBy(leds, NUM_LEDS, 20);
   byte dothue = 0;
-  for( int i = 0; i < 8; i++) {
+  for (int i = 0; i < 8; i++) {
     leds[beatsin16(i+7,0,NUM_LEDS)] |= CHSV(dothue, 200, 255);
     dothue += 32;
   }

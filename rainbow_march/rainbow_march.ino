@@ -5,7 +5,7 @@ By: Andrew Tuline
 
 Date: Nov, 2014
 
-Rainbow marching up the strand. Pretty basic, but oh so popular.
+Rainbow marching up the strand. Pretty basic, but oh so popular. Oh look, we don't need to add a 'wheel' routine.
 
 */
 
@@ -20,7 +20,7 @@ Rainbow marching up the strand. Pretty basic, but oh so popular.
 #define NUM_LEDS 20                                           // Number of LED's
 
 // Initialize changeable global variables.
-uint8_t max_bright = 128;                                      // Overall brightness definition. It can be changed on the fly.
+uint8_t max_bright = 128;                                     // Overall brightness definition. It can be changed on the fly.
 
 struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
 
@@ -34,7 +34,7 @@ uint8_t deltahue = 10;                                        // Hue change betw
 void setup() {
   Serial.begin(57600);
 
-//  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);      // For WS2812B
+//  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);         // For WS2812B
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);   // For APA102 or WS2801
 
   FastLED.setBrightness(max_bright);

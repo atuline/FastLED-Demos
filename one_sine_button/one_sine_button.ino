@@ -6,7 +6,7 @@ Date: March, 2015
 
 A demo showing the flexibility of just using a single sine wave. A little code and a lot of variables can go a long way. This includes an optional twinkle overlay for Mark Kriegsman.
 
-I've modified the timer based code in one_site_demo to support a button instead using JChristensen's Button Library from:
+I've modified the timer based code in one_site_demo to support a button instead by using JChristensen's Button Library from:
 
 https://github.com/JChristensen/Button
 
@@ -16,8 +16,8 @@ Note that a LONG press will reset it back to the first mode.
 */
 
 
-#define qsubd(x, b)  ((x>b)?wavebright:0)                   // Digital unsigned subtraction macro. if result <0, then => 0. Otherwise, take on fixed value.
-#define qsuba(x, b)  ((x>b)?x-b:0)                          // Analog Unsigned subtraction macro. if result <0, then => 0
+#define qsubd(x, b)  ((x>b)?wavebright:0)                     // Digital unsigned subtraction macro. if result <0, then => 0. Otherwise, take on fixed value.
+#define qsuba(x, b)  ((x>b)?x-b:0)                            // Analog Unsigned subtraction macro. if result <0, then => 0
 
 
 #include "FastLED.h"                                          // FastLED library.
@@ -59,7 +59,7 @@ uint8_t bgclr = 0;                                            // A rotating back
 uint8_t bgbri = 0;
 // End of resetvar() redefinitions.
 
-int ledMode = 0;                                             // Starting mode is typically 0. Use 99 if no controls available. ###### CHANGE ME #########
+int ledMode = 0;                                              // Starting mode is typically 0. Use 99 if no controls available. ###### CHANGE ME #########
 int maxMode = 12;
 
 
@@ -77,7 +77,7 @@ void setup() {
   delay(1000);                                                // Power-up safety delay or something like that.
   Serial.begin(57600);
 
-//  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);          // Use this for WS2812B
+//  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);        // Use this for WS2812B
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);  // Use this for WS2801 or APA102
 
   set_max_power_in_volts_and_milliamps(5, 500);               // FastLED 2.1 Power management set at 5V, 500mA
@@ -101,7 +101,7 @@ void loop()
 
 void ChangeMe()
 {
-//  uint8_t secondHand = (millis() / 1000) % 60;                // Increase this if you want a longer demo.
+//  uint8_t secondHand = (millis() / 1000) % 60;              // Increase this if you want a longer demo.
   uint8_t secondHand = ledMode % 12;
   static uint8_t lastSecond = 99;                             // Static variable, means it's only defined once. This is our 'debounce' variable.
   

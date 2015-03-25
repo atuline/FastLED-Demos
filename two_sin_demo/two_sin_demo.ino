@@ -109,7 +109,6 @@ void ChangeMe() {
 } // ChangeMe()
 
 
-
 void two_sin() {                                                             // This is the heart of this program. Sure is short.
 
   if (thisdir == 0) {thisphase += thisspeed; thatphase += thatspeed;} 
@@ -128,7 +127,6 @@ void two_sin() {                                                             // 
 } // two_sin()
 
 
-
 void twinkleover() {                                                       // This has been added for Mark Kriegsman.
   for (int i = 0; i < numtwinks; i++) {
     if (mytwinks[i].twinkbright <0) {
@@ -139,7 +137,6 @@ void twinkleover() {                                                       // Th
     mytwinks[i].twinkbright -= 8;
   }
 } // twinkle()
-
 
 
 void resetvar() {                   // Reset the variable back to the beginning.

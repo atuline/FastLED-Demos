@@ -22,18 +22,16 @@ A quick demo showing fading LED's. It's easy to start a twinkle at maximum brigh
 // Initialize changeable global variables.
 uint8_t max_bright = 128;                                     // Overall brightness definition. It can be changed on the fly.
 
-
 struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
 
-
 // These variables can be changed.
-int ranamount = 50;                                           // The higher the number, lowers the chance for a pixel to light up.
-uint8_t thisdelay = 50;                                       // Standard delay value in milliseconds.
-uint8_t fadeval = 224;                                        // Fade rate
+int     ranamount =  50;                                      // The higher the number, lowers the chance for a pixel to light up.
+uint8_t thisdelay =  50;                                      // Standard delay value in milliseconds.
+uint8_t   fadeval = 224;                                      // Fade rate
 
 
 void setup() {
-  delay(1000);                                                 // Power-up safety delay or something like that.
+  delay(1000);                                                // Power-up safety delay or something like that.
   Serial.begin(57600);
 
 //  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);          // Use this for WS2812B

@@ -13,7 +13,6 @@ Confetti flashes colours within a limited hue. It's been modified from Mark's or
 
 #include "FastLED.h"                                          // FastLED library. Preferably the latest copy of FastLED 2.1.
 
-
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Data pin to connect to the strip.
 #define LED_CK 11                                             // Clock pin for the strip.
@@ -69,9 +68,11 @@ void ChangeMe() {                                             // A time (rather 
   static uint8_t lastSecond = 99;                             // Static variable, means it's only defined once. This is our 'debounce' variable.
   if (lastSecond != secondHand) {                             // Debounce to make sure we're not repeating an assignment.
     lastSecond = secondHand;
-    if (secondHand ==  0)  {thisinc=1; thishue=192; thissat=255; thisfade=2; huediff=256;}  // You can change values here, one at a time , or altogether.
-    if (secondHand ==  5)  {thisinc=2; thishue=128; thisfade=8; huediff=64;}
-    if (secondHand == 10)  {thisinc=1; thishue=random16(255); thisfade=1; huediff=16;}                  // Only gets called once, and not continuously for the next several seconds. Therefore, no rainbows.
-    if (secondHand == 15)  {}
+    switch(secondHand) {
+      case  0: thisinc=1; thishue=192; thissat=255; thisfade=2; huediff=256; break;  // You can change values here, one at a time , or altogether.
+      case  5: thisinc=2; thishue=128; thisfade=8; huediff=64; break;
+      case 10: thisinc=1; thishue=random16(255); thisfade=1; huediff=16; break;      // Only gets called once, and not continuously for the next several seconds. Therefore, no rainbows.
+      case 15: break;                                                                // Here's the matching 15 for the other one.
+    }
   }
 } // ChangeMe()

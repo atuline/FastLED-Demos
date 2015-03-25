@@ -1,6 +1,6 @@
 /*
 
-aalight led lighting effects for FastLED 3.0 or greater.
+aalight led lighting effects for FastLED.
 
       By: Andrew Tuline
      URL: www.tuline.com
@@ -195,7 +195,7 @@ y         Save of LED's to flash                B1                     // Not ye
 #define qsubd(x, b)  ((x>b)?wavebright:0)                     // A digital unsigned subtraction macro. if result <0, then => 0. Otherwise, take on fixed value.
 #define qsuba(x, b)  ((x>b)?x-b:0)                            // Unsigned subtraction macro. if result <0, then => 0.
 
-#define VERSION_NUMBER 2.0
+#define AALIGHT_VERSION 100
 
 #include "FastLED.h"                                          // FastLED library. Preferably the latest copy of FastLED 2.1.
 #include "Button.h"                                           // Button library. Includes press, long press, double press detection.
@@ -205,8 +205,8 @@ y         Save of LED's to flash                B1                     // Not ye
 #error "Requires FastLED 3.1 or later; check github for latest code."
 #endif
 
-
-const int interruptIR = 0;                                    // Meaning, pin 2 on an UNO.
+// IR Receiver definition
+const int interruptIR = 0;                                    // Meaning, pin 2 on an UNO for use by the IR receiver.
  
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Serial data pin for WS2801, WS2811, WS2812B or APA102
@@ -225,7 +225,7 @@ struct CRGB leds[NUM_LEDS];                                   // Initialize our 
 int ledMode = 99;                                             // Starting mode is typically 0. Use 99 if no controls available. ###### CHANGE ME #########
 int maxMode;                                                  // Maximum number of modes is set later.
 
-// PUSHBUTTON SETUP STUFF
+// Pushbutton pin definition
 const int buttonPin = 6;                                      // Digital pin used for debounced pushbutton
 
 // int buttonState = 0;
@@ -233,18 +233,17 @@ const int buttonPin = 6;                                      // Digital pin use
 Button myBtn(buttonPin, true, true, 50);                      // Declare the button
 
 
-// MICROPHONE SETUP STUFF
+// Microphone pin definition
 #define MIC_PIN 5                                             // Analog (not digital) port for microphone
 #define DC_OFFSET  32                                         // DC offset in mic signal - if unusure, leave 0
 
 
-// SERIAL SETUP STUFF
+// Serial definition
 #define SERIAL_BAUDRATE 57600                                 // Or 115200.
 #define SERIAL_TIMEOUT 5
 
 byte inbyte;                                                  // Serial input byte
 int thisarg;                                                  // Serial input argument
-
 
 
 // Generic variables
@@ -370,22 +369,22 @@ void setup() {
   Serial.begin(SERIAL_BAUDRATE);                              // SETUP HARDWARE SERIAL (USB)
   Serial.setTimeout(SERIAL_TIMEOUT);
 
-  IRLbegin<IR_ALL>(interruptIR);                                // IR setup
+  IRLbegin<IR_ALL>(interruptIR);                              // IR setup
   
-  //pinMode(buttonPin, INPUT_PULLUP);                           // Debounced pushbutton with internal pullup (used to select next mode)
+  //pinMode(buttonPin, INPUT_PULLUP);                         // Debounced pushbutton with internal pullup (used to select next mode)
 
   LEDS.setBrightness(max_bright);                             // Set the generic maximum brightness value.
 
 //  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER >(leds, NUM_LEDS); // WS2812B definition
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER >(leds, NUM_LEDS); // APA102 or WS2801 definition
   
-  set_max_power_in_volts_and_milliamps(5, 500);                //5V, 500mA
+  set_max_power_in_volts_and_milliamps(5, 500);               //5V, 500mA
 
-  random16_set_seed(4832);                                     // Awesome randomizer
+  random16_set_seed(4832);                                    // Awesome randomizer
   random16_add_entropy(analogRead(2));
 
   Serial.println("---SETUP COMPLETE---");
-  change_mode(ledMode, 1);                                        // Initialize the first sequence
+  change_mode(ledMode, 1);                                    // Initialize the first sequence
 } // setup()
 
 
@@ -395,17 +394,17 @@ void loop() {
   getirl();
   readbutton();                                               // Button press increases the ledMode up to last contiguous mode and then starts over at 0.
   readkeyboard();                                             // Get keyboard input.
-  change_mode(ledMode, 0);                                     // Strobe, don't set it.
+  change_mode(ledMode, 0);                                    // Strobe, don't set it.
   show_at_max_brightness_for_power();                         // Power managed display of LED's.
   delay_at_max_brightness_for_power(2.5*thisdelay);           // Power managed FastLED delay.
-//  Serial.println(LEDS.getFPS());                              // Display frames per second in the serial monitor. Disable the delay in order to see how fast/efficient your sequence is.
+//  Serial.println(LEDS.getFPS());                            // Display frames per second in the serial monitor. Disable the delay in order to see how fast/efficient your sequence is.
 } // loop()
 
 
-void change_mode(int newMode, int mc){                            // mc = 0 is strobe, while mc = 1 is change
+void change_mode(int newMode, int mc){                        // mc stands for 'Mode Change', where mc = 0 is strobe the routine, while mc = 1 is change the routine
 
    maxMode = 41;
-   if(mc) fill_solid(leds,NUM_LEDS,CRGB(0,0,0));                      // Clean up the array for the first time through. Don't show display though, so you may have a smooth transition.
+   if(mc) fill_solid(leds,NUM_LEDS,CRGB(0,0,0));              // Clean up the array for the first time through. Don't show display though, so you may have a smooth transition.
 
   switch (newMode) {                                          // First time through a new mode, so let's initialize the variables for a given display.
 
@@ -465,50 +464,47 @@ void change_mode(int newMode, int mc){                            // mc = 0 is s
 
 
 
-void getirl() {                                       // This is the built-in IR function that just selects a mode.
-  if (IRLavailable()) {                              // Read the IR receiver. Result are poor if using 3 pin strands such as WS2812B.
+void getirl() {                                               // This is the built-in IR function that just selects a mode.
+  if (IRLavailable()) {                                       // Read the IR receiver. Result are poor if using 3 pin strands such as WS2812B.
     Serial.print("Command:");
     Serial.println(IRLgetCommand());
     switch(IRLgetCommand()) {
 
-      case 65280:  max_bright++;      break;          //a1 - max_bright++;
-      case 65025:  max_bright--;      break;          //a2 - max_bright--;
-      case 64770:  change_mode(1,1);    break;          //a3 - change_mode(1);
-      case 64515:  change_mode(0,1);    break;          //a4 - change_mode(0);
+      case 65280:  max_bright++;        break;                //a1 - max_bright++;
+      case 65025:  max_bright--;        break;                //a2 - max_bright--;
+      case 64770:  change_mode(1,1);    break;                //a3 - change_mode(1);
+      case 64515:  change_mode(0,1);    break;                //a4 - change_mode(0);
 
-      case 64260:  change_mode(5,1);    break;          //b1 - 
-      case 64005:  change_mode(6,1);    break;          //b2 - 
-      case 63750:  change_mode(7,1);    break;          //b3 - 
-      case 63495:  change_mode(8,1);    break;          //b4 - 
+      case 64260:  change_mode(5,1);    break;                //b1 - 
+      case 64005:  change_mode(6,1);    break;                //b2 - 
+      case 63750:  change_mode(7,1);    break;                //b3 - 
+      case 63495:  change_mode(8,1);    break;                //b4 - 
 
-      case 63240:  change_mode(9,1);    break;          //c1 - 
-      case 62985:  thisdelay++;       break;          //c2 - thisdelay++;
-      case 62730:  thisdelay--;       break;          //c3 - thisdelay--;
-      case 62475:  change_mode(12,1);   break;          //c4
+      case 63240:  change_mode(9,1);    break;                //c1 - 
+      case 62985:  thisdelay++;         break;                //c2 - thisdelay++;
+      case 62730:  thisdelay--;         break;                //c3 - thisdelay--;
+      case 62475:  change_mode(12,1);   break;                //c4
 
-      case 62220:  change_mode(13,1);   break;          //d1
-      case 61965:  ledMode--; change_mode(ledMode,1);  break;    //d2 - change_mode(ledMode--);
-      case 61710:  ledMode++; change_mode(ledMode,1);  break;    //d3 - change_mode(ledMode++);
-      case 61455:  change_mode(16,1);   break;          //d4
+      case 62220:  change_mode(13,1);   break;                //d1
+      case 61965:  ledMode--; change_mode(ledMode,1); break;  //d2 - change_mode(ledMode--);
+      case 61710:  ledMode++; change_mode(ledMode,1); break;  //d3 - change_mode(ledMode++);
+      case 61455:  change_mode(16,1);   break;                //d4
 
-      case 61200:  change_mode(17,1);   break;          //e1 -
-      case 60945:  thisdir = 1;       break;          //e2 - thisdir = 1;
-      case 60690:  thisdir = 0;       break;          //e3 - thisdir = 0;
-      case 60435:  change_mode(20,1);   break;          //e4
+      case 61200:  change_mode(17,1);   break;                //e1 -
+      case 60945:  thisdir = 1;         break;                //e2 - thisdir = 1;
+      case 60690:  thisdir = 0;         break;                //e3 - thisdir = 0;
+      case 60435:  change_mode(20,1);   break;                //e4
 
-      case 60180:  change_mode(21,1);   break;          //f1
-      case 59925:  thishue-=5;        break;          //f2 - thishue--;
-      case 59670:  thishue+=5;        break;          //f3 - thishue++;
-      case 59415:  change_mode(99,1);   break;          //f4
+      case 60180:  change_mode(21,1);   break;                //f1
+      case 59925:  thishue-=5;          break;                //f2 - thishue--;
+      case 59670:  thishue+=5;          break;                //f3 - thishue++;
+      case 59415:  change_mode(99,1);   break;                //f4
 
-      default: break;                                // We could do something by default
+      default:                          break;                // We could do something by default
     } // switch
     IRLreset();
   } // if IRLavailable()
 } // getir()
-
-
-
 
 
 void readkeyboard() {                                         // PROCESS HARDWARE SERIAL COMMANDS AND ARGS
@@ -572,7 +568,7 @@ void readkeyboard() {                                         // PROCESS HARDWAR
         break;
 
       case 113:                                               // "q" - DISPLAY VERSION NUMBER
-        Serial.print(VERSION_NUMBER);
+        Serial.print(AALIGHT_VERSION);
         break;
 
       case 114:                                               // "r1 or r2" - DECREASE OR INCREASE BRIGHTNESS by / or * 2
@@ -602,10 +598,10 @@ void readkeyboard() {                                         // PROCESS HARDWAR
 } // readkeyboard()
 
 
-void readbutton() {                                            // Read the button and increase the mode
+void readbutton() {                                           // Read the button and increase the mode
   myBtn.read();
   if(myBtn.wasReleased()) {
-    ledMode = ledMode > maxMode ? 0 : ledMode+1;                  // Reset to 0 only during a mode change
+    ledMode = ledMode > maxMode ? 0 : ledMode+1;              // Reset to 0 only during a mode change
     change_mode(ledMode, 1);
   }
   if(myBtn.pressedFor(1000)) {
