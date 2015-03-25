@@ -3,7 +3,7 @@
 
 By: Andrew Tuline
 
-Date: Oct, 2014
+Date: March, 2015
 
 3 sine waves, one for each colour. I'm already doing a lot with 2 sine waves, so I didn't take this far.
 
@@ -83,23 +83,17 @@ void three_sin() {
 
 void ChangeMe()
 {
-  uint8_t secondHand = (millis() / 1000) % 60;                // Increase this if you want a longer demo.
+  uint8_t secondHand = (millis() / 1000) % 30;                // Increase this if you want a longer demo.
   static uint8_t lastSecond = 99;                             // Static variable, means it's only defined once. This is our 'debounce' variable.
   
   // You can change variables, but remember to set them back in the next demo, or they will stay as is.
   if( lastSecond != secondHand) {
     lastSecond = secondHand;
-    if( secondHand ==  0)  {thisdelay = 8; mul1 = 20; mul2 = 25; mul3 = 22; lvl1 = 80; lvl2 = 80; lvl3 = 80; inc1 = 1; inc2 = 1; inc3 = -1;}
-//  if( secondHand == 5)   {mul1 = 5; mul2 = 8; mul3 = 7;}
-//  if( secondHand == 10)  {thisdelay = 20; lvl1 = 220; lvl2 = 220; lvl3 = 220;}
-    if( secondHand == 15)  {}
-    if( secondHand == 20)  {}
-    if( secondHand == 25)  {}
-    if( secondHand == 30)  {}
-    if( secondHand == 35)  {}
-    if( secondHand == 40)  {}
-    if( secondHand == 45)  {}
-    if( secondHand == 50)  {}
-    if( secondHand == 55)  {}
+    switch(secondHand) {
+      case 0: thisdelay = 8; mul1 = 20; mul2 = 25; mul3 = 22; lvl1 = 80; lvl2 = 80; lvl3 = 80; inc1 = 1; inc2 = 1; inc3 = -1; break;
+      case 10: mul1 = 5; mul2 = 8; mul3 = 7; break;
+      case 20: thisdelay = 20; lvl1 = 220; lvl2 = 220; lvl3 = 220; break;
+      case 30: break;
+    }
   } // if lastSecond
 } // ChangeMe()

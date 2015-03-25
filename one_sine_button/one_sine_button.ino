@@ -108,18 +108,20 @@ void ChangeMe()
   // You can change variables, but remember to set them back in the next demo, or they will stay as is.
   if( lastSecond != secondHand) {
     lastSecond = secondHand;
-    if (secondHand ==  0)  {twinkrun = 1; thisrot = 1; thiscutoff=254; allfreq=8; bgclr = 50; bgbri=10; }                                                         // Both rotating hues
-    if (secondHand ==  1)  {thisrot = 0; thisdir=1;}                            // Just 1 rotating hue
-    if (secondHand ==  2)  {thishue = 255; bgclr=20; bgbri=10;}                                     // No rotating hues, all red.
-    if (secondHand ==  3)  {twinkrun = 0;}                                      // Enough with the damn twinkles.
-    if (secondHand ==  4)  {allfreq = 16;bgclr=50;}                                      // Time to make a wider bar.
-    if (secondHand ==  5)  {thishue=100; thiscutoff = 96; bgclr=20; bgbri=20;}                                   // Change width of bars.
-    if (secondHand ==  6)  {thiscutoff = 96; thisrot = 1;}                      // Make those bars overlap, and rotate a hue
-    if (secondHand ==  7)  {thisdir = 1;}                                       // Change the direction.
-    if (secondHand ==  8)  {thiscutoff = 128; wavebright = 64; twinkrun = 1;}   // Yet more changes
-    if (secondHand ==  9)  {wavebright = 128; twinkrun = 0; thisspeed = 3;}     // Now, we change speeds.
-    if (secondHand == 10)  {thisdir = 0; twinkrun = 0;}                         // Opposite directions
-    if (secondHand == 11)  {resetvar(); }                                       // Getting complicated, let's reset the variables.
+    switch (secondHand) {
+      case  0: twinkrun = 1; thisrot = 1; thiscutoff=254; allfreq=8; bgclr = 50; bgbri=10; break;  // Both rotating hues
+      case  5: thisrot = 0; thisdir=1; break;                            // Just 1 rotating hue
+      case 10: thishue = 255; bgclr=20; bgbri=10; break;                 // No rotating hues, all red.
+      case 15: twinkrun = 0; break;                                      // Enough with the damn twinkles.
+      case 20: allfreq = 16; bgclr=50; break;                            // Time to make a wider bar.
+      case 25: thishue=100; thiscutoff = 96; bgclr=20; bgbri=20; break;  // Change width of bars.
+      case 30: thiscutoff = 96; thisrot = 1; break;                      // Make those bars overlap, and rotate a hue
+      case 35: thisdir = 1; break;                                       // Change the direction.
+      case 40: thiscutoff = 128; wavebright = 64; twinkrun = 1; break;   // Yet more changes
+      case 45: wavebright = 128; twinkrun = 0; thisspeed = 3; break;     // Now, we change speeds.
+      case 50: thisdir = 0; twinkrun = 0; break;                         // Opposite directions
+      case 55: resetvar(); break;                                        // Getting complicated, let's reset the variables.
+    }
   }
 } // ChangeMe()
 

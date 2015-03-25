@@ -91,17 +91,18 @@ void ChangeMe() {
   // You can change variables, but remember to set them back in the next demo, or they will stay as is.
   if (lastSecond != secondHand) {
     lastSecond = secondHand;
-    if (secondHand ==  0)  {thisdelay = 50; colours[0] = 0xffffff; numcolours=1; boolcolours=0; maxbar = 1;}         // Just white twinkles
-    if (secondHand ==  5)  {thisdelay = 20; colours[1] = 0xff0000; numcolours=2; boolcolours=0; maxbar = 4;}         // Add red and make bars
-    if (secondHand == 10)  {thisdelay = 30; fadeval = 192;}                                                           // Speed up the fade
-    if (secondHand == 15)  {thisdelay = 50; boolcolours=1; maxbar=1;}                                                // A pile of colours, 1 pixel in length
-    if (secondHand == 20)  {thisdelay = 50; fadeval = 128;}                                                            // Slow down the fade
-    if (secondHand == 25)  {thisdelay = 50; colours[2]= 0x0000ff; boolcolours=0; numcolours=3; fadeval = 192; maxbar = 6;}
-    if (secondHand == 30)  {}
-    if (secondHand == 35)  {}
-    if (secondHand == 40)  {}
-    if (secondHand == 45)  {}
-    if (secondHand == 50)  {}
-    if (secondHand == 55)  {}
+    switch(secondHand) {
+      case  0: thisdelay = 50; colours[0] = 0xffffff; numcolours=1; boolcolours=0; maxbar = 1; break;          // Just white twinkles
+      case  5: thisdelay = 20; colours[1] = 0xff0000; numcolours=2; boolcolours=0; maxbar = 4; break;          // Add red and make bars
+      case 15: thisdelay = 50; boolcolours=1; maxbar=1; break;                                                 // A pile of colours, 1 pixel in length
+      case 20: thisdelay = 50; fadeval = 128; break;                                                             // Slow down the fade
+      case 25: thisdelay = 50; colours[2]= 0x0000ff; boolcolours=0; numcolours=3; fadeval = 192; maxbar = 6; break; 
+      case 30: break;
+      case 35: break;
+      case 40: break;
+      case 45: break;
+      case 50: break;
+      case 55: break;
+    }
   } // if lastSecond
 } // ChangeMe()
