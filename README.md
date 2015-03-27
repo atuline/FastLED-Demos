@@ -5,9 +5,12 @@
 
 **Email:** atuline@gmail.com
 
-**Date:** February, 2015
+**Date:** March, 2015
 
 !!!!!!!!!!!!! WARNING !!!!!!!!!!!!!
+
+
+If this is your first foray into addressable LED's, then start off with a small strip of < 20 LED's. Long strips can exhibit some significant power issues, so start off small and work up to longer strips.
 
 Before attempting to use these demos, you should compile and run the examples found with the latest version of the FastLED library, available at:
 
@@ -27,7 +30,7 @@ The new sequences are now designed to be loop/non-blocking delay friendly. They 
 
 In addition to several standalone demos, I have included a display template as well as aalight and aainfra, which support multiple display sequences, a demo mode, keyboard, IR remote and updated pushbutton control.
 
-I have also included fht_log, which uses the Sparkfun MEMS microphone and the FHT (Fast Hartley Transform) library to respond to sound in the frequency domain. Very cool.
+I have also included a few sound reactive sequences, most notably fht_log, which uses the Sparkfun MEMS microphone and the FHT (Fast Hartley Transform) library to respond to sound in the frequency domain. Very cool.
 
 
 
@@ -47,7 +50,7 @@ Download FastLED from: [github.com/FastLED/FastLED](https://github.com/FastLED/F
 
 ## Update
 
-I've removed some clunky routines and replaced them some simple ones.
+I've replaced a pile of if statement with switch statement for the demo loops.
 
 ----------------------------------------------------------
 
@@ -63,3 +66,5 @@ My Github account is at:                https://github.com/atuline
 My Pastebins are at:                    http://pastebin.com/u/atuline
 
 My personal web site is at:             http://www.tuline.com
+
+My FastLED FAQ is at:                   http://www.tuline.com/dru/content/my-fastled-support-faq
