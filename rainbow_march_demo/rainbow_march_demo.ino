@@ -3,9 +3,9 @@
 
 By: Andrew Tuline
 
-Date: Oct, 2014
+Date: March, 2015
 
-Rainbow marching up the strand. Pretty basic, but oh so popular, and we get a few options as well.
+Rainbow marching up the strand. Pretty basic, but oh so popular, and we get a few options as well. We don't need to add a 'wheel' routine here.
 
 */
 
@@ -43,7 +43,6 @@ void setup() {
 } // setup()
 
 
-
 void loop () {
   ChangeMe();
   rainbow_march();
@@ -52,12 +51,10 @@ void loop () {
 } // loop()
 
 
-
 void rainbow_march() {                                         // The fill_rainbow call doesn't support brightness levels
   if (thisdir == 0) thishue += thisrot; else thishue-= thisrot;  // I could use signed math, but 'thisdir' works with other routines.
   fill_rainbow(leds, NUM_LEDS, thishue, deltahue);             // I don't change deltahue on the fly as it's too fast near the end of the strip.
 } // rainbow_march()
-
 
 
 void ChangeMe() {                                             // A time (rather than loop) based demo sequencer. This gives us full control over the length of each sequence.
@@ -65,17 +62,14 @@ void ChangeMe() {                                             // A time (rather 
   static uint8_t lastSecond = 99;                             // Static variable, means it's only defined once. This is our 'debounce' variable.
   if (lastSecond != secondHand) {                             // Debounce to make sure we're not repeating an assignment.
     lastSecond = secondHand;
-    if (secondHand ==  0)  {thisrot=1; deltahue=5;}
-    if (secondHand ==  5)  {thisdir=-1; deltahue=10;}
-    if (secondHand == 10)  {thisrot=5;}
-    if (secondHand == 15)  {thisrot=5; thisdir=-1; deltahue=20;}
-    if (secondHand == 20)  {deltahue=30;}
-    if (secondHand == 25)  {deltahue=2; thisrot=5;}
-    if (secondHand == 30)  {}
-    if (secondHand == 35)  {}
-    if (secondHand == 40)  {}
-    if (secondHand == 45)  {}
-    if (secondHand == 50)  {}
-    if (secondHand == 55)  {}
+    switch(secondHand) {
+      case  0: thisrot=1; deltahue=5; break;
+      case  5: thisdir=-1; deltahue=10; break;
+      case 10: thisrot=5; break;
+      case 15: thisrot=5; thisdir=-1; deltahue=20; break;
+      case 20: deltahue=30; break;
+      case 25: deltahue=2; thisrot=5; break;
+      case 30: break;
+    }
   }
 } // ChangeMe()

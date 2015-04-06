@@ -1,19 +1,33 @@
-/* one_sine_demo
+/* one_sine_button
 
 By: Andrew Tuline
 
-Date: Oct, 2014
+Date: March, 2015
 
 A demo showing the flexibility of just using a single sine wave. A little code and a lot of variables can go a long way. This includes an optional twinkle overlay for Mark Kriegsman.
 
+I've modified the timer based code in one_site_demo to support a button instead by using JChristensen's Button Library from:
+
+https://github.com/JChristensen/Button
+
+Note that a LONG press will reset it back to the first mode.
+
+
 */
 
-#define qsubd(x, b)  ((x>b)?wavebright:0)                   // Digital unsigned subtraction macro. if result <0, then => 0. Otherwise, take on fixed value.
-#define qsuba(x, b)  ((x>b)?x-b:0)                          // Analog Unsigned subtraction macro. if result <0, then => 0
+
+#define qsubd(x, b)  ((x>b)?wavebright:0)                     // Digital unsigned subtraction macro. if result <0, then => 0. Otherwise, take on fixed value.
+#define qsuba(x, b)  ((x>b)?x-b:0)                            // Analog Unsigned subtraction macro. if result <0, then => 0
 
 
 #include "FastLED.h"                                          // FastLED library.
- 
+#include "Button.h"                                           // Button library. Includes press, long press, double press detection.
+
+ // PUSHBUTTON SETUP STUFF
+const int buttonPin = 6;                                      // Digital pin used for debounced pushbutton
+Button myBtn(buttonPin, true, true, 50);                      // Declare the button
+
+
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Data pin to connect to the strip.
 #define LED_CK 11
@@ -45,6 +59,9 @@ uint8_t bgclr = 0;                                            // A rotating back
 uint8_t bgbri = 0;
 // End of resetvar() redefinitions.
 
+int ledMode = 0;                                              // Starting mode is typically 0. Use 99 if no controls available. ###### CHANGE ME #########
+int maxMode = 12;
+
 
 typedef struct {                                              // Define a structure for the twinkles that get overlaid on the moving waves.
       int twinkled;                                           // Supports a long strand of LED's.
@@ -71,26 +88,28 @@ void setup() {
 
 void loop()
 {
+  readbutton(); 
   ChangeMe();                                                 // Muck those variable around.
   one_sin();                                                  // Simple call to the routine.
   if(twinkrun == 1) twinkover();                              // You can keep or lose the twinkles.
   show_at_max_brightness_for_power();
   delay_at_max_brightness_for_power(loopdelay*2.5);
-  Serial.println(LEDS.getFPS());
+//  Serial.println(LEDS.getFPS());
 } // loop()
 
 
 
 void ChangeMe()
 {
-  uint8_t secondHand = (millis() / 1000) % 60;                // Increase this if you want a longer demo.
+//  uint8_t secondHand = (millis() / 1000) % 60;              // Increase this if you want a longer demo.
+  uint8_t secondHand = ledMode % 12;
   static uint8_t lastSecond = 99;                             // Static variable, means it's only defined once. This is our 'debounce' variable.
   
   // You can change variables, but remember to set them back in the next demo, or they will stay as is.
   if( lastSecond != secondHand) {
     lastSecond = secondHand;
     switch (secondHand) {
-      case  0: twinkrun = 1; thisrot = 1; thiscutoff=254; allfreq=8; bgclr = 50; bgbri=10; break; // Both rotating hues
+      case  0: twinkrun = 1; thisrot = 1; thiscutoff=254; allfreq=8; bgclr = 50; bgbri=10; break;  // Both rotating hues
       case  5: thisrot = 0; thisdir=1; break;                            // Just 1 rotating hue
       case 10: thishue = 255; bgclr=20; bgbri=10; break;                 // No rotating hues, all red.
       case 15: twinkrun = 0; break;                                      // Enough with the damn twinkles.
@@ -131,6 +150,19 @@ void twinkover() {                                                              
     mytwinks[i].twinkbright -= 8;
   }
 } // twinkle()
+
+
+void readbutton() {                                            // Read the button and increase the mode
+  myBtn.read();
+  if(myBtn.wasReleased()) {
+    ledMode = ledMode > maxMode ? 0 : ledMode+1;                  // Reset to 0 only during a mode change
+//    change_mode(ledMode);
+  }
+  if(myBtn.pressedFor(1000)) {
+    ledMode = 255;
+//    change_mode(ledMode);
+  }
+} // readbutton()
 
 
 

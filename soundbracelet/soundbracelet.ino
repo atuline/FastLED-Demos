@@ -72,20 +72,18 @@ void setup() {
   delay(1000);                                                // Power-up safety delay or something like that.  
   Serial.begin(57600);
 
-//  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);          // Use this for WS2812B
+//  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);        // Use this for WS2812B
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);  // Use this for WS2801 or APA102
 
   FastLED.setBrightness(max_bright);
   set_max_power_in_volts_and_milliamps(5, 500);               // FastLED 2.1 Power management set at 5V, 500mA
 } // setup()
 
-
  
 void loop() {
   soundbracelet();
   show_at_max_brightness_for_power();                         // Power managed FastLED display
 } // loop()
-
 
 
 void soundbracelet() {

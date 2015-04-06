@@ -34,12 +34,11 @@ uint8_t myfade = 255;                                         // Starting bright
 uint8_t bgcol = 0;                                            // Background colour rotates.
 int thisdelay = 50;                                           // Standard delay value.
 
-
  
 void setup() {
   Serial.begin(57600);
 
-//  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);          // Use this for WS2812B
+//  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);        // Use this for WS2812B
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);  // Use this for WS2801 or APA102
 
   FastLED.setBrightness(max_bright);
@@ -47,13 +46,11 @@ void setup() {
 } // setup()
 
 
-
 void loop () {
   ripple();
   show_at_max_brightness_for_power();
   delay_at_max_brightness_for_power(thisdelay*2.5);
 } // loop()
-
 
 
 void ripple() {
@@ -76,16 +73,15 @@ void ripple() {
       step = -1;
       break;
 
-    default:                                                          // Middle of the ripples.
+    default:                                                             // Middle of the ripples.
         leds[wrap(center + step)] += CHSV(colour, 255, myfade/step*2);   // Display the next pixels in the range for one side.
         leds[wrap(center - step)] += CHSV(colour, 255, myfade/step*2);   // Display the next pixels in the range for the other side.
-        step ++;                                                      // Next step.
+        step ++;                                                         // Next step.
         break;  
   } // switch step
 } // ripple()
  
- 
- 
+  
 int wrap(int step) {
   if(step < 0) return NUM_LEDS + step;
   if(step > NUM_LEDS - 1) return step - NUM_LEDS;

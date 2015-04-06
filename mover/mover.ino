@@ -5,8 +5,8 @@ By: Andrew Tuline
 
 Date: February 2015
 
- This is a simple pixel moving routine for those of you that just like to count pixels on a strand.
- I prefer to use sine waves as they provide a LOT of flexibility with less code for moving pixels around.
+This is a simple pixel moving routine for those of you that just like to count pixels on a strand.
+I prefer to use sine waves as they provide a LOT of flexibility with less code for moving pixels around.
 
 You should be able to add more variables, such as hues, hue rotation, direction and so forth.
 
@@ -30,12 +30,12 @@ struct CRGB leds[NUM_LEDS];                                   // Initialize our 
 
 // Define variables used by the sequence.
 
-uint8_t  thisdelay =  100;                                     // A delay value for the sequence(s).
-uint8_t   thisfade =   192;                                     // How quickly does it fade? Lower = slower fade rate.
+uint8_t thisdelay = 100;                                      // A delay value for the sequence(s).
+uint8_t  thisfade = 192;                                      // How quickly does it fade? Lower = slower fade rate.
 
 
 void setup() {
-  delay(1000);                                                 // Power-up safety delay or something like that.
+  delay(1000);                                                // Power-up safety delay or something like that.
   Serial.begin(57600);
 
 //  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);        // Use this for WS2812B
@@ -47,8 +47,8 @@ void setup() {
 
 
 void loop () {
-  ChangeMe();                                               // Check the demo loop for changes to the variables.
-  mover();                                                  // Call our sequence.
+  ChangeMe();                                                 // Check the demo loop for changes to the variables.
+  mover();                                                    // Call our sequence.
 } // loop()
 
 
@@ -58,7 +58,7 @@ void mover() {
     leds[i] += CHSV(hue, 255, 255);
     leds[(i+5) % NUM_LEDS] += CHSV(hue+85, 255, 255);         // We use modulus so that the location is between 0 and NUM_LEDS
     leds[(i+10) % NUM_LEDS] += CHSV(hue+170, 255, 255);       // Same here.
-    FastLED.show(); 
+    show_at_max_brightness_for_power();
     fadeToBlackBy(leds, NUM_LEDS, thisfade);                  // Low values = slower fade.
     delay_at_max_brightness_for_power(2.5*thisdelay);
   }
@@ -70,17 +70,11 @@ void ChangeMe() {                                             // A time (rather 
   static uint8_t lastSecond = 99;                             // Static variable, means it's only defined once. This is our 'debounce' variable.
   if (lastSecond != secondHand) {                             // Debounce to make sure we're not repeating an assignment.
     lastSecond = secondHand;
-    if (secondHand ==  0)  {thisdelay=20; thisfade=240; }     // You can change values here, one at a time , or altogether.
-    if (secondHand ==  5)  {thisdelay=50; thisfade=128; }      
-    if (secondHand == 10)  {thisdelay=100; thisfade=64; }    // Only gets called once, and not continuously for the next several seconds. Therefore, no rainbows.
-    if (secondHand == 15)  {}
-    if (secondHand == 20)  {}
-    if (secondHand == 25)  {}
-    if (secondHand == 30)  {}
-    if (secondHand == 35)  {}
-    if (secondHand == 40)  {}
-    if (secondHand == 45)  {}
-    if (secondHand == 50)  {}
-    if (secondHand == 55)  {}
+    switch(secondHand) {
+      case  0: thisdelay=20; thisfade=240; break;             // You can change values here, one at a time , or altogether.
+      case  5: thisdelay=50; thisfade=128; break;
+      case 10: thisdelay=100; thisfade=64; break;             // Only gets called once, and not continuously for the next several seconds. Therefore, no rainbows.
+      case 15: break;
+    }
   }
 } // ChangeMe()

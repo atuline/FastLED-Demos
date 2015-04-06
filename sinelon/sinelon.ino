@@ -7,7 +7,7 @@ Modified by: Andrew Tuline
 
 Date: February 2015
 
-This uses the built in beat in FastLED to move a dot back and forth. In this case, it uses two beats added together for more fun.
+This uses the built in beat in FastLED to move a dot back and forth. In this case, it uses two beats added together for more randomness.
 
 Please use FastLED 3.1 or greater.
 
@@ -28,24 +28,24 @@ Please use FastLED 3.1 or greater.
 #define NUM_LEDS 20                                           // Number of LED's.
 
 // Initialize changeable global variables.
-uint8_t max_bright = 64;                                     // Overall brightness definition. It can be changed on the fly.
+uint8_t max_bright = 64;                                      // Overall brightness definition. It can be changed on the fly.
 
 struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
 
 
 // Define variables used by the sequences.
-uint8_t   thisbeat =  23;
-uint8_t   thatbeat =  28;
-uint8_t   thisfade =   2;                                     // How quickly does it fade? Lower = slower fade rate.
-uint8_t    thissat = 255;                                     // The saturation, where 255 = brilliant colours.
-uint8_t    thisbri = 255;                                     // Brightness of a sequence.
-int          myhue =   0;
+uint8_t thisbeat =  23;
+uint8_t thatbeat =  28;
+uint8_t thisfade =   2;                                       // How quickly does it fade? Lower = slower fade rate.
+uint8_t  thissat = 255;                                       // The saturation, where 255 = brilliant colours.
+uint8_t  thisbri = 255;                                       // Brightness of a sequence.
+int        myhue =   0;
 
 
 void setup() {
-  delay(1000);                                                 // Power-up safety delay or something like that.
+  delay(1000);                                                // Power-up safety delay or something like that.
   Serial.begin(57600);
-//  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);          // Use this for WS2812B
+//  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);        // Use this for WS2812B
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);  // Use this for WS2801 or APA102
   
   FastLED.setBrightness(max_bright);
@@ -59,8 +59,7 @@ void loop () {
 } // loop()
 
 
-void sinelon() {
-  // a colored dot sweeping back and forth, with fading trails
+void sinelon() {                                              // a colored dot sweeping back and forth, with fading trails
   fadeToBlackBy( leds, NUM_LEDS, thisfade);
   int pos1 = beatsin16(thisbeat,0,NUM_LEDS);
   int pos2 = beatsin16(thatbeat,0,NUM_LEDS);

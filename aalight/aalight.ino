@@ -1,6 +1,6 @@
 /*
 
-aalight led lighting effects for FastLED 3.0 or greater.
+aalight led lighting effects for FastLED.
 
       By: Andrew Tuline
      URL: www.tuline.com
@@ -10,7 +10,7 @@ Pastebin: http://pastebin.com/u/atuline
  Youtube: https://www.youtube.com/user/atuline/videos
 
 
-Date: January, 2015
+Date: March, 2015
 
 
 Introduction:
@@ -31,10 +31,11 @@ Hardware Setup
 - 1 (or optionally 2) Arduino UNO or Nano 3.0 (is what I've been using).
 - Connect the positive end of the pushbutton to pin 6 of the Arduino.
 - Connect the negative end to ground. We will then program an internal pullup resistor on the Arduino.
-- WS2812B or (preferably) APA102 LED strip with data line connected to pin 12 (other pins are connected to Vin and Gnd of the Arduino). 
+- WS2812B or (preferably) APA102 LED strip with data line connected to pin 12. 
 - The clock line is connected to pin 11.
 - Sparkfun INMP401 MEMS microphone (a mic+opamp) with power connected to Arduino 3.3V supply, output to A5 of Arduino.
 - Connect Arduino 3.3V output to the AREF pin on the Arduino (for the 3.3V MEMS microphone).
+- If using APA102's (or other 4 pin strip) and want IR capability then connect the TSOP34838 IR receiver to pin 9 (other pins are 5V and Gnd).
 
 On a second Arduino (if using WS2812B's and want IR capability):
 
@@ -53,17 +54,17 @@ Compiling Note: When compiling or using the serial monitor, disconnect Tx/Rx bet
 Power Supplies I've Used
 
 - USB connection to computer for shorter strands.
-- 7.4V battery pack (2 x 3.7V rechargeable 18650 batteries) for shorter strands.
-- 6V battery pack (4 x 'AA' batteries) for shorter strands.
-- A short strand of LED's can connect to 5V output of the Arduino. Otherwise, use a dedicated 5V power supply or a 5V buck converter.
+- 7.4V battery pack (2 x 3.7V rechargeable 18650 batteries) for shorter strands connected to the power plug of the Arduino.
 - USB based battery pack, again for shorter strands.
+- 6V battery pack (4 x 'AA' batteries) for shorter strands connected to the power plug of the Arduino.
+- 7.4 DC power supply connected to Arduino and DC-DC converter to provide 5V and >500mA to a medium length strip.
 
 For short strands, connect the LED strip to 5V of the Arduino. For longer strands, get a dedicated 5V power supply, and make sure ALL grounds are connected.
 
 
 Libraries Required
 
-- FastLED library (v3.0) from https://github.com/FastLED/FastLED
+- FastLED library from https://github.com/FastLED/FastLED
 - Nico Hood's IRL library from https://github.com/NicoHood/IRLremote
 - JChristensen's Button Library from https://github.com/JChristensen/Button
 
@@ -104,7 +105,7 @@ A long push/release resets back to display mode 0.
 
 If No Controls Are Available
 
-If no controls are available, then it stays in demonstration mode '99'.
+If no controls are available, then the routine defaults to demonstration mode '99'.
 
 
 
@@ -194,7 +195,7 @@ y         Save of LED's to flash                B1                     // Not ye
 #define qsubd(x, b)  ((x>b)?wavebright:0)                     // A digital unsigned subtraction macro. if result <0, then => 0. Otherwise, take on fixed value.
 #define qsuba(x, b)  ((x>b)?x-b:0)                            // Unsigned subtraction macro. if result <0, then => 0.
 
-#define VERSION_NUMBER 2.0
+#define AALIGHT_VERSION 100
 
 #include "FastLED.h"                                          // FastLED library. Preferably the latest copy of FastLED 2.1.
 #include "Button.h"                                           // Button library. Includes press, long press, double press detection.
@@ -204,8 +205,8 @@ y         Save of LED's to flash                B1                     // Not ye
 #error "Requires FastLED 3.1 or later; check github for latest code."
 #endif
 
-
-const int interruptIR = 0;                                    // Meaning, pin 2 on an UNO.
+// IR Receiver definition
+const int interruptIR = 0;                                    // Meaning, pin 2 on an UNO for use by the IR receiver.
  
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Serial data pin for WS2801, WS2811, WS2812B or APA102
@@ -224,7 +225,7 @@ struct CRGB leds[NUM_LEDS];                                   // Initialize our 
 int ledMode = 99;                                             // Starting mode is typically 0. Use 99 if no controls available. ###### CHANGE ME #########
 int maxMode;                                                  // Maximum number of modes is set later.
 
-// PUSHBUTTON SETUP STUFF
+// Pushbutton pin definition
 const int buttonPin = 6;                                      // Digital pin used for debounced pushbutton
 
 // int buttonState = 0;
@@ -232,18 +233,17 @@ const int buttonPin = 6;                                      // Digital pin use
 Button myBtn(buttonPin, true, true, 50);                      // Declare the button
 
 
-// MICROPHONE SETUP STUFF
+// Microphone pin definition
 #define MIC_PIN 5                                             // Analog (not digital) port for microphone
 #define DC_OFFSET  32                                         // DC offset in mic signal - if unusure, leave 0
 
 
-// SERIAL SETUP STUFF
+// Serial definition
 #define SERIAL_BAUDRATE 57600                                 // Or 115200.
 #define SERIAL_TIMEOUT 5
 
 byte inbyte;                                                  // Serial input byte
 int thisarg;                                                  // Serial input argument
-
 
 
 // Generic variables
@@ -260,6 +260,8 @@ bool thisdir = 0;                                             // Standard direct
 // Matrix variables
 
 bool huerot = 0;
+uint8_t bgclr = 0;
+uint8_t bgbri = 0;
 
 // Two_sin variables-------------------------------------------------------------------------
 uint8_t wavebright = 128;                                     // You can change the brightness of the waves/bars rolling across the screen. Best to make them not as bright as the sparkles.
@@ -285,7 +287,8 @@ int twinkrate = 100;
 // One_sin variables -----------------------------------------------------------------------
 
 // bool thisdir = 0;
-uint8_t bgclr = 0;
+// uint8_t bgclr = 0;
+// uint8_t bgbri = 0;
 
 
 // pop_fade variables ----------------------------------------------------------------------
@@ -366,22 +369,22 @@ void setup() {
   Serial.begin(SERIAL_BAUDRATE);                              // SETUP HARDWARE SERIAL (USB)
   Serial.setTimeout(SERIAL_TIMEOUT);
 
-  IRLbegin<IR_ALL>(interruptIR);                                // IR setup
+  IRLbegin<IR_ALL>(interruptIR);                              // IR setup
   
-  //pinMode(buttonPin, INPUT_PULLUP);                           // Debounced pushbutton with internal pullup (used to select next mode)
+  //pinMode(buttonPin, INPUT_PULLUP);                         // Debounced pushbutton with internal pullup (used to select next mode)
 
   LEDS.setBrightness(max_bright);                             // Set the generic maximum brightness value.
 
 //  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER >(leds, NUM_LEDS); // WS2812B definition
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER >(leds, NUM_LEDS); // APA102 or WS2801 definition
   
-  set_max_power_in_volts_and_milliamps(5, 500);                //5V, 500mA
+  set_max_power_in_volts_and_milliamps(5, 500);               //5V, 500mA
 
-  random16_set_seed(4832);                                     // Awesome randomizer
+  random16_set_seed(4832);                                    // Awesome randomizer
   random16_add_entropy(analogRead(2));
 
   Serial.println("---SETUP COMPLETE---");
-  change_mode(ledMode);                                        // Initialize the first sequence
+  change_mode(ledMode, 1);                                    // Initialize the first sequence
 } // setup()
 
 
@@ -391,172 +394,117 @@ void loop() {
   getirl();
   readbutton();                                               // Button press increases the ledMode up to last contiguous mode and then starts over at 0.
   readkeyboard();                                             // Get keyboard input.
-  strobemode();
+  change_mode(ledMode, 0);                                    // Strobe, don't set it.
   show_at_max_brightness_for_power();                         // Power managed display of LED's.
   delay_at_max_brightness_for_power(2.5*thisdelay);           // Power managed FastLED delay.
-//  Serial.println(LEDS.getFPS());                              // Display frames per second in the serial monitor. Disable the delay in order to see how fast/efficient your sequence is.
+//  Serial.println(LEDS.getFPS());                            // Display frames per second in the serial monitor. Disable the delay in order to see how fast/efficient your sequence is.
 } // loop()
 
 
+void change_mode(int newMode, int mc){                        // mc stands for 'Mode Change', where mc = 0 is strobe the routine, while mc = 1 is change the routine
 
-void change_mode(int newMode){
-  fill_solid(leds,NUM_LEDS,CRGB(0,0,0));                      // Clean up the array for the first time through. Don't show display though, so you may have a smooth transition.
+   maxMode = 41;
+   if(mc) fill_solid(leds,NUM_LEDS,CRGB(0,0,0));              // Clean up the array for the first time through. Don't show display though, so you may have a smooth transition.
 
   switch (newMode) {                                          // First time through a new mode, so let's initialize the variables for a given display.
 
-    case  0: fill_solid(leds,NUM_LEDS,CRGB(0,0,0)); LEDS.show(); break;              // All off, not animated.
-    case  1: fill_solid(leds, NUM_LEDS,CRGB(255,255,255)); LEDS.show(); break;        // All on, not animated.
-    case  2: thisdelay=20; twinkrate=NUM_LEDS; thishue=0; thissat=255; thisbright=255; thisfade=64; break;
-    case  3: thisdelay=10; thisrot=1; thatrot=1; break;                         // two_sin
-    case  4: thisdelay=10; thisrot=0; thisdir=1; break;                                  // two_sin
-    case  5: thisdelay=10; thatrot=0; thishue=255; thathue=255;break;                          // two_sin
-    case  6: thisdelay=10; allfreq=16; thathue=128; break;                                       // two_sin
-    case  7: thisdelay=10; thiscutoff=96; thishue=196; thatcutoff=240; break;                                 // two_sin
-    case  8: thisdelay=10; thiscutoff=96; thatcutoff=96; thisrot=1; break;                     // two_sin
-    case  9: thisdelay=10; thisspeed= -4; thatspeed= -4;break;                                       // two_sin
-    case 10: thisdelay=10; thiscutoff=128; thatcutoff=128; wavebright=64; break;               // two_sin
-    case 11: thisdelay=10; wavebright=128; thisspeed=3; break;                                         // two_sin
-    case 12: thisdelay=10; thisspeed=3; thatspeed=-3; break;                                         // two_sin
-    case 13: thisdelay=30; thishue=95; break;                                             // matrix
-    case 14: thisdelay=30; thisdir=1; break;                                                            // matrix
-    case 15: thisdelay=30; thishue=random8(); break;                                                    // matrix
-    case 16: thisdelay=20; thisrot=1; thiscutoff=254; allfreq=8; break;                // one_sin
-    case 17: thisdelay=20; thisrot=0; break;                                                        // one_sin
-    case 18: thisdelay=20; thishue=255; break;                                                        // one_sin
-    case 19: thisdelay=20; allfreq=16; break;                                                        // one_sin
-    case 20: thisdelay=20; thiscutoff=96; break;                                                        // one_sin
-    case 21: thisdelay=20; thiscutoff=128; wavebright=64; break;                                    // one_sin
-    case 22: thisdelay=40; colours[0]=0xffffff; numcolours=1; boolcolours=0; maxbar=1; break;       // pop_fade
-    case 23: thisdelay=40; colours[1]=0xff0000; numcolours=2; boolcolours=0; maxbar=4; break;       // pop_fade
-    case 24: thisdelay=40; fadeval=192; break;                                                        // pop_fade
-    case 25: thisdelay=40; boolcolours=1; maxbar=1; break;                                              // pop_fade
-    case 26: thisdelay=40; fadeval=128; break;                                                        // pop_fade
-    case 27: thisdelay=40; colours[2]= 0x0000ff; boolcolours=0; numcolours=3; fadeval=192; maxbar=6; break; //pop_fade
-    case 28: thisdelay=20; mul1=20; mul2=25; mul3=22; break;                      // three_sin
-    case 29: thisdelay=20; mul1=5; mul2=8; mul3=7; break;                                         // three_sin
-    case 30: thisdelay=20; lvl1=220; lvl2=220; lvl3=220; break;                                   // three_sin
-    case 31: thisdelay=10; thisrot=1; deltahue=5; break;                                // rainbow_march
-    case 32: thisdelay=10; thisdir=-1; deltahue=10; break;                                              // rainbow_march
-    case 33: thisdelay=10; thisrot=5; break;                                                          // rainbow_march
-    case 34: thisdelay=10; thisrot=5; thisdir=-1; deltahue=20; break;                                   // rainbow_march
-    case 35: thisdelay=10; deltahue=30; break;                                                           // rainbow_march
-    case 36: thisdelay=10; deltahue=2; thisrot=5; break;                                                  // rainbow_march
-    case 37: thisdelay=20; octaves=1; hue_octaves=2; hxy=6000; x=5000; xscale=3000; hue_scale=50; hue_speed=15; x_speed=100; break; // noise16
-    case 38: thisdelay=20; hxyinc = random16(1,15); octaves=random16(1,3); hue_octaves=random16(1,5); hue_scale=random16(10, 50);  x=random16(); xscale=random16(); hxy= random16(); hue_time=random16(); hue_speed=random16(1,3); x_speed=random16(1,30); break; // noise16
-    case 39: thisdelay = 20; thishue = 20; // confetti
-    case 40: thisdelay = 20; thishue = 50; // sinelon
-    case 41: thisdelay = 10; // juggle
+    case  0: if(mc) {fill_solid(leds,NUM_LEDS,CRGB(0,0,0)); LEDS.show();} LEDS.show(); break;              // All off, not animated.
+    case  1: if(mc) {fill_solid(leds, NUM_LEDS,CRGB(255,255,255)); LEDS.show();} LEDS.show(); break;              // All on, not animated.
+    case  2: if(mc) {thisdelay=20; twinkrate=NUM_LEDS; thishue=0; thissat=255; thisbright=255; thisfade=64; } twinkle(); break;
+    case  3: if(mc) {thisdelay=10; thisrot=1; thatrot=1;} two_sin(); break;
+    case  4: if(mc) {thisdelay=10; thisrot=0; thisdir=1;} two_sin(); break;
+    case  5: if(mc) {thisdelay=10; thatrot=0; thishue=255; thathue=255;} two_sin(); break;
+    case  6: if(mc) {thisdelay=10; allfreq=16; thathue=128;} two_sin(); break;
+    case  7: if(mc) {thisdelay=10; thiscutoff=96; thishue=196; thatcutoff=240;} two_sin(); break;
+    case  8: if(mc) {thisdelay=10; thiscutoff=96; thatcutoff=96; thisrot=1;} two_sin(); break;
+    case  9: if(mc) {thisdelay=10; thisspeed= -4; thatspeed= -4;} two_sin(); break;
+    case 10: if(mc) {thisdelay=10; thiscutoff=128; thatcutoff=128; wavebright=64;} two_sin(); break;
+    case 11: if(mc) {thisdelay=10; wavebright=128; thisspeed=3;} two_sin(); break;
+    case 12: if(mc) {thisdelay=10; thisspeed=3; thatspeed=-3;} two_sin(); break;
+    case 13: if(mc) {thisdelay=30; thishue=95; bgclr=100; bgbri=10;} matrix(); break;
+    case 14: if(mc) {thisdelay=30; thishue=40; thisdir=1; bgclr=75;} matrix(); break;
+    case 15: if(mc) {thisdelay=30; thishue=random8(); huerot=1; bgbri=0;} matrix(); break;
+    case 16: if(mc) {thisdelay=20; thisrot=1; thiscutoff=254; allfreq=8; bgclr=0; bgbri=10;} one_sin(); break;
+    case 17: if(mc) {thisdelay=20; thisrot=0; bgclr=50;} one_sin(); break;
+    case 18: if(mc) {thisdelay=20; thishue=255; bgclr=100; bgbri=40;} one_sin(); break;
+    case 19: if(mc) {thisdelay=20; allfreq=16; bgbri=0;} one_sin(); break;
+    case 20: if(mc) {thisdelay=20; thiscutoff=96; bgclr=200; bgbri=20;} one_sin(); break;
+    case 21: if(mc) {thisdelay=20; thiscutoff=128; wavebright=64;} one_sin(); break;
+    case 22: if(mc) {thisdelay=40; colours[0]=0xffffff; numcolours=1; boolcolours=0; maxbar=1;} pop_fade(); break;
+    case 23: if(mc) {thisdelay=40; colours[1]=0xff0000; numcolours=2; boolcolours=0; maxbar=4;} pop_fade(); break;
+    case 24: if(mc) {thisdelay=40; fadeval=192;} pop_fade(); break;
+    case 25: if(mc) {thisdelay=40; boolcolours=1; maxbar=1;} pop_fade(); break;
+    case 26: if(mc) {thisdelay=40; fadeval=128;} pop_fade(); break;
+    case 27: if(mc) {thisdelay=40; colours[2]= 0x0000ff; boolcolours=0; numcolours=3; fadeval=192; maxbar=6;} pop_fade(); break;
+    case 28: if(mc) {thisdelay=20; mul1=20; mul2=25; mul3=22;} three_sin(); break;
+    case 29: if(mc) {thisdelay=20; mul1=5; mul2=8; mul3=7;} three_sin(); break;
+    case 30: if(mc) {thisdelay=20; lvl1=220; lvl2=220; lvl3=220;} three_sin(); break;
+    case 31: if(mc) {thisdelay=10; thisrot=1; deltahue=5;} rainbow_march(); break;
+    case 32: if(mc) {thisdelay=10; thisdir=-1; deltahue=10;} rainbow_march(); break;
+    case 33: if(mc) {thisdelay=10; thisrot=5;} rainbow_march(); break;
+    case 34: if(mc) {thisdelay=10; thisrot=5; thisdir=-1; deltahue=20;} rainbow_march(); break;
+    case 35: if(mc) {thisdelay=10; deltahue=30;} rainbow_march(); break;
+    case 36: if(mc) {thisdelay=10; deltahue=2; thisrot=5;} rainbow_march(); break;
+    case 37: if(mc) {thisdelay=20; octaves=1; hue_octaves=2; hxy=6000; x=5000; xscale=3000; hue_scale=50; hue_speed=15; x_speed=100;} noise16(); break;
+    case 38: if(mc) {thisdelay=20; hxyinc = random16(1,15); octaves=random16(1,3); hue_octaves=random16(1,5); hue_scale=random16(10, 50);  x=random16(); xscale=random16(); hxy= random16(); hue_time=random16(); hue_speed=random16(1,3); x_speed=random16(1,30);} noise16(); break;
+    case 39: if(mc) {thisdelay=20; thishue = 20;} confetti(); break;
+    case 40: if(mc) {thisdelay=20; thishue = 50;} sinelon(); break;
+    case 41: if(mc) {thisdelay=10;} juggle(); break;
 
     // DEMO MODE
-    case 99: break;                                           // Standard demos
+    case 99: demo_modeA(); break;
 
   } // switch newMode
 
   ledMode = newMode;
-  Serial.print("Mode is: ");
-  Serial.println(ledMode);
 } // change_mode()
-
 
 
 //----------------- Hardware Support Functions ---------------------------------------------
 
-void strobemode() {
-  maxMode = 41;
-  switch (ledMode) {                                          // Looping through (and not initializing) the current mode. Don't initialize variables here, as we are just going through loop again.
-    case   0: LEDS.show();      break;                        // All off, not animated.
-    case   1: LEDS.show();      break;                        // All on, not animated.
-    case   2: twinkle();        break;                        // I kept twinkle for old time's sake. Pop_fade does everything it does and more.
-    case   3: two_sin();        break;
-    case   4: two_sin();        break;
-    case   5: two_sin();        break;
-    case   6: two_sin();        break;
-    case   7: two_sin();        break;
-    case   8: two_sin();        break;
-    case   9: two_sin();        break;
-    case  10: two_sin();        break;
-    case  11: two_sin();        break;
-    case  12: two_sin();        break;
-    case  13: matrix();         break;
-    case  14: matrix();         break; 
-    case  15: matrix();         break;
-    case  16: one_sin();        break;
-    case  17: one_sin();        break;
-    case  18: one_sin();        break;
-    case  19: one_sin();        break;
-    case  20: one_sin();        break;
-    case  21: one_sin();        break;
-    case  22: pop_fade();       break;
-    case  23: pop_fade();       break;
-    case  24: pop_fade();       break;
-    case  25: pop_fade();       break;
-    case  26: pop_fade();       break;
-    case  27: pop_fade();       break;
-    case  28: three_sin();      break;
-    case  29: three_sin();      break;
-    case  30: three_sin();      break;
-    case  31: rainbow_march();  break;
-    case  32: rainbow_march();  break;
-    case  33: rainbow_march();  break;
-    case  34: rainbow_march();  break;
-    case  35: rainbow_march();  break;
-    case  36: rainbow_march();  break;
-    case  37: noise16();        break;
-    case  38: noise16();        break;
-    case  39: confetti();       break;
-    case  40: sinelon();        break;
-    case  41: juggle();         break;
-
-    // DEMO MODE
-    case 99: demo_modeA();      break;                        // This is the standard demo mode.
-  } // switch ledMode
-} // strobemode()
 
 
-void getirl() {                                       // This is the built-in IR function that just selects a mode.
-  if (IRLavailable()) {                              // Read the IR receiver. Result are poor if using 3 pin strands such as WS2812B.
+void getirl() {                                               // This is the built-in IR function that just selects a mode.
+  if (IRLavailable()) {                                       // Read the IR receiver. Result are poor if using 3 pin strands such as WS2812B.
     Serial.print("Command:");
     Serial.println(IRLgetCommand());
     switch(IRLgetCommand()) {
 
-      case 65280:  max_bright++;      break;          //a1 - max_bright++;
-      case 65025:  max_bright--;      break;          //a2 - max_bright--;
-      case 64770:  change_mode(1);    break;          //a3 - change_mode(1);
-      case 64515:  change_mode(0);    break;          //a4 - change_mode(0);
+      case 65280:  max_bright++;        break;                //a1 - max_bright++;
+      case 65025:  max_bright--;        break;                //a2 - max_bright--;
+      case 64770:  change_mode(1,1);    break;                //a3 - change_mode(1);
+      case 64515:  change_mode(0,1);    break;                //a4 - change_mode(0);
 
-      case 64260:  change_mode(5);    break;          //b1 - 
-      case 64005:  change_mode(6);    break;          //b2 - 
-      case 63750:  change_mode(7);    break;          //b3 - 
-      case 63495:  change_mode(8);    break;          //b4 - 
+      case 64260:  change_mode(5,1);    break;                //b1 - 
+      case 64005:  change_mode(6,1);    break;                //b2 - 
+      case 63750:  change_mode(7,1);    break;                //b3 - 
+      case 63495:  change_mode(8,1);    break;                //b4 - 
 
-      case 63240:  change_mode(9);    break;          //c1 - 
-      case 62985:  thisdelay++;       break;          //c2 - thisdelay++;
-      case 62730:  thisdelay--;       break;          //c3 - thisdelay--;
-      case 62475:  change_mode(12);   break;          //c4
+      case 63240:  change_mode(9,1);    break;                //c1 - 
+      case 62985:  thisdelay++;         break;                //c2 - thisdelay++;
+      case 62730:  thisdelay--;         break;                //c3 - thisdelay--;
+      case 62475:  change_mode(12,1);   break;                //c4
 
-      case 62220:  change_mode(13);   break;          //d1
-      case 61965:  ledMode--; change_mode(ledMode);  break;    //d2 - change_mode(ledMode--);
-      case 61710:  ledMode++; change_mode(ledMode);  break;    //d3 - change_mode(ledMode++);
-      case 61455:  change_mode(16);   break;          //d4
+      case 62220:  change_mode(13,1);   break;                //d1
+      case 61965:  ledMode--; change_mode(ledMode,1); break;  //d2 - change_mode(ledMode--);
+      case 61710:  ledMode++; change_mode(ledMode,1); break;  //d3 - change_mode(ledMode++);
+      case 61455:  change_mode(16,1);   break;                //d4
 
-      case 61200:  change_mode(17);   break;          //e1 -
-      case 60945:  thisdir = 1;       break;          //e2 - thisdir = 1;
-      case 60690:  thisdir = 0;       break;          //e3 - thisdir = 0;
-      case 60435:  change_mode(20);   break;          //e4
+      case 61200:  change_mode(17,1);   break;                //e1 -
+      case 60945:  thisdir = 1;         break;                //e2 - thisdir = 1;
+      case 60690:  thisdir = 0;         break;                //e3 - thisdir = 0;
+      case 60435:  change_mode(20,1);   break;                //e4
 
-      case 60180:  change_mode(21);   break;          //f1
-      case 59925:  thishue-=5;         break;          //f2 - thishue--;
-      case 59670:  thishue+=5;         break;          //f3 - thishue++;
-      case 59415:  change_mode(99);   break;          //f4
+      case 60180:  change_mode(21,1);   break;                //f1
+      case 59925:  thishue-=5;          break;                //f2 - thishue--;
+      case 59670:  thishue+=5;          break;                //f3 - thishue++;
+      case 59415:  change_mode(99,1);   break;                //f4
 
-      default: break;                                // We could do something by default
+      default:                          break;                // We could do something by default
     } // switch
     IRLreset();
   } // if IRLavailable()
 } // getir()
-
-
-
 
 
 void readkeyboard() {                                         // PROCESS HARDWARE SERIAL COMMANDS AND ARGS
@@ -603,7 +551,7 @@ void readkeyboard() {                                         // PROCESS HARDWAR
 
       case 109:                                               // "m" - SET MODE to #
         thisarg = Serial.parseInt();
-        change_mode(thisarg);
+        change_mode(thisarg, 1);
         break;
 
       case 110:                                               // "n0 or n1" - DIRECTION is 0 or 1
@@ -616,11 +564,11 @@ void readkeyboard() {                                         // PROCESS HARDWAR
         if (thisarg == 1) ledMode--;
         if (thisarg == 2) ledMode++;
         if (ledMode < 0) ledMode = 0;
-        change_mode(ledMode);
+        change_mode(ledMode, 1);
         break;
 
       case 113:                                               // "q" - DISPLAY VERSION NUMBER
-        Serial.print(VERSION_NUMBER);
+        Serial.print(AALIGHT_VERSION);
         break;
 
       case 114:                                               // "r1 or r2" - DECREASE OR INCREASE BRIGHTNESS by / or * 2
@@ -650,15 +598,15 @@ void readkeyboard() {                                         // PROCESS HARDWAR
 } // readkeyboard()
 
 
-void readbutton() {                                            // Read the button and increase the mode
+void readbutton() {                                           // Read the button and increase the mode
   myBtn.read();
   if(myBtn.wasReleased()) {
-    ledMode = ledMode > maxMode ? 0 : ledMode+1;                  // Reset to 0 only during a mode change
-    change_mode(ledMode);
+    ledMode = ledMode > maxMode ? 0 : ledMode+1;              // Reset to 0 only during a mode change
+    change_mode(ledMode, 1);
   }
   if(myBtn.pressedFor(1000)) {
     ledMode = 255;
-    change_mode(ledMode);
+    change_mode(ledMode, 1);
   }
 } // readbutton()
 

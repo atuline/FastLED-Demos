@@ -83,32 +83,33 @@ void loop() {
 
 
 
-void ChangeMe()
-{
+void ChangeMe() {
   uint8_t secondHand = (millis() / 1000) % 60;                // Increase this if you want a longer demo.
   static uint8_t lastSecond = 99;                             // Static variable, means it's only defined once. This is our 'debounce' variable.
   
   // You can change variables, but remember to set them back in the next demo, or they will stay as is.
-  if( lastSecond != secondHand) {
+  if (lastSecond != secondHand) {
     lastSecond = secondHand;
-    if( secondHand ==  0) {thisrot = 1; thatrot = 1;}                                             // Both rotating hues
-    if( secondHand == 5)  {thisrot = 0; thisdir = 1;}                                                          // Just 1 rotating hue
-    if( secondHand == 10)  {thatrot = 0; thishue = 255; thathue = 255;}                           // No rotating hues, all red.
-    if( secondHand == 15)  {twinkrun = 0;}                                                        // Enough with the damn twinkles.
-    if( secondHand == 20)  {allfreq = 16; thathue = 128;}                                         // Time to make a wider bar.
-    if( secondHand == 25)  {thiscutoff = 96; thatcutoff = 240;}                                   // Change width of bars.
-    if( secondHand == 30)  {thiscutoff = 96; thatcutoff = 96; thisrot = 1;}                       // Make those bars overlap, and rotate a hue
-    if( secondHand == 35)  {thisspeed= -4; thatspeed= -4;}                                        // Change direction                                      // Change the direction.
-    if( secondHand == 40)  {thiscutoff = 128; thatcutoff = 128; wavebright = 64; twinkrun = 1;}   // Yet more changes
-    if( secondHand == 45)  {wavebright = 128; twinkrun = 0; thisspeed = 3;}                       // Now, we change speeds.
-    if( secondHand == 50)  {thisspeed = 3; twinkrun = 0; thatspeed = -3;}                            // Opposite directions
-    if( secondHand == 55)  {resetvar(); }                                                         // Getting complicated, let's reset the variables.
+    switch (secondHand) {
+      case  0: thisrot = 1; thatrot = 1; break;                                      // Both rotating hues
+      case  5: thisrot = 0; thisdir = 1; break;                                      // Just 1 rotating hue
+      case 10: thatrot = 0; thishue = 255; thathue = 255; break;                     // No rotating hues, all red.
+      case 15: twinkrun = 0; break;                                                  // Enough with the damn twinkles.
+      case 20: allfreq = 16; thathue = 128; break;                                   // Time to make a wider bar.
+      case 25: thiscutoff = 96; thatcutoff = 240; break;                             // Change width of bars.
+      case 30: thiscutoff = 96; thatcutoff = 96; thisrot = 1; break;                 // Make those bars overlap, and rotate a hue
+      case 35: thisspeed= -4; thatspeed= -4; break;                                  // Change direction                                      // Change the direction.
+      case 40: thiscutoff = 128; thatcutoff = 128; wavebright = 64; twinkrun = 1; break; // Yet more changes
+      case 45: wavebright = 128; twinkrun = 0; thisspeed = 3; break;                 // Now, we change speeds.
+      case 50: thisspeed = 3; twinkrun = 0; thatspeed = -3; break;                      // Opposite directions
+      case 55: resetvar(); break;                                                    // Getting complicated, let's reset the variables.
+      case 60: break;
+    }
   }
 } // ChangeMe()
 
 
-
-void two_sin() {                                                              // This is the heart of this program. Sure is short.
+void two_sin() {                                                             // This is the heart of this program. Sure is short.
 
   if (thisdir == 0) {thisphase += thisspeed; thatphase += thatspeed;} 
   else {thisphase -= thisspeed; thatphase -= thatspeed;}
@@ -126,9 +127,7 @@ void two_sin() {                                                              //
 } // two_sin()
 
 
-
-
-void twinkleover() {                                                          // This has been added for Mark Kriegsman.
+void twinkleover() {                                                       // This has been added for Mark Kriegsman.
   for (int i = 0; i < numtwinks; i++) {
     if (mytwinks[i].twinkbright <0) {
       mytwinks[i].twinkled = random8(0, NUM_LEDS-1);
@@ -140,8 +139,7 @@ void twinkleover() {                                                          //
 } // twinkle()
 
 
-
-void resetvar() {                      // Reset the variable back to the beginning.
+void resetvar() {                   // Reset the variable back to the beginning.
   wavebright = 128;                    // You can change the brightness of the waves/bars rolling across the screen. Best to make them not as bright as the sparkles.
   thishue = 0;                         // You can change the starting hue value for the first wave.
   thathue = 140;                       // You can change the starting hue for other wave.

@@ -32,7 +32,7 @@ struct CRGB leds[NUM_LEDS];                                   // Initializxe our
 // Initialize noise specific variables
 uint8_t thisdelay = 20;                                       // A delay value for the sequence(s)
 uint8_t thisdir = 0;                                          // We can reverse the direction.
-uint32_t  x,hue_time;                                         // x & time values
+uint32_t x,hue_time;                                          // x & time values
 uint8_t octaves=2;       //2                                  // how many octaves to use for the brightness
 uint8_t hue_octaves=3;   //3                                  // how many octaves to use for the hue
 int xscale=57771;        //57771                              // the 'distance' between points on the x axis
@@ -48,12 +48,12 @@ void setup() {
   Serial.begin(57600);
 
 //  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);          // Use this for WS2812B
-  LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);  // Use this for WS2801 or APA102
+  LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);    // Use this for WS2801 or APA102
 
   FastLED.setBrightness(max_bright);
-  set_max_power_in_volts_and_milliamps(5, 500);                // FastLED 2.1 Power management set at 5V, 500mA
+  set_max_power_in_volts_and_milliamps(5, 500);               // FastLED power management set at 5V, 500mA
 
-  random16_set_seed(4832);                                     // Awesome randomizer
+  random16_set_seed(4832);                                    // Awesome randomizer
   random16_add_entropy(analogRead(2));
 } // setup()
 
@@ -73,7 +73,7 @@ void noise16() {
   fill_noise16(leds, NUM_LEDS, octaves, x, xscale, hue_octaves, hxy, hue_scale, hue_time);
   if (thisdir == 0) {hxy+=hxyinc; x += x_speed; hue_time+= hue_speed;} else { hxy-=hxyinc; x -= x_speed; hue_time -= hue_speed;}
 
-//  for (int i=0; i<NUM_LEDS; i++) {                            // We can filter, we can invert, we can do all sorts of things.
+//  for (int i=0; i<NUM_LEDS; i++) {                          // We can filter, we can invert, we can do all sorts of things.
 //    leds[i].r = 0;                                          // Totally filter out red.
 //    leds[i].g = 0;
 //    leds[i].b = 0;
@@ -81,22 +81,18 @@ void noise16() {
 //    leds[i].g =qsubd(leds[i].g, 32);                        // Set a min value to display.
 //    leds[i].b =qsuba(leds[i].b, 32);                        // Set a min value to display.
 //  }
-
-} // noisy()
-
+} // nois16()
 
 
 void ChangeMe() {
-  uint8_t secondHand = (millis() / 1000)%60 ;                 // Increase this if you want a longer demo. Currently changes once per minute.
+  uint8_t secondHand = (millis() / 1000)%20 ;                 // Increase this if you want a longer demo. Currently changes once per minute.
   static uint8_t lastSecond = 99;                             // Static variable, means it's only defined once. This is our 'debounce' variable.
-  
   if( lastSecond != secondHand) {
     lastSecond = secondHand;
-    if (secondHand == 0)  {hxyinc = 3; octaves = 1; hue_octaves = 2; hxy = 6000; x = 5000; xscale=3000; hue_scale=50; hue_speed=15; x_speed=100; }
-    if (secondHand == 10) {hxyinc = random16(1,15); octaves=random16(1,3); hue_octaves=random16(1,5); hue_scale=random16(10, 50);  x = random16(); xscale=random16(); hxy= random16(); hue_time = random16(); hue_speed = random16(1,3); x_speed = random16(1,30); }
-    if (secondHand == 20) {}
-    if (secondHand == 30) {}
-    if (secondHand == 40) {}
-    if (secondHand == 50) {}
+    switch(secondHand) {
+      case  0: hxyinc = 3; octaves = 1; hue_octaves = 2; hxy = 6000; x = 5000; xscale=3000; hue_scale=50; hue_speed=15; x_speed=100; break;
+      case 10: hxyinc = random16(1,15); octaves=random16(1,3); hue_octaves=random16(1,5); hue_scale=random16(10, 50);  x = random16(); xscale=random16(); hxy= random16(); hue_time = random16(); hue_speed = random16(1,3); x_speed = random16(1,30); break;
+      case 20: break;
+    }
   }
 } // ChangeMe()

@@ -1,7 +1,9 @@
 
 /* Matrix
 
-By: funkboxing LED and significantly modified by Andrew Tuline
+By: funkboxing LED
+
+Modified by: Andrew Tuline
 
 Date: Oct, 2014
 
@@ -26,11 +28,13 @@ struct CRGB leds[NUM_LEDS];                                   // Initialize our 
 
 
 // Initialize global variables for sequences
-int thisdelay = 50;                                           // A delay value for the sequence(s)
-int thishue = 95;
-int thissat = 255;
-int thisdir = 0;
-bool huerot = 0;                                               // Does the hue rotate? 1 = yes
+int thisdelay =  50;                                          // A delay value for the sequence(s)
+int   thishue =  95;
+int   thissat = 255;
+int   thisdir =   0;
+bool   huerot =   0;                                          // Does the hue rotate? 1 = yes
+uint8_t bgclr =   0;
+uint8_t bgbri =   0;
 
 
 void setup() {
@@ -40,7 +44,7 @@ void setup() {
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);   // For APA102 or WS2801
 
   FastLED.setBrightness(max_bright);
-  set_max_power_in_volts_and_milliamps(5, 500);               // FastLED 2.1 Power management set at 5V, 500mA
+  set_max_power_in_volts_and_milliamps(5, 500);               // FastLED power management set at 5V, 500mA
 } // setup()
 
 
@@ -50,19 +54,20 @@ void loop () {
   matrix();
   show_at_max_brightness_for_power();
   delay_at_max_brightness_for_power(thisdelay*2.5);
-  Serial.println(LEDS.getFPS());
+//  Serial.println(LEDS.getFPS());
 } // loop()
-
 
 
 void matrix() {                                               // One line matrix
 
   if (huerot) thishue=thishue+5;
-
+  
   if (random16(90) > 80) {
     if (thisdir == 0) leds[0] = CHSV(thishue, thissat, 255); else leds[NUM_LEDS-1] = CHSV(thishue, thissat, 255);
   }
-  else {leds[0] = CHSV(thishue, thissat, 0);}
+  else {
+    if (thisdir ==0) leds[0] = CHSV(bgclr, thissat, bgbri); else leds[NUM_LEDS-1] = CHSV(bgclr, thissat, bgbri);
+  }
 
   if (thisdir == 0) {
     for (int i = NUM_LEDS-1; i >0 ; i-- ) leds[i] = leds[i-1];
@@ -72,23 +77,18 @@ void matrix() {                                               // One line matrix
 } // matrix()
 
 
-
 void ChangeMe() {                                             // A time (rather than loop) based demo sequencer. This gives us full control over the length of each sequence.
-  uint8_t secondHand = (millis() / 1000) % 60;                // Change '25' to a different value to change length of the loop.
+  uint8_t secondHand = (millis() / 1000) % 25;                // Change '25' to a different value to change length of the loop.
   static uint8_t lastSecond = 99;                             // Static variable, means it's only defined once. This is our 'debounce' variable.
   if (lastSecond != secondHand) {                             // Debounce to make sure we're not repeating an assignment.
     lastSecond = secondHand;
-    if (secondHand ==  0)  {thisdelay=30; thishue=95; huerot=0;}
-    if (secondHand ==  5)  {thisdir=1; huerot=1;}
-    if (secondHand == 10)  {thisdelay=10; thishue=0; huerot=0;}
-    if (secondHand == 15)  {thisdelay=20; thishue=random8();}
-    if (secondHand == 20)  {thishue=random8(); huerot=1;}
-    if (secondHand == 25)  { }
-    if (secondHand == 30)  { }
-    if (secondHand == 35)  { }
-    if (secondHand == 40)  { }
-    if (secondHand == 45)  { }
-    if (secondHand == 50)  { }
-    if (secondHand == 55)  { }
+    switch(secondHand) {
+      case  0: thisdelay=30; thishue=95; bgclr=0; bgbri=10; huerot=0; break;
+      case  5: thisdir=1; bgbri=0; huerot=1; break;
+      case 10: thisdelay=10; thishue=0; bgclr=50; bgbri=10; huerot=0; break;
+      case 15: thisdelay=20; bgbri = 0; thishue=random8(); break;
+      case 20: thishue=random8(); huerot=1; break;
+      case 25: break;
+    }
   }
 } // ChangeMe()
