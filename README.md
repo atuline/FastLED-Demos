@@ -51,6 +51,7 @@ Download FastLED from: [github.com/FastLED/FastLED](https://github.com/FastLED/F
 ## Update
 
 I've replaced a pile of if statement with switch statement for the demo loops.
+<<<<<<< HEAD
 
 ## Adding to the Library
 
@@ -61,6 +62,8 @@ In order for me to add sequences to the library, my expectation is that they:
 * Be short.
 * Use 8 or 16 bit math. No floating point.
 
+=======
+>>>>>>> 4398e44db27cfe95bc2af7aae86aadaba7bfb15e
 
 ----------------------------------------------------------
 
