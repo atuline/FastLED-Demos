@@ -28,18 +28,18 @@ This is built upon code from several sources, but mainly:
 
 Hardware Setup
 
-- 1 (or optionally 2) Arduino UNO or Nano 3.0 (is what I've been using).
-- Connect the positive end of the pushbutton to pin 6 of the Arduino.
-- Connect the negative end to ground. We will then program an internal pullup resistor on the Arduino.
+- 1 (or optionally 2) Arduino UNO or Nano 3.0.
+- Pushbutton to pin 6 and gnd.
 - WS2812B or (preferably) APA102 LED strip with data line connected to pin 12. 
 - The clock line is connected to pin 11.
 - Sparkfun INMP401 MEMS microphone (a mic+opamp) with power connected to Arduino 3.3V supply, output to A5 of Arduino.
 - Connect Arduino 3.3V output to the AREF pin on the Arduino (for the 3.3V MEMS microphone).
-- If using APA102's (or other 4 pin strip) and want IR capability then connect the TSOP34838 IR receiver to pin 9 (other pins are 5V and Gnd).
+- For IR functionality, connect the output of a TSOP34838 IR receiver to pin D2 on a Nano (other pins are 5V and Gnd)..
+
 
 On a second Arduino (if using WS2812B's and want IR capability):
 
-- TSOP34838 IR receiver with data connected to pin 9 (other pins are 5V and Gnd).
+- TSOP34838 IR receiver with data connected to pin D2 (other pins are 5V and Gnd).
 - Connect ground of the second Arduino to the first Arduino.
 - Connect Tx of the second Arduino to Rx of first Arduino.
 - Disconnect them when programming the Arduino's.
@@ -54,12 +54,11 @@ Compiling Note: When compiling or using the serial monitor, disconnect Tx/Rx bet
 Power Supplies I've Used
 
 - USB connection to computer for shorter strands.
-- 7.4V battery pack (2 x 3.7V rechargeable 18650 batteries) for shorter strands connected to the power plug of the Arduino.
+- 7.4V battery pack (2 x 3.7V rechargeable 18650 batteries) for shorter strands connected to the power plug or Vin of the Arduino.
 - USB based battery pack, again for shorter strands.
-- 6V battery pack (4 x 'AA' batteries) for shorter strands connected to the power plug of the Arduino.
+- 6V battery pack (4 x 'AA' batteries) for shorter strands connected to the power plug or Vin of the Arduino.
 - 7.4 DC power supply connected to Arduino and DC-DC converter to provide 5V and >500mA to a medium length strip.
-
-For short strands, connect the LED strip to 5V of the Arduino. For longer strands, get a dedicated 5V power supply, and make sure ALL grounds are connected.
+- Connect ALL grounds!!!!
 
 
 Libraries Required
@@ -69,11 +68,11 @@ Libraries Required
 - JChristensen's Button Library from https://github.com/JChristensen/Button
 
 
+
 LED Strand Configuration
 
 I'm currently using 20 APA102 LED's. You'll need to change the LED_TYPE, the NUM_LEDS's and LEDS.addLeds definition for different types of strands.
 See the FastLED library examples with other types of strands.
-
 
 
 
@@ -205,8 +204,9 @@ y         Save of LED's to flash                B1                     // Not ye
 #error "Requires FastLED 3.1 or later; check github for latest code."
 #endif
 
-// IR Receiver definition
-const int interruptIR = 0;                                    // Meaning, pin 2 on an UNO for use by the IR receiver.
+// choose a valid PinInterrupt pin of your Arduino board
+#define pinIR 2
+#define IRL_BLOCKING true
  
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Serial data pin for WS2801, WS2811, WS2812B or APA102
@@ -224,6 +224,11 @@ struct CRGB leds[NUM_LEDS];                                   // Initialize our 
 
 int ledMode = 99;                                             // Starting mode is typically 0. Use 99 if no controls available. ###### CHANGE ME #########
 int maxMode;                                                  // Maximum number of modes is set later.
+
+// temporary variables to save latest IR input
+uint8_t IRProtocol = 0;
+uint16_t IRAddress = 0;
+uint32_t IRCommand = 0;
 
 // Pushbutton pin definition
 const int buttonPin = 6;                                      // Digital pin used for debounced pushbutton
@@ -369,10 +374,8 @@ void setup() {
   Serial.begin(SERIAL_BAUDRATE);                              // SETUP HARDWARE SERIAL (USB)
   Serial.setTimeout(SERIAL_TIMEOUT);
 
-  IRLbegin<IR_ALL>(interruptIR);                              // IR setup
+  attachInterrupt(digitalPinToInterrupt(pinIR), IRLinterrupt<IR_NEC>, CHANGE);    // IR definition
   
-  //pinMode(buttonPin, INPUT_PULLUP);                         // Debounced pushbutton with internal pullup (used to select next mode)
-
   LEDS.setBrightness(max_bright);                             // Set the generic maximum brightness value.
 
 //  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER >(leds, NUM_LEDS); // WS2812B definition
@@ -382,6 +385,7 @@ void setup() {
 
   random16_set_seed(4832);                                    // Awesome randomizer
   random16_add_entropy(analogRead(2));
+  int ranstart = random16();
 
   Serial.println("---SETUP COMPLETE---");
   change_mode(ledMode, 1);                                    // Initialize the first sequence
@@ -465,11 +469,12 @@ void change_mode(int newMode, int mc){                        // mc stands for '
 
 
 void getirl() {                                               // This is the built-in IR function that just selects a mode.
-  if (IRLavailable()) {                                       // Read the IR receiver. Result are poor if using 3 pin strands such as WS2812B.
+  uint8_t oldSREG = SREG;
+//  cli();
+  if (IRProtocol) {                                              // This is the built-in IR function that just selects a mode.
     Serial.print("Command:");
-    Serial.println(IRLgetCommand());
-    switch(IRLgetCommand()) {
-
+    Serial.println(IRCommand);
+    switch(IRCommand) {
       case 65280:  max_bright++;        break;                //a1 - max_bright++;
       case 65025:  max_bright--;        break;                //a2 - max_bright--;
       case 64770:  change_mode(1,1);    break;                //a3 - change_mode(1);
@@ -502,9 +507,26 @@ void getirl() {                                               // This is the bui
 
       default:                          break;                // We could do something by default
     } // switch
-    IRLreset();
+    // reset variable to not read the same value twice
+    IRProtocol = 0;
   } // if IRLavailable()
+  SREG = oldSREG;
 } // getir()
+
+
+void IREvent(uint8_t protocol, uint16_t address, uint32_t command) {
+  // called when directly received a valid IR signal.
+  // do not use Serial inside, it can crash your program!
+
+  // dont update value if blocking is enabled
+  if (IRL_BLOCKING && !IRProtocol) {
+    // update the values to the newest valid input
+    IRProtocol = protocol;
+    IRAddress = address;
+    IRCommand = command;
+  }
+}
+
 
 
 void readkeyboard() {                                         // PROCESS HARDWARE SERIAL COMMANDS AND ARGS
