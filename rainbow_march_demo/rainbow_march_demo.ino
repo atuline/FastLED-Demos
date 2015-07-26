@@ -45,9 +45,10 @@ void setup() {
 
 void loop () {
   ChangeMe();
-  rainbow_march();
-  show_at_max_brightness_for_power();                         // Power managed display of LED's.
-  delay_at_max_brightness_for_power(2.5*thisdelay);           // Power managed FastLED delay.
+  EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
+    rainbow_march();
+    show_at_max_brightness_for_power();
+  }
 } // loop()
 
 

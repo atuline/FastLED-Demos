@@ -26,7 +26,7 @@ struct CRGB leds[NUM_LEDS];                                   // Initialize our 
 
 
 // Initialize global variables for sequences
-uint8_t thisdelay = 20;                                       // A delay value for the sequence(s)
+uint8_t thisdelay = 50;                                       // A delay value for the sequence(s)
 
 int wave1=0;                                                  // Current phase is calculated.
 int wave2=0;
@@ -61,9 +61,11 @@ void setup() {
 
 void loop () {
   ChangeMe();
-  three_sin();                                                // Improved method of using non-blocking delay
-  show_at_max_brightness_for_power();                         // Power managed display of LED's 
-  delay_at_max_brightness_for_power(thisdelay*2.5);
+
+  EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
+    three_sin();                                                // Improved method of using non-blocking delay
+    show_at_max_brightness_for_power();
+  }
 } // loop()
 
 
@@ -88,9 +90,9 @@ void ChangeMe()
   if( lastSecond != secondHand) {
     lastSecond = secondHand;
     switch(secondHand) {
-      case 0: thisdelay = 8; mul1 = 20; mul2 = 25; mul3 = 22; lvl1 = 80; lvl2 = 80; lvl3 = 80; inc1 = 1; inc2 = 1; inc3 = -1; break;
+      case 0: thisdelay = 25; mul1 = 20; mul2 = 25; mul3 = 22; lvl1 = 80; lvl2 = 80; lvl3 = 80; inc1 = 1; inc2 = 1; inc3 = -1; break;
       case 10: mul1 = 5; mul2 = 8; mul3 = 7; break;
-      case 20: thisdelay = 20; lvl1 = 220; lvl2 = 220; lvl3 = 220; break;
+      case 20: thisdelay = 40; lvl1 = 220; lvl2 = 220; lvl3 = 220; break;
       case 30: break;
     }
   } // if lastSecond

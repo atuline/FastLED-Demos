@@ -52,7 +52,7 @@ int8_t thisspeed = 4;                                         // You can change 
 uint8_t allfreq = 32;                                         // You can change the frequency, thus overall width of bars.
 int thisphase = 0;                                            // Phase change value gets calculated.
 uint8_t thiscutoff = 192;                                     // You can change the cutoff value to display this wave. Lower value = longer wave.
-int loopdelay = 10;                                           // You can change the delay. Also you can change the allspeed variable above. 
+int thisdelay = 25;                                           // You can change the delay. Also you can change the allspeed variable above. 
 uint8_t twinkrun = 1;                                         // Enable/disable twinkles.
 
 uint8_t bgclr = 0;                                            // A rotating background colour.
@@ -89,12 +89,12 @@ void setup() {
 void loop()
 {
   readbutton(); 
-  ChangeMe();                                                 // Muck those variable around.
-  one_sin();                                                  // Simple call to the routine.
-  if(twinkrun == 1) twinkover();                              // You can keep or lose the twinkles.
-  show_at_max_brightness_for_power();
-  delay_at_max_brightness_for_power(loopdelay*2.5);
-//  Serial.println(LEDS.getFPS());
+  ChangeMe();
+  EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
+    one_sin();                                                  // Simple call to the routine.
+    if(twinkrun == 1) twinkover();                              // You can keep or lose the twinkles.
+    show_at_max_brightness_for_power();
+  }
 } // loop()
 
 
@@ -176,7 +176,7 @@ void resetvar() {                                             // Reset the varia
   allfreq = 32;                                               // You can change the frequency, thus overall width of bars.
   thisphase = 0;                                              // Phase change value gets calculated.
   thiscutoff = 192;                                           // You can change the cutoff value to display this wave. Lower value = longer wave.
-  loopdelay = 10;                                             // You can change the delay. Also you can change the allspeed variable above. 
+  thisdelay = 25;                                             // You can change the delay. Also you can change the allspeed variable above. 
   twinkrun = 1;                                               // Enable/disable twinkles.
   bgbri = 0;
   bgclr = 0;

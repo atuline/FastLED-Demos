@@ -61,9 +61,10 @@ void setup() {
 
 void loop() {
   ChangeMe();                                                 // Muck those variable around.
-  pop_fade();                                                 // Simple call to the routine.
-  show_at_max_brightness_for_power();
-  delay_at_max_brightness_for_power(thisdelay*2.5);
+  EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
+    pop_fade();                                                 // Simple call to the routine.
+    show_at_max_brightness_for_power();
+  }
 } // loop()
 
 

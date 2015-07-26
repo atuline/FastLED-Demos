@@ -1,16 +1,20 @@
 
-/* rainbow_march for FastLED
+/* rainbow_beat for FastLED
 
 By: Andrew Tuline
 
-Date: Nov, 2014
+Date: July, 2015
 
-Rainbow marching up the strand. Pretty basic, but oh so popular. Oh look, we don't need to add a 'wheel' routine.
+A rainbow program using FastLED function calls with no delays or 'for' loops. Very simple, yet effective.
 
 */
 
 
 #include "FastLED.h"                                          // FastLED library.
+
+#if FASTLED_VERSION < 3001000
+#error "Requires FastLED 3.1 or later; check github for latest code."
+#endif
  
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Serial data pin
@@ -25,32 +29,23 @@ uint8_t max_bright = 128;                                     // Overall brightn
 struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
 
 
-// Initialize global variables for sequences
-uint8_t thisdelay = 5;                                        // A delay value for the sequence(s)
-uint8_t thishue;                                              // Starting hue value.
-uint8_t deltahue = 10;                                        // Hue change between pixels.
-
 
 void setup() {
-  Serial.begin(57600);
-
 //  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);         // For WS2812B
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);   // For APA102 or WS2801
-
   FastLED.setBrightness(max_bright);
-  set_max_power_in_volts_and_milliamps(5, 500);               // FastLED 2.1 Power management set at 5V, 500mA
+  set_max_power_in_volts_and_milliamps(5, 500);               // FastLED Power management set at 5V, 500mA
 } // setup()
 
 
 void loop () {
-  EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
-    rainbow_march();
+    rainbow_beat();
     show_at_max_brightness_for_power();
-  }
 } // loop()
 
 
-void rainbow_march() {                                        // The fill_rainbow call doesn't support brightness levels
-  thishue++;                                                  // Increment the starting hue.
-  fill_rainbow(leds, NUM_LEDS, thishue, deltahue);            // Use FastLED's fill_rainbow routine.
-} // rainbow_march()
+void rainbow_beat() {
+  uint8_t beatA = beatsin8(5, 0, 255);                        // Starting hue
+  uint8_t beatB = beatsin8(15, 4, 20);                        // Delta hue between LED's
+  fill_rainbow(leds, NUM_LEDS, beatA, beatB);                 // Use FastLED's fill_rainbow routine.
+} // rainbow_beat()

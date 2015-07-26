@@ -30,7 +30,7 @@ struct CRGB leds[NUM_LEDS];                                   // Initializxe our
 
 
 // Initialize noise specific variables
-uint8_t thisdelay = 20;                                       // A delay value for the sequence(s)
+uint8_t thisdelay = 60;                                       // A delay value for the sequence(s)
 uint8_t thisdir = 0;                                          // We can reverse the direction.
 uint32_t x,hue_time;                                          // x & time values
 uint8_t octaves=2;       //2                                  // how many octaves to use for the brightness
@@ -61,12 +61,12 @@ void setup() {
 
 void loop () {
   ChangeMe();
-  noise16();
-  show_at_max_brightness_for_power();
-  delay_at_max_brightness_for_power(thisdelay*2.5);
-  Serial.println(LEDS.getFPS());
-} // loop()
 
+  EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
+    noise16();                                                   // Routine is still delay based, but at least it's now a non-blocking day.
+    show_at_max_brightness_for_power();
+  }
+} // loop()
 
 
 void noise16() {

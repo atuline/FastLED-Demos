@@ -5,9 +5,8 @@ By: Andrew Tuline
 
 Date: Jan, 2015
 
-The Cylon routine included with the FastLED examples has code to move an LED in one direction, and more code to move it in another. Kind of boring, but it works.
+This routine uses sine waves to move pixels around. It's much simpler than counting them.
 
-This routine DOES only go in one directon a a time, but it's got a LOT of variables you can tweak.
 
 You COULD add another sine routine to have it go back and forth.
 
@@ -40,9 +39,9 @@ int8_t thisspeed = 8;                                         // You can change 
 uint8_t allfreq = 32;                                         // You can change the frequency, thus distance between bars.
 int thisphase = 0;                                            // Phase change value gets calculated.
 uint8_t thiscutoff = 192;                                     // You can change the cutoff value to display this wave. Lower value = longer wave.
-int loopdelay = 10;                                           // You can change the delay. Also you can change the allspeed variable above. 
+int thisdelay = 30;                                           // You can change the delay. Also you can change the allspeed variable above. 
 uint8_t bgclr = 0;                                            // A rotating background colour.
-uint8_t bgbri = 3;                                            // Brightness of background colour
+uint8_t bgbri = 16;                                           // Brightness of background colour
 
 
 
@@ -50,14 +49,15 @@ void setup() {
   Serial.begin(57600);
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);
   FastLED.setBrightness(max_bright);
-  set_max_power_in_volts_and_milliamps(5, 500);                // FastLED 2.1 Power management set at 5V, 500mA
+  set_max_power_in_volts_and_milliamps(5, 500);               // FastLED 2.1 Power management set at 5V, 500mA
 } // setup()
 
 
 void loop () {
-  one_sine();
-  show_at_max_brightness_for_power();
-  delay_at_max_brightness_for_power(loopdelay);
+  EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
+    one_sine();
+    show_at_max_brightness_for_power();
+  }  
 } // loop()
 
 

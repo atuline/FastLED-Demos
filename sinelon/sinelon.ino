@@ -36,11 +36,12 @@ struct CRGB leds[NUM_LEDS];                                   // Initialize our 
 // Define variables used by the sequences.
 uint8_t thisbeat =  23;
 uint8_t thatbeat =  28;
-uint8_t thisfade =   2;                                       // How quickly does it fade? Lower = slower fade rate.
+uint8_t thisfade =   4;                                       // How quickly does it fade? Lower = slower fade rate.
 uint8_t  thissat = 255;                                       // The saturation, where 255 = brilliant colours.
 uint8_t  thisbri = 255;                                       // Brightness of a sequence.
 int        myhue =   0;
 
+int    thisdelay = 50;
 
 void setup() {
   delay(1000);                                                // Power-up safety delay or something like that.
@@ -54,8 +55,10 @@ void setup() {
 
 
 void loop () {
-  sinelon();                                                  // Call our sequence.
-  show_at_max_brightness_for_power();                         // Power managed display of LED's.
+  EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
+    sinelon();                                                  // Call our sequence.
+    show_at_max_brightness_for_power();
+  }
 } // loop()
 
 

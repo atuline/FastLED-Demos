@@ -45,7 +45,7 @@ int thisphase = 0;                                            // Phase change va
 int thatphase = 0;                                            // Phase change value gets calculated.
 uint8_t thiscutoff = 192;                                     // You can change the cutoff value to display this wave. Lower value = longer wave.
 uint8_t thatcutoff = 192;                                     // You can change the cutoff value to display that wave. Lower value = longer wave.
-int thisdelay = 10;                                           // You can change the delay. Also you can change the allspeed variable above. 
+int thisdelay = 25;                                           // You can change the delay. Also you can change the allspeed variable above. 
 uint8_t twinkrun = 1;                                         // Enable/disable twinkles.
 // End of resetvar() redefinitions.
 
@@ -75,10 +75,11 @@ void setup() {
 
 void loop() {
   ChangeMe();                                                 // Muck those variable around.
-  two_sin();                                                  // Simple call to the routine.
-  if(twinkrun == 1) twinkleover();                            // You can keep or lose the twinkles.
-  show_at_max_brightness_for_power();
-  delay_at_max_brightness_for_power(thisdelay*2.5);
+  EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
+    two_sin();                                                  // Simple call to the routine.
+    if(twinkrun == 1) twinkleover();                            // You can keep or lose the twinkles.
+    show_at_max_brightness_for_power();
+  }
 } // loop()
 
 

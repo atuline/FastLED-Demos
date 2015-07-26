@@ -13,6 +13,10 @@ Green (or other coloured) characters going up/down the strand, a la 'The Matrix'
 
 
 #include "FastLED.h"                                          // FastLED library.
+
+#if FASTLED_VERSION < 3001000
+#error "Requires FastLED 3.1 or later; check github for latest code."
+#endif
  
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Serial data pin
@@ -25,7 +29,6 @@ Green (or other coloured) characters going up/down the strand, a la 'The Matrix'
 uint8_t max_bright = 128;                                     // Overall brightness definition. It can be changed on the fly.
 
 struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
-
 
 // Initialize global variables for sequences
 int thisdelay =  50;                                          // A delay value for the sequence(s)
@@ -51,10 +54,11 @@ void setup() {
 
 void loop () {
   ChangeMe();
-  matrix();
-  show_at_max_brightness_for_power();
-  delay_at_max_brightness_for_power(thisdelay*2.5);
-//  Serial.println(LEDS.getFPS());
+
+  EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
+    matrix();                                                   // Routine is still delay based, but at least it's now a non-blocking day.
+    show_at_max_brightness_for_power();
+  }
 } // loop()
 
 
@@ -83,10 +87,10 @@ void ChangeMe() {                                             // A time (rather 
   if (lastSecond != secondHand) {                             // Debounce to make sure we're not repeating an assignment.
     lastSecond = secondHand;
     switch(secondHand) {
-      case  0: thisdelay=30; thishue=95; bgclr=0; bgbri=10; huerot=0; break;
+      case  0: thisdelay=50; thishue=95; bgclr=140; bgbri=20; huerot=0; break;
       case  5: thisdir=1; bgbri=0; huerot=1; break;
-      case 10: thisdelay=10; thishue=0; bgclr=50; bgbri=10; huerot=0; break;
-      case 15: thisdelay=20; bgbri = 0; thishue=random8(); break;
+      case 10: thisdelay=30; thishue=0; bgclr=50; bgbri=20; huerot=0; break;
+      case 15: thisdelay=80; bgbri = 10; thishue=random8(); break;
       case 20: thishue=random8(); huerot=1; break;
       case 25: break;
     }

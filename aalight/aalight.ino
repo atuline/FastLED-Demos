@@ -63,7 +63,7 @@ Power Supplies I've Used
 
 Libraries Required
 
-- FastLED library from https://github.com/FastLED/FastLED
+- FastLED library (get 3.1) from https://github.com/FastLED/FastLED
 - Nico Hood's IRL library from https://github.com/NicoHood/IRLremote
 - JChristensen's Button Library from https://github.com/JChristensen/Button
 

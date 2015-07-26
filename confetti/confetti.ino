@@ -5,13 +5,18 @@ By: Mark Kriegsman
 
 Modified By: Andrew Tuline
 
-Date: February 2015
+Date: July 2015
 
 Confetti flashes colours within a limited hue. It's been modified from Mark's original to support a few variables. It's a simple, but great looking routine.
 
 */
 
+
 #include "FastLED.h"                                          // FastLED library. Preferably the latest copy of FastLED 2.1.
+
+#if FASTLED_VERSION < 3001000
+#error "Requires FastLED 3.1 or later; check github for latest code."
+#endif
 
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Data pin to connect to the strip.
@@ -25,6 +30,8 @@ uint8_t max_bright = 64;                                      // Overall brightn
 
 struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
 
+unsigned long previousMillis;                                 // Store last time the strip was updated.
+
 
 // Define variables used by the sequences.
 uint8_t  thisfade = 8;                                        // How quickly does it fade? Lower = slower fade rate.
@@ -33,7 +40,8 @@ uint8_t   thisinc = 1;                                        // Incremental val
 uint8_t   thissat = 100;                                      // The saturation, where 255 = brilliant colours.
 uint8_t   thisbri = 255;                                      // Brightness of a sequence. Remember, max_bright is the overall limiter.
 int       huediff = 256;                                      // Range of random #'s to use for hue
-uint8_t thisdelay = 1;                                        // We don't need much delay (if any)
+uint8_t thisdelay = 5;                                        // We don't need much delay (if any)
+
 
 void setup() {
   delay(1000);                                                // Power-up safety delay or something like that.
@@ -49,10 +57,13 @@ void setup() {
 
 void loop () {
   ChangeMe();                                                 // Check the demo loop for changes to the variables.
-  confetti();                                                 // Call our sequence.
-  delay_at_max_brightness_for_power(thisdelay*2.5);
-  show_at_max_brightness_for_power();                         // Power managed display of LED's.
+
+  EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
+    confetti();
+    show_at_max_brightness_for_power();
+  }
 } // loop()
+
 
 
 void confetti() {                                             // random colored speckles that blink in and fade smoothly

@@ -32,7 +32,7 @@ uint8_t myfade = 255;                                         // Starting bright
 #define maxsteps 16                                           // Case statement wouldn't allow a variable.
 
 uint8_t bgcol = 0;                                            // Background colour rotates.
-int thisdelay = 50;                                           // Standard delay value.
+int thisdelay = 100;                                           // Standard delay value.
 
  
 void setup() {
@@ -47,9 +47,10 @@ void setup() {
 
 
 void loop () {
-  ripple();
-  show_at_max_brightness_for_power();
-  delay_at_max_brightness_for_power(thisdelay*2.5);
+  EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
+    ripple();
+    show_at_max_brightness_for_power();
+  }
 } // loop()
 
 

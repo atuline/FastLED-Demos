@@ -43,9 +43,10 @@ void setup() {
 
 
 void loop() {
-  twinkle();                                                  // Simple call to the routine.
-  show_at_max_brightness_for_power();                         // Power managed display is better than FastLED.show()
-  delay_at_max_brightness_for_power(thisdelay*2.5);           // Power managed delay.
+  EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
+    twinkle();
+    show_at_max_brightness_for_power();
+  }
 } // loop()
 
 

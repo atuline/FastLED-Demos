@@ -5,7 +5,7 @@ By: John Burroughs
 
 Modified by: Andrew Tuline
 
-Date: Oct, 2014
+Date: July, 2015
 
 This sequence moves a few LED's at different distances across the strip. This could be the basis for a routine that moves different dots with different routines.
 
@@ -17,6 +17,12 @@ You could also sequence through a palette with this as well.
 
 #include "FastLED.h"                                          // FastLED library.
  
+
+#if FASTLED_VERSION < 3001000
+#error "Requires FastLED 3.1 or later; check github for latest code."
+#endif
+
+
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Serial data pin
 #define LED_CK 11                                             // Serial clock pin for APA102 or WS2801
@@ -29,9 +35,8 @@ uint8_t max_bright = 128;                                     // Overall brightn
 
 struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
 
-
 // Define variables used by the sequences.
-int   thisdelay =   4;                                        // A delay value for the sequence(s)
+int   thisdelay =   10;                                        // A delay value for the sequence(s)
 uint8_t   count =   0;                                        // Count up to 255 and then reverts to 0
 uint8_t fadeval = 224;                                        // Trail behind the LED's. Lower => faster fade.
 
@@ -49,10 +54,10 @@ void setup() {
 
 
 void loop () {
-  dots();
-  show_at_max_brightness_for_power();
-  delay_at_max_brightness_for_power(thisdelay*2.5);
-  Serial.println(LEDS.getFPS());
+  EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
+    dots();                                                   // Routine is still delay based, but at least it's now a non-blocking day.
+    show_at_max_brightness_for_power();
+  }
 } // loop()
 
 

@@ -10,23 +10,22 @@
 !!!!!!!!!!!!! WARNING !!!!!!!!!!!!!
 
 
-If this is your first foray into addressable LED's, then start off with a small strip of < 20 LED's. Long strips can exhibit some significant power issues, so start off small and work up to longer strips.
+If this is your first foray into addressable LED's, then start off with a small strip of < 20 LED's. Long strips require careful power management planning, so start off small and then work up to longer strips.
 
-Before attempting to use these demos, you should compile and run the examples found with the latest version of the FastLED library, available at:
+Before attempting to use these demos, make sure you can compile and run the examples found with the latest development version of the FastLED library, currently 3.1.
 
-https://github.com/FastLED/FastLED
+The FastLED Google+ community is at https://plus.google.com/communities/109127054924227823508
 
-In some cases, you may need to use the latest development version of FastLED.
+Finally, before looking for some support, have a look at my FastLED FAQ at http://www.tuline.com/dru/content/my-fastled-support-faq
+
 
 
 
 ##Introduction
 
-Here's several COMPLETELY re-written display sequences for FastLED for a single strand of RGB LED's, such as Neopixels, WS2812B, WS2801 or APA102. Each should compile and run separately and have been tested on an Arduino UNO and Nano 3.0.
+Here's several display sequences for FastLED for a single strand of RGB LED's, such as Neopixels/WS2812, WS2801 or DotStars/APA102. Each should compile and run separately and have been tested on an Arduino Nano.
 
-In an older version, I had several demos that used nested for loops, required a lot of code, weren't highly customizable. Except for some really cool ones, most of those have now been replaced. For instance, two_sin() replaces several 'marching' type sequences and supports several variables to change colour, phase, direction, brightness and so on. Likewise, pop_fade_demo replaces several twinkling sequences.
-
-The new sequences are now designed to be loop/non-blocking delay friendly. They perform some simple calculations, update the LED array and then then return back to the loop to SHOW the LED's and then continue on to the next iteration.
+These sequences are designed to be loop/non-blocking delay friendly. They perform some simple calculations, update the LED array, return back to the loop to SHOW the LED's and then continue on to the next iteration.
 
 In addition to several standalone demos, I have included a display template as well as aalight and aainfra, which support multiple display sequences, a demo mode, keyboard, IR remote and updated pushbutton control.
 
@@ -36,30 +35,27 @@ I have also included a few sound reactive sequences, most notably fht_log, which
 
 **aatemplate.ino** - A standard display template which can be re-used.
 
-**aalight.ino** - Runs on an Arduino connected to an LED strip. Compile aalight.ino, and it will include the other ino files in the directory. The structure for this code is based on funkboxing LED. In addition, to the FastLED library, it also requires a couple of other 3rd party libraries to support pushbutton and IR remote control.
+**aalight.ino** - Runs on an Arduino connected to an LED strip. Compile aalight.ino, and it will include the other files in the directory. The overall structure for this code is based on funkboxing LED. In addition, to the FastLED library, it also requires a couple of other 3rd party libraries to support pushbutton and IR remote control.
 
 **aainfra.ino** - Runs on a 2nd Arduino with an IR sensor attached. Compile aainfra.ino and connect Tx of the 2nd Arduino to Rx of the first one. You will need to disconnect that in order to program the Arduinos.
 
 See aalight.ino comment section for more information on how to use this. Also see aalight.png for a breadboard layout.
 
 
-The awesome FastLED Library is available from: [fastled.io](http://fastled.io/)
+Information about the awesome FastLED Library is available from: [fastled.io](http://fastled.io/)
 
-Download FastLED from: [github.com/FastLED/FastLED](https://github.com/FastLED/FastLED)
+Download FastLED (select version 3.1) from: [github.com/FastLED/FastLED](https://github.com/FastLED/FastLED)
 
-
-## Update
-
-I've replaced a pile of if statement with switch statement for the demo loops.
 
 ## Adding to the Library
 
 In order for me to add sequences to the library, my expectation is that they:
 
 * Run quickly (no nested for loops with delay statements).
-* Be called with many different parameters.
+* Can be called with many different parameters.
 * Be short.
 * Use 8 or 16 bit math. No floating point.
+* Preference is given to time based rather than delay based code.
 
 
 ----------------------------------------------------------
