@@ -23,7 +23,7 @@ Please use FastLED 3.1 or greater.
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Data pin to connect to the strip.
 #define LED_CK 11
-#define COLOR_ORDER BGR                                       // Are they RGB, GRB or what??
+#define COLOR_ORDER BGR                                       // It's GRB for WS2812 and BGR for APA102
 #define LED_TYPE APA102                                       // Don't forget to change LEDS.addLeds
 #define NUM_LEDS 20                                           // Number of LED's.
 
@@ -34,8 +34,8 @@ struct CRGB leds[NUM_LEDS];                                   // Initialize our 
 
 
 // Define variables used by the sequences.
-uint8_t thisbeat =  23;
-uint8_t thatbeat =  28;
+uint8_t thisbeat =  23;                                       // Beats per minute for first part of dot.
+uint8_t thatbeat =  28;                                       // Combined the above with this one.
 uint8_t thisfade =   4;                                       // How quickly does it fade? Lower = slower fade rate.
 uint8_t  thissat = 255;                                       // The saturation, where 255 = brilliant colours.
 uint8_t  thisbri = 255;                                       // Brightness of a sequence.
@@ -46,6 +46,7 @@ int    thisdelay = 50;
 void setup() {
   delay(1000);                                                // Power-up safety delay or something like that.
   Serial.begin(57600);
+
 //  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);        // Use this for WS2812B
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);  // Use this for WS2801 or APA102
   
@@ -56,7 +57,7 @@ void setup() {
 
 void loop () {
   EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
-    sinelon();                                                  // Call our sequence.
+    sinelon();                                                // Call our sequence.
     show_at_max_brightness_for_power();
   }
 } // loop()

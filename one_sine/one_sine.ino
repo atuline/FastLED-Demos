@@ -7,8 +7,7 @@ Date: Jan, 2015
 
 This routine uses sine waves to move pixels around. It's much simpler than counting them.
 
-
-You COULD add another sine routine to have it go back and forth.
+You COULD add a beat and map the output to the location for it to go back and forth.
 
 */
 
@@ -17,11 +16,15 @@ You COULD add another sine routine to have it go back and forth.
 #define qsuba(x, b)  ((x>b)?x-b:0)                            // Analog Unsigned subtraction macro. if result <0, then => 0
 
 #include "FastLED.h"                                          // FastLED library.
+
+#if FASTLED_VERSION < 3001000
+#error "Requires FastLED 3.1 or later; check github for latest code."
+#endif
  
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Serial data pin for WS2812B or WS2801.
 #define LED_CK 11                                             // Serial clock pin for WS2801 or APA102.
-#define COLOR_ORDER BGR                                       // It's GRB for WS2812B
+#define COLOR_ORDER BGR                                       // It's GRB for WS2812B and BGR for APA102.
 #define LED_TYPE APA102                                       // What kind of strip are you using?
 #define NUM_LEDS 20                                           // Number of LED's.
 
@@ -49,7 +52,7 @@ void setup() {
   Serial.begin(57600);
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);
   FastLED.setBrightness(max_bright);
-  set_max_power_in_volts_and_milliamps(5, 500);               // FastLED 2.1 Power management set at 5V, 500mA
+  set_max_power_in_volts_and_milliamps(5, 500);               // FastLED Power management set at 5V, 500mA
 } // setup()
 
 

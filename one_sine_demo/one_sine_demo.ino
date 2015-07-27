@@ -11,8 +11,11 @@ A demo showing the flexibility of just using a single sine wave. A little code a
 #define qsubd(x, b)  ((x>b)?wavebright:0)                   // Digital unsigned subtraction macro. if result <0, then => 0. Otherwise, take on fixed value.
 #define qsuba(x, b)  ((x>b)?x-b:0)                          // Analog Unsigned subtraction macro. if result <0, then => 0
 
-
 #include "FastLED.h"                                          // FastLED library.
+
+#if FASTLED_VERSION < 3001000
+#error "Requires FastLED 3.1 or later; check github for latest code."
+#endif
  
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Data pin to connect to the strip.
@@ -26,7 +29,7 @@ uint8_t max_bright = 128;                                     // Overall brightn
 
 struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
 
-// Most of these variables can be mucked around with. Better yet, add some form of variable input or routine to change them on the fly. 1970's here I come. . 
+// Most of these variables can be mucked around with. Better yet, add some form of variable input or routine to change them on the fly. 1970's here I come. .
 
 // Don't forget to update resetvar() definitions if you change these.
 uint8_t wavebright = 128;                                     // You can change the brightness of the waves/bars rolling across the screen. Best to make them not as bright as the sparkles.
@@ -63,16 +66,14 @@ void setup() {
 //  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);        // Use this for WS2812B
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);  // Use this for WS2801 or APA102
 
-  set_max_power_in_volts_and_milliamps(5, 500);               // FastLED 2.1 Power management set at 5V, 500mA
+  set_max_power_in_volts_and_milliamps(5, 500);               // FastLED Power management set at 5V, 500mA
   FastLED.setBrightness(max_bright);
 } // setup()
 
 
 
-void loop()
-{
-  ChangeMe();                                                 // Muck those variable around.
-
+void loop() {
+  ChangeMe();                                                 // Muck those variables around.
   EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
     one_sin();
   if(twinkrun == 1) twinkover();                              // You can keep or lose the twinkles.
@@ -82,8 +83,7 @@ void loop()
 
 
 
-void ChangeMe()
-{
+void ChangeMe() {
   uint8_t secondHand = (millis() / 1000) % 60;                // Increase this if you want a longer demo.
   static uint8_t lastSecond = 99;                             // Static variable, means it's only defined once. This is our 'debounce' variable.
   

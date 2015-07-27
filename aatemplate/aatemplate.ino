@@ -23,7 +23,7 @@ FastLED is available at https://github.com/FastLED/FastLED
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Data pin to connect to the strip.
 #define LED_CK 11                                             // Clock pin for WS2801 or APA102.
-#define COLOR_ORDER GBR                                       // Are they GRB for WS2812 and GBR for APA102.
+#define COLOR_ORDER GBR                                       // It's GRB for WS2812 and GBR for APA102.
 #define LED_TYPE APA102                                       // Using APA102, WS2812, WS2801. Don't forget to change LEDS.addLeds.
 #define NUM_LEDS 20                                           // Number of LED's.
 
@@ -52,7 +52,7 @@ void setup() {
 //  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);  // Use this for WS2812
   
   FastLED.setBrightness(max_bright);
-  set_max_power_in_volts_and_milliamps(5, 500);               // FastLED Power management set at 5V, 500mA. This is OPTIONAL!!!
+  set_max_power_in_volts_and_milliamps(5, 500);               // FastLED Power management set at 5V, 500mA.
 } // setup()
 
 

@@ -19,7 +19,7 @@ A rainbow program using FastLED function calls with no delays or 'for' loops. Ve
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Serial data pin
 #define LED_CK 11                                             // Clock pin for WS2801 or APA102
-#define COLOR_ORDER BGR                                       // It's GRB for WS2812B
+#define COLOR_ORDER BGR                                       // It's GRB for WS2812B and BGR for APA102
 #define LED_TYPE APA102                                       // What kind of strip are you using (APA102, WS2801 or WS2812B)?
 #define NUM_LEDS 20                                           // Number of LED's
 

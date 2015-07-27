@@ -5,13 +5,17 @@ By: Andrew Tuline
 
 Date: March, 2015
 
-3 sine waves, one for each colour. I'm already doing a lot with 2 sine waves, so I didn't take this far.
+3 sine waves, one for each colour. I didn't take this far.
 
 */
 
 
 #include "FastLED.h"                                          // FastLED library. Preferably the latest copy of FastLED 2.1.
- 
+
+#if FASTLED_VERSION < 3001000
+#error "Requires FastLED 3.1 or later; check github for latest code."
+#endif
+
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Serial data pin for WS2812B or WS2801
 #define LED_CK 11
@@ -48,22 +52,21 @@ uint8_t mul3 = 22;
 
 void setup() {
   Serial.begin(57600);
-  LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);
+//  FastLED.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);        // Use this for WS2812B
+  FastLED.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);  // Use this for WS2801 or APA102
   FastLED.setBrightness(max_bright);
-  set_max_power_in_volts_and_milliamps(5, 500);               // FastLED 2.1 Power management set at 5V, 500mA
+  set_max_power_in_volts_and_milliamps(5, 500);               // FastLED Power management set at 5V, 500mA
 
   random16_set_seed(4832);                                    // Awesome randomizer (which we don't yet need here.)
   random16_add_entropy(analogRead(2));
-
 } // setup()
 
 
 
 void loop () {
   ChangeMe();
-
   EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
-    three_sin();                                                // Improved method of using non-blocking delay
+    three_sin();                                              // Improved method of using non-blocking delay
     show_at_max_brightness_for_power();
   }
 } // loop()
@@ -81,13 +84,12 @@ void three_sin() {
 } // three_sin()
 
 
-void ChangeMe()
-{
-  uint8_t secondHand = (millis() / 1000) % 30;                // Increase this if you want a longer demo.
+void ChangeMe() {
+  uint8_t secondHand = (millis() / 1000) % 30;                // Increase this and add more options below if you want a longer demo.
   static uint8_t lastSecond = 99;                             // Static variable, means it's only defined once. This is our 'debounce' variable.
   
-  // You can change variables, but remember to set them back in the next demo, or they will stay as is.
-  if( lastSecond != secondHand) {
+  
+  if(lastSecond != secondHand) {                              // You can change variables, but remember to set them back in the next demo, or they will stay as is.
     lastSecond = secondHand;
     switch(secondHand) {
       case 0: thisdelay = 25; mul1 = 20; mul2 = 25; mul3 = 22; lvl1 = 80; lvl2 = 80; lvl3 = 80; inc1 = 1; inc2 = 1; inc3 = -1; break;
@@ -95,5 +97,5 @@ void ChangeMe()
       case 20: thisdelay = 40; lvl1 = 220; lvl2 = 220; lvl3 = 220; break;
       case 30: break;
     }
-  } // if lastSecond
+  }
 } // ChangeMe()

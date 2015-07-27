@@ -15,7 +15,7 @@ Rainbow marching up the strand. Pretty basic, but oh so popular, and we get a fe
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Data pin to connect to the strip.
 #define LED_CK 11
-#define COLOR_ORDER BGR                                       // It's GRB for WS2812B
+#define COLOR_ORDER BGR                                       // It's GRB for WS2812B and BGR for APA102
 #define LED_TYPE APA102                                       // What kind of strip are you using (WS2801, WS2812B or APA102)?
 #define NUM_LEDS 20                                           // Number of LED's.
 

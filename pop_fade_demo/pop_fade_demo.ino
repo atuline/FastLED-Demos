@@ -19,11 +19,15 @@ such as changing the saturation (which doesn't look at that cool anyway).
 
 
 #include "FastLED.h"                                          // FastLED library.
+
+#if FASTLED_VERSION < 3001000
+#error "Requires FastLED 3.1 or later; check github for latest code."
+#endif
  
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Data pin to connect to the strip.
 #define LED_CK 11
-#define COLOR_ORDER BGR                                       // It's GRB for WS2812B
+#define COLOR_ORDER BGR                                       // It's GRB for WS2812B and BGR for APA102
 #define LED_TYPE APA102                                       // What kind of strip are you using (WS2801, WS2812B or APA102)?
 #define NUM_LEDS 20                                           // Number of LED's.
 
@@ -31,9 +35,6 @@ such as changing the saturation (which doesn't look at that cool anyway).
 uint8_t max_bright = 128;                                     // Overall brightness definition. It can be changed on the fly.
 
 struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
-
-struct CHSV hsvs[NUM_LEDS];
-
 
 // Most of these variables can be changed.
 int ranamount = 50;                                           // The higher the number, lowers the chance for a pixel to light up.
@@ -96,7 +97,7 @@ void ChangeMe() {
       case  0: thisdelay = 50; colours[0] = 0xffffff; numcolours=1; boolcolours=0; maxbar = 1; break;          // Just white twinkles
       case  5: thisdelay = 20; colours[1] = 0xff0000; numcolours=2; boolcolours=0; maxbar = 4; break;          // Add red and make bars
       case 15: thisdelay = 50; boolcolours=1; maxbar=1; break;                                                 // A pile of colours, 1 pixel in length
-      case 20: thisdelay = 50; fadeval = 128; break;                                                             // Slow down the fade
+      case 20: thisdelay = 50; fadeval = 128; break;                                                           // Slow down the fade
       case 25: thisdelay = 50; colours[2]= 0x0000ff; boolcolours=0; numcolours=3; fadeval = 192; maxbar = 6; break; 
       case 30: break;
     }

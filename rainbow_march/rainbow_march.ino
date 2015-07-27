@@ -5,7 +5,7 @@ By: Andrew Tuline
 
 Date: Nov, 2014
 
-Rainbow marching up the strand. Pretty basic, but oh so popular. Oh look, we don't need to add a 'wheel' routine.
+Rainbow marching up the strand. Very basic, but oh so popular. Oh look, we don't need to add a 'wheel' routine.
 
 */
 
@@ -15,7 +15,7 @@ Rainbow marching up the strand. Pretty basic, but oh so popular. Oh look, we don
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Serial data pin
 #define LED_CK 11                                             // Clock pin for WS2801 or APA102
-#define COLOR_ORDER BGR                                       // It's GRB for WS2812B
+#define COLOR_ORDER BGR                                       // It's GRB for WS2812B and GBR for APA102
 #define LED_TYPE APA102                                       // What kind of strip are you using (APA102, WS2801 or WS2812B)?
 #define NUM_LEDS 20                                           // Number of LED's
 
@@ -27,7 +27,7 @@ struct CRGB leds[NUM_LEDS];                                   // Initialize our 
 
 // Initialize global variables for sequences
 uint8_t thisdelay = 5;                                        // A delay value for the sequence(s)
-uint8_t thishue;                                              // Starting hue value.
+uint8_t thishue = 0;                                          // Starting hue value.
 uint8_t deltahue = 10;                                        // Hue change between pixels.
 
 
@@ -43,7 +43,7 @@ void setup() {
 
 
 void loop () {
-  EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
+  EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking routine to update/display the sequence.
     rainbow_march();
     show_at_max_brightness_for_power();
   }
