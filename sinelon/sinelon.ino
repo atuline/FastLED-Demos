@@ -36,7 +36,7 @@ struct CRGB leds[NUM_LEDS];                                   // Initialize our 
 // Define variables used by the sequences.
 uint8_t thisbeat =  23;                                       // Beats per minute for first part of dot.
 uint8_t thatbeat =  28;                                       // Combined the above with this one.
-uint8_t thisfade =   4;                                       // How quickly does it fade? Lower = slower fade rate.
+uint8_t thisfade =   8;                                       // How quickly does it fade? Lower = slower fade rate.
 uint8_t  thissat = 255;                                       // The saturation, where 255 = brilliant colours.
 uint8_t  thisbri = 255;                                       // Brightness of a sequence.
 int        myhue =   0;
