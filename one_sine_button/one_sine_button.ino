@@ -1,5 +1,7 @@
 /* one_sine_button
 
+IS NOT YET WORKING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 By: Andrew Tuline
 
 Date: March, 2015
@@ -23,7 +25,11 @@ Note that a LONG press will reset it back to the first mode.
 #include "FastLED.h"                                          // FastLED library.
 #include "Button.h"                                           // Button library. Includes press, long press, double press detection.
 
- // PUSHBUTTON SETUP STUFF
+#if FASTLED_VERSION < 3001000
+#error "Requires FastLED 3.1 or later; check github for latest code."
+#endif
+
+// Pushbutton setup
 const int buttonPin = 6;                                      // Digital pin used for debounced pushbutton
 Button myBtn(buttonPin, true, true, 50);                      // Declare the button
 
@@ -31,7 +37,7 @@ Button myBtn(buttonPin, true, true, 50);                      // Declare the but
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Data pin to connect to the strip.
 #define LED_CK 11
-#define COLOR_ORDER BGR                                       // It's GRB for WS2812B
+#define COLOR_ORDER BGR                                       // It's GRB for WS2812B and GBR for APA102
 #define LED_TYPE APA102                                       // What kind of strip are you using (WS2801, WS2812B or APA102)?
 #define NUM_LEDS 20                                           // Number of LED's.
 
@@ -86,8 +92,7 @@ void setup() {
 
 
 
-void loop()
-{
+void loop() {
   readbutton(); 
   ChangeMe();
   EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
@@ -99,8 +104,7 @@ void loop()
 
 
 
-void ChangeMe()
-{
+void ChangeMe() {
 //  uint8_t secondHand = (millis() / 1000) % 60;              // Increase this if you want a longer demo.
   uint8_t secondHand = ledMode % 12;
   static uint8_t lastSecond = 99;                             // Static variable, means it's only defined once. This is our 'debounce' variable.
