@@ -4,7 +4,7 @@ By: Andrew Tuline
 
 Date: Nov, 2014
 
-This is a test program for IRLRemote and FastLED to ensure they work together with the strip you're using. It's also a good routine to test IR mapping.
+TEST program for IRLRemote and FastLED to ensure they work together with the strip you're using. It's also a good routine to test IR keyboard mapping.
 
 I'm using the TSOP4838 IR receiver an an el cheapo aliexpress IR transmitter.
 

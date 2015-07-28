@@ -14,7 +14,11 @@ You should be able to add more variables, such as hues, hue rotation, direction 
 
 
 #include "FastLED.h"                                          // FastLED library. Preferably the latest copy of FastLED 2.1.
- 
+
+#if FASTLED_VERSION < 3001000
+#error "Requires FastLED 3.1 or later; check github for latest code."
+#endif 
+
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Data pin to connect to the strip.
 #define LED_CK 11
@@ -60,7 +64,7 @@ void mover() {
     leds[(i+10) % NUM_LEDS] += CHSV(hue+170, 255, 255);       // Same here.
     show_at_max_brightness_for_power();
     fadeToBlackBy(leds, NUM_LEDS, thisfade);                  // Low values = slower fade.
-    delay_at_max_brightness_for_power(2.5*thisdelay);
+    delay_at_max_brightness_for_power(thisdelay);             // UGH!!!! A blocking delay. If you want to add controls, they may not work reliably.
   }
 } // mover()
 

@@ -1,0 +1,132 @@
+FastLED Support FAQ
+
+By: Andrew Tuline
+
+Date: July, 2015
+
+
+I've made a LOT of mistakes over the past couple of years, and thought I'd pass along some of the things I've seen and done.
+
+
+
+ 
+
+Q. My LED's are the wrong colour.
+
+A. Run RGB Calibrate as found at:
+
+https://github.com/FastLED/FastLED/tree/master/examples/RGBCalibrate
+
+You could be using Neopixels, which typically have a colour ordering of GRB. Instead of using:
+
+FastLED.addLeds<NEOPIXEL, DATA_PIN>
+
+try:
+
+LEDS.addLeds<WS2812, LED_DT, RGB>     or
+LEDS.addLeds<WS2812, LED_DT, GRB>
+
+
+In the case of APA102, try:
+
+LEDS.addLeds<APA102, LED_DT, LED_CK, BGR>
+
+
+
+Things we've seen:
+
+- Connecting to the wrong data/clock pin.
+- Incorrect LEDS.addLeds definition.
+- Flaky wiring/breadboard.
+- The wrong version of the library being used (wasn't up to date).
+- Some strips/code/microcontrollers need the development version of the library (currently at 3.1, which is NOT the default).
+- Incorrectly named library.
+- Duplicate library.
+- Library placed in wrong location.
+- Not enough power/current available.
+- Too high (or low) of a voltage being used.
+- Noisy power supplies.
+- Trying to power too many LED's from the Arduino 5V line.
+- Connecting to Dout instead of Din.
+- Grounds not tied together.
+- Blown LED's (see voltage above).
+- Memory leakage, i.e. referring to leds[NUM_LEDS] as opposed to leds[NUM_LEDS-1].
+- Wrong colours (as in Neopixels).
+- Make sure you're not using a 12V led strip.
+- Your board may not yet be supported.
+- Your code just does NOT work (yet). Have you tried known working code?
+- Trying to support too many LED's. (Learn to walk before you can run).
+- IR doesn't work with WS2812's. No it doesn't. Try APA102's.
+ 
+ 
+
+Q. I've tried the above and it still doesn't work. Help!!!
+
+A. There could be loads of reasons, so let's gather information. Please provide details:
+
+- What kind of LED's you're using.
+- What board you're using.
+- How it's all powered up.
+- What version of the FastLED library you're using.
+- What version of Arduino IDE you're using.
+- What OS you're building from.
+- A circuit diagram/layout (try using Fritzing to show it).
+- A copy of your .ino file (copy it to www.pastebin.com).
+- Essentially, give us EVERYTHING in excruciating detail.
+- Provide specifics on how/where it's all being powered up.
+- That would be pins, voltages, power supply used. . . everything.
+- Check out "things we've seen" (below).
+- Try and remove all the superfluous code and minimize the amount of code that exhibits the issue.
+
+A. Oh, and triple check EVERYTHING. Again!
+
+If you ask a question online and later get it resolved, please have the courtesy and post what the solution was.
+
+ 
+
+Q. My FastLED .ino file gives a (long assed) compile error.
+
+A. Make sure you are using (the most recent update of) FastLED.
+A. Some routines may require the LATEST development version (currently 3.1). Get it.
+A. Make sure you've renamed the library to just FastLED.
+A. Re-install the library just to be sure.
+A. Check your code to make sure it's correct. 
+A. Post a copy of your code onto pastebin.com and ask for some assistance with it. Please remove the non-relevant portions if you can.
+
+ 
+
+Q. I want to use a LOT of LED's. What do I need to do?
+
+A. If you need to limit the current, consider using the power management capabilities of FastLED.
+A. Depending on the brightness, if you're running more than about 30 LED's, you should be using a dedicated power source for them You shouldn't be powering the Arduino with 5V through the barrel connector.
+A. Just make sure that all of the grounds are tied together. Robustly.
+A. You should put a 1000uf capacitor between Vcc and Gnd near the strip.
+A. Add a 330 ohm resistor between the data lines and the strip.
+A. Add a 10K ohm resistor between the data lines and Gnd. 
+A. Here's an interesting article: 
+
+http://ledwallproject.blogspot.ca/2014/05/making-5v-signals-for-ws2812-with-logic.html?m=1
+
+A. Test the whole thing about on a small scale first, so you can isolate power/size issues from basic functionality.
+
+ 
+
+Q. My Arduino is not recognized? What do I do?
+
+A. Try a different Arduino.
+A. Try a different cable.
+A. Try a short cable.
+A. Are you using an Arduino clone? With a clone FTDI chip? If so, please Google search for 'FTDI fix'.
+ 
+
+ 
+
+
+When designing complicated projects:
+
+- Break it down into individual components (i.e. buttons, IR, LED's).
+- Create test jigs and programs for each component.
+- Slowly combine the functionality and test again.
+- Make sure you incorporate lots of testing.
+- Learn to use git for version control.
+- Be prepared to throw it all out and start from scratch with your newly acquired knowledge.
