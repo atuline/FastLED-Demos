@@ -97,6 +97,7 @@ A. Post a copy of your code onto pastebin.com and ask for some assistance with i
 
 Q. I want to use a LOT of LED's. What do I need to do?
 
+A. Remember that at full brightness, each LED can take up to 60mA of current.
 A. If you need to limit the current, consider using the power management capabilities of FastLED.
 A. Depending on the brightness, if you're running more than about 30 LED's, you should be using a dedicated power source for them You shouldn't be powering the Arduino with 5V through the barrel connector.
 A. Just make sure that all of the grounds are tied together. Robustly.
@@ -116,6 +117,7 @@ Q. My Arduino is not recognized? What do I do?
 A. Try a different Arduino.
 A. Try a different cable.
 A. Try a short cable.
+A. Remove the LED strip from the Arduino.
 A. Are you using an Arduino clone? With a clone FTDI chip? If so, please Google search for 'FTDI fix'.
  
 

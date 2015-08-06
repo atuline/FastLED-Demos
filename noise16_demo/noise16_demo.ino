@@ -64,24 +64,15 @@ void loop () {
 
   EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
     noise16();                                                   // Routine is still delay based, but at least it's now a non-blocking day.
-    show_at_max_brightness_for_power();
   }
+  show_at_max_brightness_for_power();  
 } // loop()
 
 
 void noise16() {
   fill_noise16(leds, NUM_LEDS, octaves, x, xscale, hue_octaves, hxy, hue_scale, hue_time);
   if (thisdir == 0) {hxy+=hxyinc; x += x_speed; hue_time+= hue_speed;} else { hxy-=hxyinc; x -= x_speed; hue_time -= hue_speed;}
-
-//  for (int i=0; i<NUM_LEDS; i++) {                          // We can filter, we can invert, we can do all sorts of things.
-//    leds[i].r = 0;                                          // Totally filter out red.
-//    leds[i].g = 0;
-//    leds[i].b = 0;
-//    leds[i].r =qsuba(leds[i].r, 32);                        // Set a min value to display.
-//    leds[i].g =qsubd(leds[i].g, 32);                        // Set a min value to display.
-//    leds[i].b =qsuba(leds[i].b, 32);                        // Set a min value to display.
-//  }
-} // nois16()
+} // noise16()
 
 
 void ChangeMe() {

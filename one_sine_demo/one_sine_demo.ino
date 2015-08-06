@@ -4,7 +4,7 @@ By: Andrew Tuline
 
 Date: Oct, 2014
 
-A demo showing the flexibility of just using a single sine wave. A little code and a lot of variables can go a long way. This includes an optional twinkle overlay for Mark Kriegsman.
+A demo showing the flexibility of just using a single sine wave. A little code and a lot of variables can go a long way.
 
 */
 
@@ -25,7 +25,7 @@ A demo showing the flexibility of just using a single sine wave. A little code a
 #define NUM_LEDS 20                                           // Number of LED's.
 
 // Initialize changeable global variables.
-uint8_t max_bright = 128;                                     // Overall brightness definition. It can be changed on the fly.
+uint8_t max_bright = 255;                                     // Overall brightness definition. It can be changed on the fly.
 
 struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
 
@@ -42,20 +42,9 @@ uint8_t allfreq = 32;                                         // You can change 
 int thisphase = 0;                                            // Phase change value gets calculated.
 uint8_t thiscutoff = 192;                                     // You can change the cutoff value to display this wave. Lower value = longer wave.
 int thisdelay = 25;                                           // You can change the delay. Also you can change the allspeed variable above. 
-uint8_t twinkrun = 1;                                         // Enable/disable twinkles.
-
 uint8_t bgclr = 0;                                            // A rotating background colour.
-uint8_t bgbri = 0;
+uint8_t bgbri = 32;                                           // Don't go below 16.
 // End of resetvar() redefinitions.
-
-
-typedef struct {                                              // Define a structure for the twinkles that get overlaid on the moving waves.
-      int twinkled;                                           // Supports a long strand of LED's.
-      int twinkbright;                                        // Defined as 'int', so that we can trigger change on a negative brightness value.
-  }  twinks;
-
-#define numtwinks 4                                           // You can change the number of twinkles.
-twinks mytwinks[numtwinks];                                   // The structure is called mytwinks.
 
 
 
@@ -76,9 +65,9 @@ void loop() {
   ChangeMe();                                                 // Muck those variables around.
   EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
     one_sin();
-  if(twinkrun == 1) twinkover();                              // You can keep or lose the twinkles.
-  show_at_max_brightness_for_power();
+    bgclr++;
   }
+  show_at_max_brightness_for_power();
 } // loop()
 
 
@@ -88,21 +77,21 @@ void ChangeMe() {
   static uint8_t lastSecond = 99;                             // Static variable, means it's only defined once. This is our 'debounce' variable.
   
   // You can change variables, but remember to set them back in the next demo, or they will stay as is.
-  if( lastSecond != secondHand) {
+  if(lastSecond != secondHand) {
     lastSecond = secondHand;
     switch (secondHand) {
-      case  0: twinkrun = 1; thisrot = 1; thiscutoff=254; allfreq=8; bgclr = 50; bgbri=10; break; // Both rotating hues
-      case  5: thisrot = 0; thisdir=1; break;                            // Just 1 rotating hue
-      case 10: thishue = 255; bgclr=20; bgbri=10; break;                 // No rotating hues, all red.
-      case 15: twinkrun = 0; break;                                      // Enough with the damn twinkles.
-      case 20: allfreq = 16; bgclr=50; break;                            // Time to make a wider bar.
-      case 25: thishue=100; thiscutoff = 96; bgclr=20; bgbri=20; break;  // Change width of bars.
-      case 30: thiscutoff = 96; thisrot = 1; break;                      // Make those bars overlap, and rotate a hue
-      case 35: thisdir = 1; break;                                       // Change the direction.
-      case 40: thiscutoff = 128; wavebright = 64; twinkrun = 1; break;   // Yet more changes
-      case 45: wavebright = 128; twinkrun = 0; thisspeed = 3; break;     // Now, we change speeds.
-      case 50: thisdir = 0; twinkrun = 0; break;                         // Opposite directions
-      case 55: resetvar(); break;                                        // Getting complicated, let's reset the variables.
+      case  0: thisrot = 1; thiscutoff=252; allfreq=8; break; // Both rotating hues
+      case  5: thisrot = 0; thisspeed=-4; break;              // Just 1 rotating hue
+      case 10: thishue = 255; break;                          // No rotating hues, all red.
+      case 15: thisrot = 1; thisspeed=2; break;               // 
+      case 20: allfreq = 16; break;                           // Time to make a wider bar.
+      case 25: thishue=100; thiscutoff = 96; break;           // Change width of bars.
+      case 30: thiscutoff = 96; thisrot = 1; break;           // Make those bars overlap, and rotate a hue
+      case 35: thisspeed = 3; break;                          // Change the direction.
+      case 40: thiscutoff = 128; wavebright = 64; break;      // Yet more changes
+      case 45: wavebright = 128; thisspeed = 3; break;        // Now, we change speeds.
+      case 50: thisspeed = -2; break;                         // Opposite directions
+      case 55: break;                                         // Getting complicated, let's reset the variables.
     }
   }
 } // ChangeMe()
@@ -110,29 +99,15 @@ void ChangeMe() {
 
 
 void one_sin() {                                                                // This is the heart of this program. Sure is short.
-  if (thisdir == 0) thisphase+=thisspeed; else thisphase-=thisspeed;            // You can change direction and speed individually.
-    thishue = thishue + thisrot;                                                // Hue rotation is fun for thiswave.
+//  if (thisdir == 0) thisphase+=thisspeed; else thisphase-=thisspeed;          // You can change direction and speed individually.
+    thisphase += thisspeed;
+    thishue += thisrot;                                                         // Hue rotation is fun for thiswave.
   for (int k=0; k<NUM_LEDS-1; k++) {
     int thisbright = qsubd(cubicwave8((k*allfreq)+thisphase), thiscutoff);      // qsub sets a minimum value called thiscutoff. If < thiscutoff, then bright = 0. Otherwise, bright = 128 (as defined in qsub)..
     leds[k] = CHSV(bgclr, 255, bgbri);
     leds[k] += CHSV(thishue, allsat, thisbright);                               // Assigning hues and brightness to the led array.
   }
-  bgclr++;
 } // one_sin()
-
-
-
-void twinkover() {                                                              // Twinkle overlay has been added for Mark Kriegsman.
-  for (int i = 0; i < numtwinks; i++) {
-    if (mytwinks[i].twinkbright <0) {
-      mytwinks[i].twinkled = random8(0, NUM_LEDS-1);
-      mytwinks[i].twinkbright = random8(220, 255);
-    }
-    leds[mytwinks[i].twinkled] = CHSV(80, 120, mytwinks[i].twinkbright);        // Trying to make a soft white twinkle
-    mytwinks[i].twinkbright -= 8;
-  }
-} // twinkle()
-
 
 
 void resetvar() {                                             // Reset the variable back to the beginning.
@@ -146,7 +121,5 @@ void resetvar() {                                             // Reset the varia
   thisphase = 0;                                              // Phase change value gets calculated.
   thiscutoff = 192;                                           // You can change the cutoff value to display this wave. Lower value = longer wave.
   thisdelay = 25;                                             // You can change the delay. Also you can change the allspeed variable above. 
-  twinkrun = 1;                                               // Enable/disable twinkles.
-  bgbri = 0;
-  bgclr = 0;
+  bgbri = 16;
 } // resetvar()

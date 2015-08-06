@@ -5,7 +5,7 @@ By: Andrew Tuline
 
 Date: July, 2015
 
-This provide many examples on filling the strand with colours such as:
+This boring example provides ways of filling the strand with colours such as:
 
 - fill_solid for a single colour across the entire strip
 - fill_gradient for one or more colours across the section of, or the entire strip
@@ -19,9 +19,6 @@ References:
 
 http://fastled.io/docs/3.1/group___colorutils.html
 https://github.com/FastLED/FastLED/wiki/Pixel-reference#predefined-colors-list
-
-
-FastLED is available at https://github.com/FastLED/FastLED
 
 */
 

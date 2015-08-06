@@ -28,6 +28,11 @@ Plug Vcc of the microphone into 3.3V of Arduino. Connect 3.3V of Arduino to aref
 
 #include "FastLED.h"                                          // FastLED library.
  
+
+#if FASTLED_VERSION < 3001000
+#error "Requires FastLED 3.1 or later; check github for latest code."
+#endif
+
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Data pin to connect to the strip.
 #define LED_CK 11

@@ -1,13 +1,14 @@
 
-/* Matrix
+/* Matrix with Palettes
 
-By: funkboxing LED
+Originally By: funkboxing LED
 
-Modified by: Andrew Tuline
+Modified a LOT by: Andrew Tuline
 
-Date: Oct, 2014
+Date: July, 2015
 
-Green (or other coloured) characters going up/down the strand, a la 'The Matrix'.
+Various coloured characters going up/down the strand, a la 'The Matrix'. This highly modified version uses non-blocking
+delays as well as colorPalette lookups and other variables such as direction, speed and background colours.
 
 */
 
@@ -30,14 +31,21 @@ uint8_t max_bright = 128;                                     // Overall brightn
 
 struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
 
+// Palette definitions
+CRGBPalette16 currentPalette;
+CRGBPalette16 targetPalette;
+TBlendType    currentBlending;
+
+
 // Initialize global variables for sequences
-int thisdelay =  50;                                          // A delay value for the sequence(s)
-int   thishue =  95;
-int   thissat = 255;
-int   thisdir =   0;
-bool   huerot =   0;                                          // Does the hue rotate? 1 = yes
-uint8_t bgclr =   0;
-uint8_t bgbri =   0;
+int      thisdelay =  50;                                          // A delay value for the sequence(s)
+uint8_t    thishue =  95;
+uint8_t    thissat = 255;
+int        thisdir =   0;
+uint8_t thisbright = 255;
+bool        huerot =   0;                                          // Does the hue rotate? 1 = yes
+uint8_t      bgclr =   0;
+uint8_t      bgbri =   0;
 
 
 void setup() {
@@ -48,6 +56,10 @@ void setup() {
 
   FastLED.setBrightness(max_bright);
   set_max_power_in_volts_and_milliamps(5, 500);               // FastLED power management set at 5V, 500mA
+
+  currentPalette  = CRGBPalette16(CRGB::Black);
+  targetPalette   = RainbowColors_p;                            // Used for smooth transitioning.
+  currentBlending = LINEARBLEND;  
 } // setup()
 
 
@@ -55,19 +67,24 @@ void setup() {
 void loop () {
   ChangeMe();
 
-  EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
-    matrix();                                                   // Routine is still delay based, but at least it's now a non-blocking day.
-    show_at_max_brightness_for_power();
+  EVERY_N_MILLISECONDS(100) {
+    uint8_t maxChanges = 24; 
+    nblendPaletteTowardPalette(currentPalette, targetPalette, maxChanges);   // AWESOME palette blending capability.
   }
+
+  EVERY_N_MILLISECONDS(thisdelay) {
+    matrix();
+  }
+  show_at_max_brightness_for_power();
 } // loop()
 
 
 void matrix() {                                               // One line matrix
 
-  if (huerot) thishue=thishue+5;
+  if (huerot) thishue++;
   
   if (random16(90) > 80) {
-    if (thisdir == 0) leds[0] = CHSV(thishue, thissat, 255); else leds[NUM_LEDS-1] = CHSV(thishue, thissat, 255);
+    if (thisdir == 0) leds[0] = ColorFromPalette(currentPalette, thishue, thisbright, currentBlending); else leds[NUM_LEDS-1] = ColorFromPalette( currentPalette, thishue, thisbright, currentBlending);
   }
   else {
     if (thisdir ==0) leds[0] = CHSV(bgclr, thissat, bgbri); else leds[NUM_LEDS-1] = CHSV(bgclr, thissat, bgbri);
@@ -81,16 +98,18 @@ void matrix() {                                               // One line matrix
 } // matrix()
 
 
+// Preset palettes: RainbowColors_p, RainbowStripeColors_p, OceanColors_p, CloudColors_p, LavaColors_p, ForestColors_p, and PartyColors_p.
+
 void ChangeMe() {                                             // A time (rather than loop) based demo sequencer. This gives us full control over the length of each sequence.
   uint8_t secondHand = (millis() / 1000) % 25;                // Change '25' to a different value to change length of the loop.
   static uint8_t lastSecond = 99;                             // Static variable, means it's only defined once. This is our 'debounce' variable.
   if (lastSecond != secondHand) {                             // Debounce to make sure we're not repeating an assignment.
     lastSecond = secondHand;
     switch(secondHand) {
-      case  0: thisdelay=50; thishue=95; bgclr=140; bgbri=20; huerot=0; break;
-      case  5: thisdir=1; bgbri=0; huerot=1; break;
-      case 10: thisdelay=30; thishue=0; bgclr=50; bgbri=20; huerot=0; break;
-      case 15: thisdelay=80; bgbri = 10; thishue=random8(); break;
+      case  0: thisdelay=50; thishue=95; bgclr=140; bgbri=16; huerot=0; break;
+      case  5: targetPalette = OceanColors_p; thisdir=1; bgbri=0; huerot=1; break;
+      case 10: targetPalette = LavaColors_p; thisdelay=30; thishue=0; bgclr=50; bgbri=15; huerot=0; break;
+      case 15: thisdelay=80; bgbri = 32; bgclr=96; thishue=random8(); break;
       case 20: thishue=random8(); huerot=1; break;
       case 25: break;
     }

@@ -44,6 +44,11 @@ http://fastled.io/docs/3.1/
  
 
 3) You can even use functions like beatsin88() mapped to NUM_LEDS to avoid using delays entirely.
+
+4) Palettes. Learn to use them. Learn how to smoothly transition between them.
+
+5) Use 8 and 16 bit math, and the FastLED math functions where possible. Floating point is s-l-o-w.
+
 */
 
 
@@ -85,7 +90,7 @@ http://fastled.io/docs/3.1/
 
     FastLED.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);        // Use this for WS2812B
     FastLED.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);  // Use this for WS2801 or APA102
-    FastLED.addLeds<LED_TYPE,LED_DT,LED_CK,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip).setDither(brightness < 255);
+    FastLED.addLeds<LED_TYPE,LED_DT,LED_CK,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip).setDither(max_bright < 255);
 
     FastLED.setBrightness(max_bright);                          // You can change the overall brightness on the fly, i.e. with a potentiometer.
     set_max_power_in_volts_and_milliamps(5, 500);               // This is used by the power management functionality and is currently set at 5V, 500mA.
@@ -101,18 +106,17 @@ http://fastled.io/docs/3.1/
 
 
 
-
-
 // LOOP -------------------------------------------------------------------------------------------------------
 
   void loop() {
-    static int myvar = 5;                                       // The value is only defined once. Very cool.
-    int yourvar = 6;                                            // The value is defined every time you call this routine.
+    static int myvar = 5;                                       // The value is only initialized once. Very cool.
+    int yourvar = 6;                                            // The value is initialied every time you call this routine.
     ChangeMe();                                                 // Used to change parameters of your program.
+
     EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
       twinkle();
-      show_at_max_brightness_for_power();
     }
+    show_at_max_brightness_for_power();                         // Run the FastLED.show() at full loop speed.
     Serial.println(LEDS.getFPS());                              // Display frames per second on the serial monitor.  
   } // loop()
 
@@ -127,9 +131,12 @@ http://fastled.io/docs/3.1/
     static uint8_t lastSecond = 99;                             // Static variable, means it's only defined once. This is our 'debounce' variable.
     if (lastSecond != secondHand) {                             // Debounce to make sure we're not repeating an assignment.
       lastSecond = secondHand;
-      if (secondHand ==  0)  {thisdelay = 10;}
-      if (secondHand ==  5)  {thisdelay = 20;}
-      if (secondHand == 10)  {thisdelay = 30;}
+      switch(secondHand) {
+        case 0: thisdelay = 10; break;
+        case 5: thisdelay = 20; break;
+        case 10: thisdelay = 30; break;
+        case 15: break;
+      }
     }
   } // ChangeMe()
 
@@ -144,40 +151,60 @@ http://fastled.io/docs/3.1/
 
 // Power managed display -----------------------------------
 
-  set_max_power_in_volts_and_milliamps(5, 500);               // This is used by the power management functionality and is currently set at 5V, 500mA.
-
-  show_at_max_brightness_for_power();                         // Power managed display of LED's.
+  set_max_power_in_volts_and_milliamps(5, 500);               // This is defined in setup and used by the power management functionality and is currently set at 5V, 500mA.
+  show_at_max_brightness_for_power();                         // This is used in loop for power managed display of LED's.
   
-
-
-
-
 
 
 // Palettes -----------------------------------------------------------------------------------------
 
 CRGBPalette16 currentPalette;
+CRGBPalette16 targetPlette;
 TBlendType    currentBlending;        // NOBLEND or LINEARBLEND
 
 
 // In setup
-// Preset palettes: RainbowColors_p, RainbowStripeColors_p, OceanColors_p, CloudColors_p, LavaColors_p, ForestColors_p, and PartyColors_p.
+// RainbowColors_p, RainbowStripeColors_p, OceanColors_p, CloudColors_p, LavaColors_p, ForestColors_p, and PartyColors_p
 
-  currentPalette  = RainbowColors_p; 
-  targetPalette   = RainbowColors_p;
-  currentBlending = LINEARBLEND;  
+  currentPalette  = CRGBPalette16(CRGB::Black);
+  targetPalette   = RainbowColors_p;                            // Used for smooth transitioning.
+  currentBlending = LINEARBLEND;
 
 // In loop
-  leds[i] = ColorFromPalette(currentPalette,thishue,thisbri, currentBlending);
 
   EVERY_N_MILLISECONDS(100) {
     uint8_t maxChanges = 24; 
-    nblendPaletteTowardPalette( currentPalette, targetPalette, maxChanges);   // AWESOME palette blending capability.
+    nblendPaletteTowardPalette(currentPalette, targetPalette, maxChanges);   // AWESOME palette blending capability.
   }
 
+// In loop for testing
   EVERY_N_MILLISECONDS(5000) {
       targetPalette = CRGBPalette16(CHSV(random8(), 255, 32), CHSV(random8(), random8(64)+192, 255), CHSV(random8(), 255, 32), CHSV(random8(), 255, 255)); 
   }
+
+
+
+// In routine
+  leds[i] = ColorFromPalette(currentPalette,thishue,thisbri, currentBlending);
+
+
+
+// Creating a palette
+void SetupRandomPalette() {
+  int myHue = random8();
+  targetPalette = CRGBPalette16(CHSV(myHue, 255, 32), CHSV(myHue, random8(64)+192, 255), CHSV(myHue, 255, 32), CHSV(myHue, random8(64)+192, 255)); 
+}
+
+void SetupRandomPalette() {
+  for (int i = 0; i < 16; i++) {
+    targetPalette[i] = CHSV(random8(), 255, 255);
+  }
+}
+
+void SetupRandomPalette() {
+  int myHue = random8();
+  targetPalette = CRGBPalette16(CRGB::Green); 
+}
 
 
 
@@ -221,7 +248,7 @@ TBlendType    currentBlending;        // NOBLEND or LINEARBLEND
 // Fade, Scale
   fadeToBlackBy(leds, NUM_LEDS, fadeval);                     // 8 bit, 1 = slow, 255 = fast
   nscale8(leds,NUM_LEDS,fadeval);                             // 8 bit, 1 = fast, 255 = slow
-
+  leds[i].fadeToBlackBy(fadeval);
 
 // Blend
   leds[i] = blend(CRGB::Red, CRGB::Blue, sin8(mysine));
@@ -283,3 +310,51 @@ TBlendType    currentBlending;        // NOBLEND or LINEARBLEND
   void loop() {
     printf("My favorite number is %6d!\n", 12);                 // This is just an example
   } // loop()
+
+
+// Other ---------------------------------------------------------------------------------------------------------------------------------
+
+  // An add glitter function.
+  void addGlitter( uint8_t chanceOfGlitter) {
+    if(random8() < chanceOfGlitter) {
+      leds[ random16(NUM_LEDS) ] += CRGB::White;
+    }
+  }
+
+
+// Beats Information ---------------------------------------------------------------------------------------------------------------------
+
+
+uint8_t wave = beatsin8(
+  accum88 beats_per_minute,                                   // I'd use an int or uint8_t
+  uint8_t lowest=0,
+  uint8_t highest=255,
+  uint32_t timebase=0,                                        // Set to millis() to zero out the beat
+  uint8_t phase_offset=0)                                     // This is kind of cool
+
+When you want to 'zero' out the beat:
+
+  uint8_t wave = beatsin8(60, 0, 255, millis());
+
+
+// Easing & lerping -------------------------------------------------------------------------------------------------------
+
+easeOutVal = ease8InOutQuad(easeInVal);                       // Start with easeInVal at 0 and then go to 255 for the full easing.
+ledNum = lerp8by8(0, NUM_LEDS, easeOutVal);                   // Map it to the number of LED's you have.
+
+
+
+
+// CHSV to CRGB scaling -----------------------------------------------------------
+/*
+If you want any level of hue rotation, then keep CHSV brightness at 32
+
+Table of CHSV brightness to CRGB value
+0 == (0,0,0)
+1 == (1,0,0)
+16 == (2,0,0)
+23 == (3,0,0)
+28 == (4,0,0)
+32 == (5,0,0)
+
+*/

@@ -21,10 +21,10 @@ A cool ripple effect for an LED strip that's been re-written from the Neopixel v
 #define LED_CK 11
 #define COLOR_ORDER BGR                                       // It's GRB for WS2812B and BGR for APA102.
 #define LED_TYPE APA102                                       // What kind of strip are you using (WS2801, WS2812B or APA102)?
-#define NUM_LEDS 20                                           // Number of LED's.
+#define NUM_LEDS 12                                           // Number of LED's.
 
 // Initialize changeable global variables.
-uint8_t max_bright = 128;                                     // Overall brightness definition. It can be changed on the fly.
+uint8_t max_bright = 255;                                     // Overall brightness definition. It can be changed on the fly.
 
 struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
 
@@ -53,19 +53,19 @@ void setup() {
 void loop () {
   EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
     ripple();
-    show_at_max_brightness_for_power();
   }
+  show_at_max_brightness_for_power();
 } // loop()
 
 
 void ripple() {
-  for (int i = 0; i < NUM_LEDS; i++) leds[i] = CHSV(bgcol++, 255, 50);  // Rotate background colour.
+  for (int i = 0; i < NUM_LEDS; i++) leds[i] = CHSV(bgcol++, 255, 15);  // Rotate background colour.
 
   switch (step) {
 
     case -1:                                                          // Initialize ripple variables.
       center = random(NUM_LEDS);
-      colour = random16(0,256);
+      colour = random8();
       step = 0;
       break;
 
@@ -79,16 +79,9 @@ void ripple() {
       break;
 
     default:                                                             // Middle of the ripples.
-        leds[wrap(center + step)] += CHSV(colour, 255, myfade/step*2);   // Display the next pixels in the range for one side.
-        leds[wrap(center - step)] += CHSV(colour, 255, myfade/step*2);   // Display the next pixels in the range for the other side.
-        step ++;                                                         // Next step.
-        break;  
+      leds[(center + step + NUM_LEDS) % NUM_LEDS] += CHSV(colour, 255, myfade/step*2);       // Simple wrap from Marc Miller
+      leds[(center - step + NUM_LEDS) % NUM_LEDS] += CHSV(colour, 255, myfade/step*2);
+      step ++;                                                         // Next step.
+      break;  
   } // switch step
 } // ripple()
- 
-  
-int wrap(int step) {
-  if(step < 0) return NUM_LEDS + step;
-  if(step > NUM_LEDS - 1) return step - NUM_LEDS;
-  return step;
-} // wrap()

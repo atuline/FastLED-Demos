@@ -15,7 +15,11 @@ This takes my one_sine routine and adds Mark's palette lookup to it.
 #define qsuba(x, b)  ((x>b)?x-b:0)                          // Analog Unsigned subtraction macro. if result <0, then => 0
 
 #include "FastLED.h"                                          // FastLED library. Preferably the latest copy of FastLED 2.1.
- 
+
+#if FASTLED_VERSION < 3001000
+#error "Requires FastLED 3.1 or later; check github for latest code."
+#endif
+
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Serial data pin for WS2812 or WS2801.
 #define LED_CK 11                                             // Serial clock pin for WS2801 or APA102.
@@ -25,7 +29,7 @@ This takes my one_sine routine and adds Mark's palette lookup to it.
 
 struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
 
-uint8_t max_bright = 64;                                     // Overall brightness definition. It can be changed on the fly.
+uint8_t max_bright = 128;                                     // Overall brightness definition. It can be changed on the fly.
 
 
 // Initialize changeable global variables. Play around with these!!!
@@ -37,12 +41,13 @@ int8_t thisspeed = 8;                                         // You can change 
 uint8_t allfreq = 32;                                         // You can change the frequency, thus distance between bars.
 int thisphase = 0;                                            // Phase change value gets calculated.
 uint8_t thiscutoff = 192;                                     // You can change the cutoff value to display this wave. Lower value = longer wave.
-int thisdelay = 10;                                           // You can change the delay. Also you can change the allspeed variable above. 
+int thisdelay = 30;                                           // You can change the delay. Also you can change the allspeed variable above. 
 uint8_t bgclr = 0;                                            // A rotating background colour.
 uint8_t bgbright = 10;                                        // Brightness of background colour
 
 // Palette definitions
 CRGBPalette16 currentPalette;
+CRGBPalette16 targetPalette;
 TBlendType    currentBlending;
 
 
@@ -68,9 +73,8 @@ void loop () {
     static uint8_t startIndex = 0;
     startIndex = startIndex + 1; /* motion speed */
     one_sine_pal(startIndex);
-    show_at_max_brightness_for_power();
   }
-
+  show_at_max_brightness_for_power();
 } // loop()
 
 

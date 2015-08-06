@@ -64,7 +64,7 @@ void mover() {
     leds[(i+10) % NUM_LEDS] += CHSV(hue+170, 255, 255);       // Same here.
     show_at_max_brightness_for_power();
     fadeToBlackBy(leds, NUM_LEDS, thisfade);                  // Low values = slower fade.
-    delay_at_max_brightness_for_power(thisdelay);             // UGH!!!! A blocking delay. If you want to add controls, they may not work reliably.
+    delay(thisdelay);                                         // UGH!!!! A blocking delay. If you want to add controls, they may not work reliably.
   }
 } // mover()
 

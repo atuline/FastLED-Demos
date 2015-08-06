@@ -5,7 +5,7 @@ By: Andrew Tuline
 
 Date: July, 2015
 
-A rainbow program using FastLED function calls with no delays or 'for' loops. Very simple, yet effective.
+A rainbow moving back and forth using FastLED function calls with no delays or 'for' loops. Very simple, yet effective.
 
 */
 

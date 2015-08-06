@@ -11,6 +11,10 @@ Rainbow marching up the strand. Very basic, but oh so popular. Oh look, we don't
 
 
 #include "FastLED.h"                                          // FastLED library.
+
+#if FASTLED_VERSION < 3001000
+#error "Requires FastLED 3.1 or later; check github for latest code."
+#endif
  
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Serial data pin
@@ -45,8 +49,8 @@ void setup() {
 void loop () {
   EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking routine to update/display the sequence.
     rainbow_march();
-    show_at_max_brightness_for_power();
   }
+  show_at_max_brightness_for_power();  
 } // loop()
 
 

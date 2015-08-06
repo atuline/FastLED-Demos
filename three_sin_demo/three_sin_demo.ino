@@ -67,8 +67,8 @@ void loop () {
   ChangeMe();
   EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
     three_sin();                                              // Improved method of using non-blocking delay
-    show_at_max_brightness_for_power();
   }
+  show_at_max_brightness_for_power();
 } // loop()
 
 
