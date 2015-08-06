@@ -16,7 +16,7 @@ Before attempting to use these demos, make sure you can compile and run the exam
 
 The FastLED Google+ community is at https://plus.google.com/communities/109127054924227823508
 
-Finally, before looking for some support in the above community (or directly), have a look at my FastLED FAQ at http://www.tuline.com/dru/content/my-fastled-support-faq. Key things are to:
+Finally, before looking for some support in the above community (or directly), have a look at fastled_support_faq.txt. Key things are to:
 
 - Check everything several times.
 - Break it down into simple components.
