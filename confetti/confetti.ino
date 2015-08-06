@@ -60,8 +60,8 @@ void loop () {
 
   EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
     confetti();
-    show_at_max_brightness_for_power();
   }
+  show_at_max_brightness_for_power();  
 } // loop()
 
 

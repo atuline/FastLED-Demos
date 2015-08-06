@@ -37,7 +37,7 @@ FastLED is available at https://github.com/FastLED/FastLED
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Data pin to connect to the strip.
 #define LED_CK 11                                             // Clock pin for WS2801 or APA102.
-#define COLOR_ORDER GBR                                       // It's GRB for WS2812 and GBR for APA102.
+#define COLOR_ORDER BGR                                       // It's GRB for WS2812 and BGR for APA102.
 #define LED_TYPE APA102                                       // Using APA102, WS2812, WS2801. Don't forget to change LEDS.addLeds.
 #define NUM_LEDS 20                                           // Number of LED's.
 
