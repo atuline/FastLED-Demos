@@ -159,7 +159,7 @@ http://fastled.io/docs/3.1/
 // Palettes -----------------------------------------------------------------------------------------
 
 CRGBPalette16 currentPalette;
-CRGBPalette16 targetPlette;
+CRGBPalette16 targetPalette;
 TBlendType    currentBlending;        // NOBLEND or LINEARBLEND
 
 

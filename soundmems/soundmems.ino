@@ -23,7 +23,7 @@ This uses some nice debug output with a printf statement.
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Data pin to connect to the strip.
 #define LED_CK 11
-#define COLOR_ORDER BGR                                       // It's GRB for WS2812B
+#define COLOR_ORDER BGR                                       // It's GRB for WS2812B and BGR for APA102
 #define LED_TYPE APA102                                       // What kind of strip are you using (WS2801, WS2812B or APA102)?
 #define NUM_LEDS 20                                           // Number of LED's.
 
@@ -53,7 +53,7 @@ void setup() {
   // Connect 3.3V to mic AND TO AREF ON ARDUINO and enable this
   // line.  Audio samples are 'cleaner' at 3.3V.
   // COMMENT OUT THIS LINE FOR 3.3V ARDUINOS (FLORA, ETC.):
-//  analogReference(EXTERNAL);
+  analogReference(EXTERNAL);
   
   Serial.begin(57600);
    // Set up stdout

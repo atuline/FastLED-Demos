@@ -16,6 +16,8 @@ https://github.com/TJC/arduino/blob/master/fhttest/fhttest.cpp
 
 
 Note: If you are using a microphone powered by the 3.3V signal, such as the Sparkfun MEMS microphone, then connect 3.3V to the AREF pin.
+Also make sure you uncomment analogReference(EXTERNAL);  in Setup().
+
 
 Test with: http://onlinetonegenerator.com/frequency-sweep-generator.html
 
@@ -28,7 +30,11 @@ Test with: http://onlinetonegenerator.com/frequency-sweep-generator.html
 #define wavebright 128                                        // qsubd result will be this value if subtraction is >0.
 
 #include "FastLED.h"                                          // FastLED library. Preferably the latest copy of FastLED 2.1.
- 
+
+#if FASTLED_VERSION < 3001000
+#error "Requires FastLED 3.1 or later; check github for latest code."
+#endif
+
 // Fixed definitions cannot change on the fly.
 #define LED_DT 12                                             // Data pin to connect to the strip.
 #define LED_CK 11                                             // Clock pin for APA102 or WS2801
@@ -43,21 +49,17 @@ struct CRGB leds[NUM_LEDS];                                   // Initialize our 
 
 
 #define LOG_OUT 1
-// #define OCT_NORM 1
-// #define OCTAVE 1
-
 
 #define FHT_N 256                                             // Set to 256 point fht.
 #define inputPin A5
 
 #include <FHT.h>                                              // FHT library
 
-uint8_t D[NUM_LEDS][12];                                      // Our initial samples used to normalize the output.
-uint8_t E[NUM_LEDS];                                          // Our normalized values.
 
 uint8_t hueinc;                                               // A hue increment value to make it rotate a bit.
 uint8_t micmult = 10;
 
+uint8_t noiseval = 32;                                        // Increase this to reduce sensitivity.
 
 void setup() {
   analogReference(EXTERNAL);                                  // Connect 3.3V to AREF pin for any microphones using 3.3V
@@ -67,65 +69,40 @@ void setup() {
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);
 
   FastLED.setBrightness(max_bright);
-
-  for (int k = 0; k<12; k++) {                                // Let's get some initial FHT samples.
-    GetFHT();                                                 // Get 'em fast
-    for (int i=0; i<NUM_LEDS; i++){
-      D[i][k] = fht_log_out[2*i+2];                           // Get every 2nd array element starting with the 2nd one.
-//      Serial.print(fht_log_out[2*i+2]);
-    }
-//    Serial.println();
-  }
-
-  for (int m = 0; m <NUM_LEDS; m++) {                         // We need to average out those samples to mellow out the noise.
-      E[m] = (D[m][0] + D[m][1] + D[m][2] + D[m][3] + D[m][4] + D[m][5] + D[m][6] + D[m][7] + D[m][8] + D[m][9] + D[m][10] + D[m][11])/12*1.75;      // Let's average and 'fudge' the noise limiter.
-//      Serial.print(E[m]);
-//      Serial.print(", ");
-  }
+  set_max_power_in_volts_and_milliamps(5, 500);               // FastLED Power management set at 5V, 500mA.
 }
 
+
 void loop() {
-  fhtsound();
-  FastLED.show();
+  EVERY_N_MILLISECONDS(20) {
+    fhtsound();
+  }
+  show_at_max_brightness_for_power();
+
+//  Serial.println(LEDS.getFPS());                              // Display frames per second on the serial monitor.
 }  
 
 
 void fhtsound() {
   hueinc++;                                                   // A cute little hue incrementer.
   GetFHT();                                                   // Let's take FHT_N samples and crunch 'em.
-//  for (int i = 0 ; i < FHT_N/2 ; i++)                       // You can process up to FHT_N/2 of them. Hmm, Nyquist.
-//    B[i] = fht_log_out[i];
 
   for (int i= 0; i < NUM_LEDS; i++) {                         // Run through the LED array.
-//        Serial.print(fht_oct_out[2*i+2]);
-//        Serial.print(", ");
-  
-//  int tmp = qsuba(fht_oct_out[2*i+2], E[i]);                // Get the sample and subtract the 'quiet' normalized values, but don't go < 0.
-  int tmp = qsuba(fht_log_out[2*i+2], E[i]);                  // Get the sample and subtract the 'quiet' normalized values, but don't go < 0.
-
+    int tmp = qsuba(fht_log_out[2*i+2], noiseval);           // Get the sample and subtract the 'quiet' normalized values, but don't go < 0.
     if (tmp > (leds[i].r + leds[i].g + leds[i].b))            // Refresh an LED only when the intensity is low
         leds[i] = CHSV(tmp*micmult+hueinc, 255, tmp*micmult);  // Note how we really cranked up the tmp value to get BRIGHT LED's. Also increment the hue for fun.
     leds[i].nscale8(224);                                     // Let's fade the whole thing over time as well.
   }
-//          Serial.println();
 } // fhtsound()
 
 
-
 void GetFHT() {
-//  Serial.println("GetFHT");
   cli();
-  for (int i = 0 ; i < FHT_N ; i++) {
-    fht_input[i] = analogRead(inputPin) - 512;
-//    Serial.print(fht_input[i]);
-//    Serial.print(", ");
-  }
+  for (int i = 0 ; i < FHT_N ; i++) fht_input[i] = analogRead(inputPin) - 512;
   sei();
-//  Serial.println();
-    // save 256 samples
+
   fht_window();                                               // Window the data for better frequency response.
   fht_reorder();                                              // Reorder the data before doing the fht.
   fht_run();                                                  // Process the data in the fht.
-//  fht_mag_octave();                                         // Take the output of the fht and put in an array called fht_log_out[FHT_N/2]
   fht_mag_log();
 } // GetFHT()
