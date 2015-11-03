@@ -25,7 +25,6 @@ Finally, before looking for some support in the above community (or directly), h
 
 ##Introduction
 
-I remember back in high school physics (in 1969) when my grade 9 physics teacher talked about wave particle duality where light can be thought of as either a wave or a series of particles.  When I first started programming addressable LED's, I made sure that each LED was lit to a specific value and at a specific location just like the particles I had learned about in grade 9. This was quite tedious and I have since come to think of and to program a strand of LED's as not only a wave, but one that's been abstracted by colour palettes. The advantage is that we can come up with some simple and cool mathematical sequences, however we don't necessarily know what each LED will contain.
 
 Here are several display sequences for FastLED for a single strand of RGB LED's, such as NeoPixels/WS2812, WS2801 or DotStars/APA102. Each should compile and run separately and all have been tested on an Arduino Nano.
 
@@ -35,7 +34,12 @@ In addition to several standalone demos, I have included a display template as w
 
 I have also included a few sound reactive sequences, most notably fht_log, which uses the Sparkfun MEMS microphone and the FHT (Fast Hartley Transform) library to respond to sound in the frequency domain. Very cool.
 
+##My LED Philosophy
 
+I remember back in high school physics (in 1969) when my grade 9 physics teacher talked about wave particle duality where light can be thought of as either a wave or a series of particles.  When I first started programming addressable LED's, I made sure that each LED was lit to a specific value and at a specific location just like the particles I had learned about in grade 9. This was quite tedious and I have since come to think of and to program a strand of LED's as not only a wave, but one that's been abstracted by colour palettes. The advantage is that we can come up with some simple and cool mathematical sequences, however we don't necessarily know what each LED will contain.
+
+
+##Files
 
 **aatemplate.ino** - A standard display template which can be re-used.
 
@@ -48,10 +52,12 @@ I have also included a few sound reactive sequences, most notably fht_log, which
 See aalight.ino comment section for more information on how to use this. Also see aalight.png for a breadboard layout.
 
 
+##More
 Information about the awesome FastLED Library is available from: [fastled.io](http://fastled.io/)
 
 Download FastLED (select version 3.1) from: [github.com/FastLED/FastLED](https://github.com/FastLED/FastLED)
 
+FastLED Documentation is at: [http://fastled.io/docs/3.1/modules.html](http://fastled.io/docs/3.1/modules.html)
 
 ## Adding to the Library
 
@@ -67,16 +73,11 @@ In order for me to add sequences to the library, they should:
 ----------------------------------------------------------
 
 
-An LED links page on my web site:       http://www.tuline.com/dru/content/led-products-libraries-and-effects
-
 My Youtube channel is at:               https://www.youtube.com/user/atuline/videos
-
-My future LED site will be at:          http://www.twinkleds.com  (already registered with an 'under construction' page)
 
 My Github account is at:                https://github.com/atuline
 
+My Gists are at:                        http://gist.github.com/atuline
+
 My Pastebins are at:                    http://pastebin.com/u/atuline
 
-My personal web site is at:             http://www.tuline.com
-
-My FastLED FAQ is at:                   http://www.tuline.com/dru/content/my-fastled-support-faq

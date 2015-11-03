@@ -1,13 +1,23 @@
-FastLED Support FAQ
+My FastLED Support FAQ
 
 By: Andrew Tuline
 
-Date: July, 2015
+Date: August, 2015
 
 
-I've made a LOT of mistakes over the past couple of years, and thought I'd pass along some of the things I've seen and done.
+I've made a LOT of mistakes over the past couple of years with the FastLED library for the Arduino, and thought I'd pass along
+some of the things I've seen and done.
 
 
+Q. Where's the documentation?
+
+A. FastLED Documentation is located at:
+
+http://fastled.io/docs/3.1/modules.html
+
+Remember, this is the FastLED library and not the Adafruit one. Their documentation is at:
+
+https://learn.adafruit.com/adafruit-neopixel-uberguide/arduino-library
 
  
 
@@ -23,7 +33,7 @@ FastLED.addLeds<NEOPIXEL, DATA_PIN>
 
 try:
 
-LEDS.addLeds<WS2812, LED_DT, RGB>     or
+LEDS.addLeds<WS2812, LED_DT, RGB>     // or
 LEDS.addLeds<WS2812, LED_DT, GRB>
 
 
@@ -41,22 +51,27 @@ Things we've seen:
 - The wrong version of the library being used (wasn't up to date).
 - Some strips/code/microcontrollers need the development version of the library (currently at 3.1, which is NOT the default).
 - Incorrectly named library.
+- Using the wrong version of the library.
 - Duplicate library.
+- Didn't rename the library from FastLED-master to FastLED.
 - Library placed in wrong location.
+- After mucking around, STILL using the library incorrectly in some manner. Start from scratch!
 - Not enough power/current available.
-- Too high (or low) of a voltage being used.
+- Too high of a voltage being used (and you might have blown up the 1st LED). Try connecting clock/data to the 2nd LED.
 - Noisy power supplies.
 - Trying to power too many LED's from the Arduino 5V line.
 - Connecting to Dout instead of Din.
 - Grounds not tied together.
-- Blown LED's (see voltage above).
+- Blown/dead LED's (see voltage above).
+- Cold solder joints on the LED strips (cause flakiness).
 - Memory leakage, i.e. referring to leds[NUM_LEDS] as opposed to leds[NUM_LEDS-1].
 - Wrong colours (as in Neopixels).
 - Make sure you're not using a 12V led strip.
+- Getting errors when using BLEND. Replace BLEND with LINEARBLEND instead.
 - Your board may not yet be supported.
 - Your code just does NOT work (yet). Have you tried known working code?
-- Trying to support too many LED's. (Learn to walk before you can run).
-- IR doesn't work with WS2812's. No it doesn't. Try APA102's.
+- Trying to support too many LED's. There's 3 bytes per LED and only 2K of RAM.
+- IR doesn't work with WS2812's. No it doesn't. Try APA102's or WS2801's.
  
  
 
@@ -65,18 +80,18 @@ Q. I've tried the above and it still doesn't work. Help!!!
 A. There could be loads of reasons, so let's gather information. Please provide details:
 
 - What kind of LED's you're using.
-- What board you're using.
+- What microcontroller board you're using.
 - How it's all powered up.
 - What version of the FastLED library you're using.
 - What version of Arduino IDE you're using.
 - What OS you're building from.
 - A circuit diagram/layout (try using Fritzing to show it).
-- A copy of your .ino file (copy it to www.pastebin.com).
+- A copy of your .ino file (copy it to www.pastebin.com or gist.github.com).
 - Essentially, give us EVERYTHING in excruciating detail.
 - Provide specifics on how/where it's all being powered up.
 - That would be pins, voltages, power supply used. . . everything.
-- Check out "things we've seen" (below).
 - Try and remove all the superfluous code and minimize the amount of code that exhibits the issue.
+  We do not want to see your 3 page code manifesto. Keep it simple.
 
 A. Oh, and triple check EVERYTHING. Again!
 
@@ -84,14 +99,15 @@ If you ask a question online and later get it resolved, please have the courtesy
 
  
 
-Q. My FastLED .ino file gives a (long assed) compile error.
+Q. My FastLED .ino file gives me a (long assed) compile error.
 
-A. Make sure you are using (the most recent update of) FastLED.
+A. Make sure you are using (the most recent version of) FastLED.
 A. Some routines may require the LATEST development version (currently 3.1). Get it.
 A. Make sure you've renamed the library to just FastLED.
 A. Re-install the library just to be sure.
-A. Check your code to make sure it's correct. 
-A. Post a copy of your code onto pastebin.com and ask for some assistance with it. Please remove the non-relevant portions if you can.
+A. Check your code to make sure it's correct.
+A. Try an example that's included with the FastLED library.
+A. Post a copy of your (simplified) code that exhibits the problem onto pastebin.com or gist.github.com and ask for some assistance with it.
 
  
 
@@ -99,11 +115,14 @@ Q. I want to use a LOT of LED's. What do I need to do?
 
 A. Remember that at full brightness, each LED can take up to 60mA of current.
 A. If you need to limit the current, consider using the power management capabilities of FastLED.
-A. Depending on the brightness, if you're running more than about 30 LED's, you should be using a dedicated power source for them You shouldn't be powering the Arduino with 5V through the barrel connector.
+A. Depending on the brightness, if you're running more than about 30 LED's, you should be using a dedicated power source for them.
+A. You shouldn't be powering the Arduino with 5V through the barrel connector.
 A. Just make sure that all of the grounds are tied together. Robustly.
 A. You should put a 1000uf capacitor between Vcc and Gnd near the strip.
 A. Add a 330 ohm resistor between the data lines and the strip.
-A. Add a 10K ohm resistor between the data lines and Gnd. 
+A. Add a 10K ohm resistor between the data lines and Gnd.
+A. Use one Arduino data/clock pin per strip. Don't try and drive 2 strips from one pin.
+A. Consider using a Teensy 3.1 with an OctoWS2811 adaptor.
 A. Here's an interesting article: 
 
 http://ledwallproject.blogspot.ca/2014/05/making-5v-signals-for-ws2812-with-logic.html?m=1
@@ -117,18 +136,25 @@ Q. My Arduino is not recognized? What do I do?
 A. Try a different Arduino.
 A. Try a different cable.
 A. Try a short cable.
-A. Remove the LED strip from the Arduino.
+A. Try a different computer.
+A. Remove the LED strip and everything else connected to the Arduino.
 A. Are you using an Arduino clone? With a clone FTDI chip? If so, please Google search for 'FTDI fix'.
- 
+A. Some Arduino's require you to manually install the drivers. 
 
- 
+
+
+Q. I need help coding my sequence of awesomeness?
+
+A. It is VERY difficult conveying to others what your sequence should do, so please put considerable effort into doing so. . clearly and concisely.
+A. Please use gist.github.com or www.pastebin.com to exchange code.
+
 
 
 When designing complicated projects:
 
-- Break it down into individual components (i.e. buttons, IR, LED's).
-- Create test jigs and programs for each component.
-- Slowly combine the functionality and test again.
-- Make sure you incorporate lots of testing.
+- Break it down into individual components (i.e. buttons, IR, LED's, Bluetooth, serial communications, demo sequences).
+- Create test 'jigs' and programs for each component.
+- Slowly combine the functionality make sure you incorporate lots of testing.
 - Learn to use git for version control.
 - Be prepared to throw it all out and start from scratch with your newly acquired knowledge.
+

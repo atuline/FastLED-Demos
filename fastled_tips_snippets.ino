@@ -2,6 +2,7 @@
 /* My FastLED Tips, Tricks and Traps
 
 By: Andrew Tuline
+
 Date: July, 2015
 
 These notes are best viewed with an IDE such as Sublime Text. This is NOT a functional program, but a series of notes about using FastLED.
@@ -9,8 +10,19 @@ These notes are best viewed with an IDE such as Sublime Text. This is NOT a func
 References:
 
 https://github.com/FastLED/FastLED/wiki/Overview
-http://fastled.io/docs/3.1/
+http://fastled.io/docs/3.1/modules.html
 
+Mark's additional demos:
+https://gist.github.com/kriegsman
+
+Other notable gists and pastebins:
+https://gist.github.com/hsiboy
+https://gist.github.com/jpro56
+https://gist.github.com/jasoncoon
+https://gist.github.com/StefanPetrick
+https://gist.github.com/bonjurroughs
+
+http://pastebin.com/u/atuline     (lots of junk in there)
 */
 
 
@@ -158,6 +170,24 @@ http://fastled.io/docs/3.1/
 
 // Palettes -----------------------------------------------------------------------------------------
 
+
+Instructions for using Paletteknife (you need to use Chrome browser):
+
+
+http://fastled.io/tools/paletteknife/
+
+Put in your toolbar:
+https://plus.googleapis.com/112916219338292742137/posts/FvLgYPF52Ma
+
+Get Palettes here:
+http://soliton.vm.bytemark.co.uk/pub/cpt-city/index.html
+
+Find palette and click on above toolbar link.
+
+Copy/paste the link to the top of your routine.
+
+
+
 CRGBPalette16 currentPalette;
 CRGBPalette16 targetPalette;
 TBlendType    currentBlending;        // NOBLEND or LINEARBLEND
@@ -251,9 +281,14 @@ void SetupRandomPalette() {
   leds[i].fadeToBlackBy(fadeval);
 
 // Blend
+
+  CRGB myclr;
+  myclr = blend(CRGB::Red, CRGB::Blue, sin8(mysine));
+  leds[i] = myclr;
+
+//  or
+
   leds[i] = blend(CRGB::Red, CRGB::Blue, sin8(mysine));
-
-
   
 
 // Randomization
