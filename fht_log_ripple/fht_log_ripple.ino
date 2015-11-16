@@ -5,6 +5,7 @@ By: Andrew Tuline
 
 Date: Aug, 2015
 
+Disclaimer: Apparently, the FHT library (as of this writing) doesn't work with the Teensy.
 
 Fast Hartley Transform with beat detection for FastLED using ripples.
 

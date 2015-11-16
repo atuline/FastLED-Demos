@@ -5,6 +5,7 @@ By: Andrew Tuline
 
 Date: Oct, 2014
 
+Disclaimer: Apparently, the FHT library (as of this writing) doesn't work with the Teensy.
 
 This is an implementation of the FHT library with FastLED
 

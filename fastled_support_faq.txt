@@ -5,21 +5,79 @@ By: Andrew Tuline
 Date: August, 2015
 
 
-I've made a LOT of mistakes over the past couple of years with the FastLED library for the Arduino, and thought I'd pass along
-some of the things I've seen and done.
+Q. Help, I need some support with my LED lights. What's the problem?
+
+A. There could be loads of reasons, so let's gather information. Please provide details:
+
+- What kind of LED's you're using.
+- What microcontroller board you're using.
+- How it's all powered up.
+- What version of the FastLED library you're using.
+- What version of Arduino IDE you're using.
+- A video of your issue would be awesome.
+- What OS you're building from.
+- A circuit diagram/layout (try using Fritzing to show it).
+- A copy of your .ino file (copy it to www.pastebin.com or gist.github.com).
+- Essentially, give us EVERYTHING in excruciating detail.
+- Provide specifics on how/where it's all being powered up.
+- That would be pins, voltages, power supply used. . . everything.
+- Try and remove all the superfluous code and minimize the amount of code that exhibits the issue.
+  We do not want to see your 3 page code manifesto. Keep it simple.
+
+A. Oh, and triple check EVERYTHING. Again!
+
+If you ask a question online and later get it resolved, please have the courtesy and post what the solution was.
+
+
+
+
+
 
 
 Q. Where's the documentation?
 
 A. FastLED Documentation is located at:
 
+https://github.com/FastLED/FastLED/wiki/Overview
 http://fastled.io/docs/3.1/modules.html
 
 Remember, this is the FastLED library and not the Adafruit one. Their documentation is at:
 
 https://learn.adafruit.com/adafruit-neopixel-uberguide/arduino-library
 
- 
+
+
+
+Q. I've looked all over the Internets and I can't find any demos.
+
+A. Try:
+
+Get FastLED here:
+https://github.com/FastLED/FastLED          (It's includes some demos)
+
+Mark's additional demos:
+
+https://gist.github.com/kriegsman
+Other gists and pastebins:
+
+https://gist.github.com/kriegsman
+https://gist.github.com/hsiboy
+https://gist.github.com/jpro56
+https://gist.github.com/jasoncoon
+https://gist.github.com/StefanPetrick
+https://gist.github.com/bonjurroughs
+https://gist.github.com/atuline
+http://pastebin.com/u/atuline
+
+Other Git Repositories:
+
+https://github.com/atuline/FastLED-Demos
+https://github.com/jasoncoon
+https://github.com/AaronLiddiment
+https://github.com/marmilicious/FastLED_examples
+
+
+
 
 Q. My LED's are the wrong colour.
 
@@ -43,8 +101,9 @@ LEDS.addLeds<APA102, LED_DT, LED_CK, BGR>
 
 
 
-Things we've seen:
+Q. Things we've seen:
 
+A. 
 - Connecting to the wrong data/clock pin.
 - Incorrect LEDS.addLeds definition.
 - Flaky wiring/breadboard.
@@ -75,27 +134,6 @@ Things we've seen:
  
  
 
-Q. I've tried the above and it still doesn't work. Help!!!
-
-A. There could be loads of reasons, so let's gather information. Please provide details:
-
-- What kind of LED's you're using.
-- What microcontroller board you're using.
-- How it's all powered up.
-- What version of the FastLED library you're using.
-- What version of Arduino IDE you're using.
-- What OS you're building from.
-- A circuit diagram/layout (try using Fritzing to show it).
-- A copy of your .ino file (copy it to www.pastebin.com or gist.github.com).
-- Essentially, give us EVERYTHING in excruciating detail.
-- Provide specifics on how/where it's all being powered up.
-- That would be pins, voltages, power supply used. . . everything.
-- Try and remove all the superfluous code and minimize the amount of code that exhibits the issue.
-  We do not want to see your 3 page code manifesto. Keep it simple.
-
-A. Oh, and triple check EVERYTHING. Again!
-
-If you ask a question online and later get it resolved, please have the courtesy and post what the solution was.
 
  
 
