@@ -81,7 +81,10 @@ The FastLED Google+ community is at [https://plus.google.com/communities/1091270
 
 
 My Youtube channel is at:               https://www.youtube.com/user/atuline/videos
+
 My Github account is at:                https://github.com/atuline
+
 My Gists are at:                        http://gist.github.com/atuline
+
 My Pastebins are at:                    http://pastebin.com/u/atuline
 
