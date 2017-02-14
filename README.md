@@ -46,7 +46,7 @@ I remember back in high school physics (in 1969) when my grade 9 physics teacher
 
 **black.ino** - Turns off your LED's, so you can program in peace without having to unplug your strand.
 
-**button_demoReel100** - Use button to control the mode. Press button for > 1 second to save current mode to EEPROM (as startup mode). This required a 3rd party button library.
+**button_demoReel100** - Use button to control the mode. Press button for > 1 second to save current mode to EEPROM (as startup mode).
 
 **fht_log_ripple.ino** - Uses Fast Hartley Transform (from a 3rd party library) to translate input sounds into frequency domain output. This is NOT for the beginner.
 
