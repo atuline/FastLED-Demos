@@ -44,7 +44,8 @@ unsigned int samplecount = 0;
 unsigned int sample = 0;
 
 
-static int16_t dist;                                          // A random number for our noise generator.
+static int16_t xdist;                                          // A random number for our noise generator.
+static int16_t ydist;
 uint16_t xscale = 30;                                         // Wouldn't recommend changing this on the fly, or the animation will be really blocky.
 uint16_t yscale = 30;                                         // Wouldn't recommend changing this on the fly, or the animation will be really blocky.
 uint8_t maxChanges = 24;                                      // Value for blending between palettes.
@@ -74,7 +75,6 @@ void loop() {
   EVERY_N_MILLISECONDS(10) {
     uint8_t maxChanges = 24; 
     nblendPaletteTowardPalette(currentPalette, targetPalette, maxChanges);   // AWESOME palette blending capability.
-
     fillnoise8();                                             // Update the LED array with noise based on sound input
     fadeToBlackBy(leds, NUM_LEDS, 1);                         // 8 bit, 1 = slow, 255 = fast
     sndwave();                                                // Move the pixels to the left/right.
@@ -84,6 +84,7 @@ void loop() {
     targetPalette = CRGBPalette16(CHSV(random8(), 255, random8(128,255)), CHSV(random8(), 255, random8(128,255)), CHSV(random8(), 192, random8(128,255)), CHSV(random8(), 255, random8(128,255)));
   }
   
+
   soundmems();                                                // Sample the sound.
 
   FastLED.show();                                             // Display everything.
@@ -109,14 +110,21 @@ void soundmems() {                                            // Rolling average
 void fillnoise8() {                                           // Add Perlin noise with modifiers from the soundmems routine.
 
   if (sampleavg >NUM_LEDS) sampleavg = NUM_LEDS;
+
   
   for (int i= (NUM_LEDS-sampleavg)/2; i<(NUM_LEDS+sampleavg)/2; i++) {          // The louder the sound, the wider the soundbar.
     
-    uint8_t index = inoise8(i*sampleavg, dist+i*sampleavg) % 255;               // Get a value from the noise function. I'm using both x and y axis.
+    uint8_t index = inoise8(i*sampleavg+xdist, ydist+i*sampleavg);               // Get a value from the noise function. I'm using both x and y axis.
 //      uint8_t index = inoise8(i*xscale, dist+i*yscale) % 255;                 // Get a value from the noise function. I'm using both x and y axis.
 
+ 
+ 
     leds[i] = ColorFromPalette(currentPalette, index, sampleavg, LINEARBLEND);  // With that value, look up the 8 bit colour palette value and assign it to the current LED.
   }
+
+  xdist=xdist+beatsin8(5,0,3);
+  ydist=ydist+beatsin8(4,0,3);
+ 
                                                                           
 } // fillnoise8()
 
