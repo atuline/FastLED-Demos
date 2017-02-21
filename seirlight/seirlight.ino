@@ -72,7 +72,7 @@
  * 
  * For normal operation:
  * 
- * - Configure and compile seirlight for your type of strand, and pins used (WS2812's don't work with IR).
+ * - Configure and compile seirlight for your type of strand, and pins used (WS2812's don't work with IR and are very unreliable with Keyboard).
  * - Use the keyboard or IR controller to modify and save the strand length (up to 100) to support your actual strand.
  * - Set the demorun variable to 0 and compile irlight, so that the strand does not startup in demo mode.
  * - As a security measure, set strandActive to 0 and recomple the sketch. Your strand is now inactive until selected with the buttons below, i.e. B4, then A1 are the defaults.
@@ -87,7 +87,7 @@
  * - The LED data line is connected to pin 12 (changeable).
  * - The LED clock line is connected to pin 11 (changeable).
  * - For IR functionality, connect the data output of a TSOP34838 IR receiver to pin D2 (other TSOP pins are 5V and Gnd).
- * - If you use WS2812 LED's, then the IR will NOT work. See https://github.com/FastLED/FastLED/wiki/Interrupt-problems
+ * - If you use WS2812 LED's, then the IR will NOT work and are unreliable with the keyboard. See https://github.com/FastLED/FastLED/wiki/Interrupt-problems
  * - This supports up to 23 strands with up to 100 LED's each currently. You can increase this value by changing MAX_LEDS.
  * 
  * 
