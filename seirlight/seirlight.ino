@@ -147,24 +147,25 @@
  * Once you have compiled the source code, you can open up the monitor and enter keyboard commands. Keyboard commands in the monitor mode include:
  * 
  * 
- * Key   Description                        Arguments         Notes
- * ---   -----------                        ---------         -----------------
- * a     Set all to one color by hue        0-255
- * b     Set brightness                     0-255
- * c     clear strip (set mode 0)           n/a
- * d     Set delay variable                 0-255
- * g     Glitter (!)                        n/a               Toggles on/off
- * h     Set hue variable                   0-255             Doesn't do much as most routines no longer use HSV, but rather palettes
- * i     Similar palette hue                0-255
- * l     Set strip length & write EEPROM    1-255
- * m     Set mode                           0-maxMode
- * n     Direction (!)                      n/a               Toggles direction for SOME of the routines, like Matrix and one_sin
- * p     Play mode (fix, seq, shuf)         0-2
- * q     Return version number              n/a
- * s     Set saturation variable            0-255             Doesn't do much as most routines no longer use HSV, but rather palettes
- * t     Select palette mode                0 - 3
- * u     Set sequence duration              1-255
- * w     Write current mode to EEPROM       n/a
+ * Key  Description                        Arguments         Notes
+ * ---  -----------                        ---------         -----------------
+ * a    Set all to one color by hue        0-255
+ * b    Set brightness                     0-255
+ * c    clear strip (set mode 0)           n/a
+ * d    Set delay variable                 0-255
+ * e    sEt display previous/next          0/1               Previous = 0, Next = 1  
+ * g    Glitter (!)                        n/a               Toggles on/off
+ * h    Set hue variable                   0-255             Doesn't do much as most routines no longer use HSV, but rather palettes
+ * i    Similar palette hue                0-255
+ * l    Set strip length & write EEPROM    1-255
+ * m    Set mode                           0-maxMode
+ * n    Direction (!)                      n/a               Toggles direction for SOME of the routines, like Matrix and one_sin
+ * p    Play mode (fix, seq, shuf)         0-2
+ * q    Return version number              n/a
+ * s    Set saturation variable            0-255             Doesn't do much as most routines no longer use HSV, but rather palettes
+ * t    Select palette mode                0 - 3
+ * u    Set sequence duration              1-255
+ * w    Write current mode to EEPROM       n/a
  * 
  * Examples:
  * 
@@ -578,6 +579,17 @@ void readkeyboard() {                                         // Process serial 
         Serial.println(thisdelay);
         break;
 
+      case 101:                                              // "e" - SET PREVIOUS / NEXT mode
+
+        thisarg = Serial.parseInt();
+        if (thisarg) {
+          demorun = 0; ledMode=(ledMode+1)%(maxMode+1);
+        } else {
+         demorun = 0; ledMode=(ledMode-1); if (ledMode==255) ledMode=maxMode; 
+        }
+        strobe_mode(ledMode,1);
+        break;
+
       case 103:                                               // "g" - TOGGLE glitter
         glitter = !glitter;
         Serial.println(" ");
@@ -659,7 +671,7 @@ void readkeyboard() {                                         // Process serial 
 
 void readbutton() {                                           // Read the button and perform action
 
-  Serial.print("Button ");
+//  Serial.print("Button ");
   
   uint8_t b = checkButton();
 
