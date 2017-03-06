@@ -2,7 +2,7 @@
  * seirlight led lighting effects for FastLED.
  * 
  *       By: Andrew Tuline
- *    Date: February, 2017
+ *    Date: March, 2017
  *      URL: www.tuline.com
  *    Email: atuline@gmail.com
  *   GitHub: https://github.com/atuline
@@ -13,12 +13,12 @@
  * CAUTION ************************************************************************************************************************************************
  * 
  * Before attempting to compile this routine, make sure you are already comfortable modifying Arduino Code and FastLED code in particular. In addition, you
- * should already be able to download, install and use 3rd party libraries.
+ * should already be able to download, install and use 3rd party libraries. If you are a beginner, this is NOT the code you're looking for.
  * 
  * ********************************************************************************************************************************************************
  * 
  * 
-* Introduction
+ * Introduction
  * 
  * This is a significant re-write of my previous aalight program and provides the following:
  * 
@@ -27,8 +27,9 @@
  * - Supports multiple display sequences, most with support for multiple settings.
  * - Supports IR (Infra Red) communications for control of the display sequences.
  * - Supports keyboard communications for control of the display sequences.
+ * - Supports a button for 3 functions.
  * - Can support APA102 and WS2801 with IR communications.
- * - WS2812 strands ONLY work with the demo mode if using IR functionality.
+ * - Can support WS2812 if NOT using keyboard or IR communications.
  * - Can save information in EEPROM.
  * 
  * 
@@ -36,10 +37,15 @@
  * underlying effects code. In addition, each of the effects contain very little code (the longest is about 12 lines) and do not employ nested loops or blocking delays.
  * 
  * 
+ * 1.01 Update
  * 
- * Updates/changes from aalight:
+ * - Small updates/changes.
+ * - Fix StrandID code.
  * 
- * - Improve the brightness controls
+ * 
+ * 1.00 Updates/changes from aalight:
+ * 
+ * - Improve the brightness controls.
  * - Removed most of the pixel counting or lengthy routines.
  * - Converted all but the rainbow march sequences for palette support.
  * - Removed push button and keyboard support. Just focusing on IR support (for 4 pin strands only).
@@ -60,25 +66,25 @@
  * - Fix demo mode timing, and increase from 5 to 10 seconds.
  * - Fixed routine timing issues with EVERY_N_MILLIS.
  * - Review routines for possible inclusion/removal.
- * - Final QA test.
+ * - Final QA test, with an emphasis of "I'm so done with this".
  * 
  * 
- * Future upgrades:
+ * Possible Future upgrades:
  * 
  * - Set a common timebase for multiple Arduino's so they can be 'in sync'.
  * 
  * 
  * 
  * 
- * For normal operation:
+ * Normal operation:
  * 
  * - Configure and compile seirlight for your type of strand, and pins used (WS2812's don't work with IR and are very unreliable with Keyboard).
  * - Use the keyboard or IR controller to modify and save the strand length (up to 100) to support your actual strand.
- * - Set the demorun variable to 0 and compile irlight, so that the strand does not startup in demo mode.
- * - As a security measure, set strandActive to 0 and recomple the sketch. Your strand is now inactive until selected with the buttons below, i.e. B4, then A1 are the defaults.
- * - If you want to support multiple strands, set the strandId for each to match the output of the various buttons on the IR controller (except for B4).
+ * - Set the demorun variable to 0 and compile seirlight, so that the strand does not startup in demo mode.
+ * - As a security measure, set strandActive to 0 and recompile the sketch. Your strand is now inactive until selected with the buttons below, i.e. B1, then A1 are the defaults.
+ * - If you want to support multiple strands, set the strandId for each to match the output of the various buttons on the IR controller (except for B1).
  * 
- * You'll need to select your strand before it will display anything, which is a nice security feature if someone steals your LED strand+Arduino.
+ * You'll need to select your strand before it will display anything, which is a nice security feature if someone steals your display.
  * 
  * 
  * 
@@ -86,8 +92,9 @@
  * 
  * - The LED data line is connected to pin 12 (changeable).
  * - The LED clock line is connected to pin 11 (changeable).
+ * - The button currently uses pin 6.
  * - For IR functionality, connect the data output of a TSOP34838 IR receiver to pin D2 (other TSOP pins are 5V and Gnd).
- * - If you use WS2812 LED's, then the IR will NOT work and are unreliable with the keyboard. See https://github.com/FastLED/FastLED/wiki/Interrupt-problems
+ * - If you use WS2812 LED's, then the IR will NOT work while the keyboard is unreliable. See https://github.com/FastLED/FastLED/wiki/Interrupt-problems
  * - This supports up to 23 strands with up to 100 LED's each currently. You can increase this value by changing MAX_LEDS.
  * 
  * 
@@ -95,15 +102,26 @@
  * 
  * - We can save the startup display mode in EEPROM.
  * - We can save the strand length in EEPROM, however the MAXIMUM strand length is pre-defined. We just use lesser value for the array.
+ * 
+ * 
+ * Multiple Arduino/strand support
+ * 
  * - We can support multiple strands with a strandID.
  * - We do not save the demo flag in EEPROM. That's modified at compile time.
- * - Only the IR support multiple strands
- * 
+ * - Only the IR control supports multiple strands. Keyboard does not.
+
  * 
  * Libraries Required
  * 
  * - FastLED library from https://github.com/FastLED/FastLED
  * - Nico Hood's IRL library from https://github.com/NicoHood/IRLremote
+ * 
+ * 
+ * Button Operation
+ * 
+ * Click          Stop demo mode and advance to the next display mode.
+ * Double-click   Stop demo mode and set to mode 0.
+ * Long hold      Stop demo mode and write current mode to EEPROM as startup mode.
  * 
  * 
  * IR Operation
@@ -113,16 +131,16 @@
  * Button location uses characters as the row, and numbers are the columns, so C2 is the 3rd row, 2nd column.
  * 
  * 
- * Command                       IR Button location
- * --------                      ------------------
+ * Command                               IR Button location
+ * --------                              ------------------
  * Increase brightness                   A1
  * Decrease brightness                   A2
  * Set mode 0 (black)                    A3  Disables the demo mode.
  * Toggle demo mode (millis based)       A4  It cycles through the routines based on the millis() counter.
  * 
- * Select Arduino                        B1  Then press A1 through F4. A1 is the first one. Press B4 twice to activate ALL Arduino's. Corresponds to strandId value.
- * Decrease strand length                B2  Set mode 0 with button A3 and then start this process.
- * Increase strand length                B3  Set mode 0 with button A3 and then start this process.
+ * Select Arduino                        B1  Then press A1 through F4. A1 is the first one. Press B4 twice to activate ALL Arduino's. Corresponds to strandId value. 
+ * Decrease strand length                B2  The # of LED's programmed are white.
+ * Increase strand length                B3  The # of LED's programmed are white.
  * Save strand length to EEPROM          B4  Press this once you have your strand length.
  * 
  * Enable/disable glitter                D1  Toggles glitter.
@@ -147,27 +165,28 @@
  * Once you have compiled the source code, you can open up the monitor and enter keyboard commands. Keyboard commands in the monitor mode include:
  * 
  * 
- * Key  Description                        Arguments         Notes
- * ---  -----------                        ---------         -----------------
- * a    Set all to one color by hue        0-255
+ * Key  Description                        Arguments                Notes
+ * ---  -----------                        ---------                -----------------
+ * a    Set all to one colour by hue       0-255
  * b    Set brightness                     0-255
  * c    clear strip (set mode 0)           n/a
- * d    Set delay variable                 0-255
- * e    sEt display previous/next          0/1               Previous = 0, Next = 1  
- * g    Glitter (!)                        n/a               Toggles on/off
- * h    Set hue variable                   0-255             Doesn't do much as most routines no longer use HSV, but rather palettes
- * i    Similar palette hue                0-255
+ * d    Set delay variable                 0-255                    10 is a good value.
+ * e    Set display mode previous/next     0/1                      Previous = 0, Next = 1.
+ * f    Set fixed palette mode (0 to max)  0-255                    It's actually modded with gGradientPaletteCount
+ * g    Glitter toggle                     n/a                      Toggles on/off.
+ * h    Set hue variable                   0-255                    Doesn't do much as most routines no longer use HSV, but rather use palettes. It's here if you need it.
+ * i    Similar palette hue                0-255                    Set a palette with colours similar to the colour selected.
  * l    Set strip length & write EEPROM    1-255
- * m    Set mode                           0-maxMode
- * n    Direction (!)                      n/a               Toggles direction for SOME of the routines, like Matrix and one_sin
+ * m    Set display mode                   0-255                    It's actually modded with maxMode
+ * n    Direction toggle                   n/a                      Toggles direction for SOME of the routines, like Matrix and one_sin.
  * p    Play mode (fix, seq, shuf)         0-2
  * q    Return version number              n/a
- * s    Set saturation variable            0-255             Doesn't do much as most routines no longer use HSV, but rather palettes
+ * s    Set saturation variable            0-255                    Doesn't do much as most routines no longer use HSV, but rather use palettes.
  * t    Select palette mode                0 - 3
  * u    Set sequence duration              1-255
  * w    Write current mode to EEPROM       n/a
  * 
- * Examples:
+ * Keyboard Examples:
  * 
  * m5              // Select mode 5 (with or without spaces separating the command and the argument)
  * h 80            // Select a hue of 80, which will change the hue of a few modes
@@ -184,7 +203,7 @@
 #define qsubd(x, b)  ((x>b)?wavebright:0)                     // A digital unsigned subtraction macro. if result <0, then => 0. Otherwise, take on fixed value.
 #define qsuba(x, b)  ((x>b)?x-b:0)                            // Unsigned subtraction macro. if result <0, then => 0.
 
-#define SEIRLIGHT_VERSION 100
+#define SEIRLIGHT_VERSION 101
 
 
 #define buttonPin 6                                           // input pin to use as a digital input
@@ -234,9 +253,9 @@ TBlendType    currentBlending;                                // NOBLEND or LINE
 // EEPROM location definitions.
 #define STARTMODE 0
 #define STRANDLEN 1
-#define STRANDID 2
 
-uint32_t strandId = 65280;                                    // This is the id of THIS strand. The value is from button button A1
+
+const uint32_t STRANDID = 65280;                              // This is the same as button A1 and is the id of THIS strand. Change to a different button press as required.
 bool strandActive=1;                                          // Must be activated by button press of B1, then A1
 
 uint8_t ledMode;                                              // Starting mode is typically 0.
@@ -252,7 +271,6 @@ uint32_t IRCommand = 0;
 
 
 
-
 // Generic/shared routine variables ----------------------------------------------------------------------
 uint8_t allfreq = 32;                                         // You can change the frequency, thus overall width of bars.
 uint8_t bgclr = 0;                                            // Generic background colour
@@ -263,7 +281,7 @@ uint8_t startindex = 0;
 uint8_t thisbeat;                                             // Standard beat
 uint8_t thisbright = 0;                                       // Standard brightness
 uint8_t thiscutoff = 192;                                     // You can change the cutoff value to display this wave. Lower value = longer wave.
-int thisdelay = 0;                                           // Standard delay
+int thisdelay = 0;                                            // Standard delay
 uint8_t thisdiff = 1;                                         // Standard palette jump
 bool    thisdir = 0;                                          // Standard direction
 uint8_t thisfade = 224;                                       // Standard fade rate
@@ -276,11 +294,19 @@ uint8_t thissat = 255;                                        // Standard satura
 int8_t  thisspeed = 4;                                        // Standard speed change
 uint8_t wavebright = 255;                                     // You can change the brightness of the waves/bars rolling across the screen.
 
-uint8_t xd[MAX_LEDS];                              // arrays for the 2d coordinates of any led
+uint8_t xd[MAX_LEDS];                                         // arrays for the 2d coordinates of any led
 uint8_t yd[MAX_LEDS];
 
-
 long summ=0;
+
+
+
+extern const TProgmemRGBGradientPalettePtr gGradientPalettes[]; // These are for the fixed palettes in gradient_palettes.h
+extern const uint8_t gGradientPaletteCount;                     // Total number of fixed palettes to display.
+uint8_t gCurrentPaletteNumber = 0;                              // Current palette number from the 'playlist' of color palettes
+uint8_t currentPatternIndex = 0;                                // Index number of which pattern is current
+
+
 
 // Display functions -----------------------------------------------------------------------
 
@@ -294,6 +320,7 @@ long summ=0;
 #include "circnoise_pal_3.h"
 #include "circnoise_pal_4.h"
 #include "confetti_pal.h"
+#include "gradient_palettes.h"
 #include "juggle_pal.h"
 #include "matrix_pal.h"
 #include "noise16_pal.h"
@@ -303,6 +330,9 @@ long summ=0;
 #include "serendipitous_pal.h"
 #include "three_sin_pal.h"
 #include "two_sin.h"
+
+
+
 
 
 /*------------------------------------------------------------------------------------------
@@ -315,6 +345,9 @@ void setup() {
 
   Serial.begin(SERIAL_BAUDRATE);                              // SETUP HARDWARE SERIAL (USB)
   Serial.setTimeout(SERIAL_TIMEOUT);
+  
+  delay(1000);
+  checkButton();
   delay(1000);                                                // Soft startup to ease the flow of electrons.
 
   attachInterrupt(digitalPinToInterrupt(pinIR), IRLinterrupt<IR_NEC>, CHANGE);    // IR definition
@@ -468,6 +501,9 @@ void demo_check(){
 void getirl() {                                                   // This is the IR function that gets the value and selects/performs command.
   
   if (IRProtocol) {
+
+    if(IRCommand == 64260) {set_strand();}
+    
     if (strandActive==1 || IRCommand == 63495) {
     
       Serial.print("Command: ");
@@ -478,10 +514,10 @@ void getirl() {                                                   // This is the
         case 64770:  demorun = 0; ledMode = 0; strobe_mode(ledMode,1); break;                                                                          //a3 - Change to mode 0
         case 64515:  demorun = !demorun; if(demorun) {Serial.println("Demo mode");} else {Serial.println("Not demo mode");} break;  //a4 - Toggle demo mode
   
-        case 64260:  set_strand(); break;                                                                                                                                                  //b1 - Write the current # of LED's
-        case 64005:  NUM_LEDS--; Serial.print("NUM_LEDS: "); Serial.println(NUM_LEDS); fill_solid(leds,MAX_LEDS,CRGB(0,0,0)); fill_solid(leds,NUM_LEDS,CRGB(255,255,255)); break;          //b2 - Decrease # of LED's
-        case 63750:  NUM_LEDS++; Serial.print("NUM_LEDS: "); Serial.println(NUM_LEDS);  fill_solid(leds,MAX_LEDS,CRGB(0,0,0)); fill_solid(leds,NUM_LEDS,CRGB(255,255,255)); break;         //b3 - Increase # of LED's
-        case 63495:  EEPROM.write(STRANDLEN,NUM_LEDS); Serial.print("Writing: "); Serial.print(NUM_LEDS); Serial.println(" LEDs"); break;                                                  //b4 - Here is where we enable or disable a strand from receiving commands
+//        case 64260:  set_strand(); break;                                                                                                                                                  //b1 - Write the current # of LED's
+        case 64005:  demorun = 0; ledMode = 0; NUM_LEDS--; Serial.print("NUM_LEDS: "); Serial.println(NUM_LEDS); fill_solid(leds,MAX_LEDS,CRGB(0,0,0)); fill_solid(leds,NUM_LEDS,CRGB(255,255,255)); break;          //b2 - Decrease # of LED's
+        case 63750:  demorun = 0; ledMode = 0; NUM_LEDS++; Serial.print("NUM_LEDS: "); Serial.println(NUM_LEDS);  fill_solid(leds,MAX_LEDS,CRGB(0,0,0)); fill_solid(leds,NUM_LEDS,CRGB(255,255,255)); break;         //b3 - Increase # of LED's
+        case 63495:  EEPROM.write(STRANDLEN,NUM_LEDS); Serial.print("Writing IR: "); Serial.print(NUM_LEDS); Serial.println(" LEDs"); break;                                                  //b4 - Here is where we enable or disable a strand from receiving commands
   
         case 63240:  strobe_mode(9,1);    break;                //c1 - 
         case 62985:  thisdelay++;         break;                //c2 - thisdelay++;
@@ -491,7 +527,7 @@ void getirl() {                                                   // This is the
         case 62220:  glitter = !glitter; Serial.println("Glitter baby!");   break;                                    //d1 - Glitter
         case 61965:  demorun = 0; ledMode=(ledMode-1); if (ledMode==255) ledMode=maxMode; strobe_mode(ledMode,1); break;            //d2 - strobe_mode(ledMode--);
         case 61710:  demorun = 0; ledMode=(ledMode+1)%(maxMode+1); strobe_mode(ledMode,1); break;                                   //d3 - strobe_mode(ledMode++);
-        case 61455:  EEPROM.write(STARTMODE,ledMode); Serial.print("Writing: "); Serial.println(ledMode);  break;     //d4 - Save startup mode
+        case 61455:  EEPROM.write(STARTMODE,ledMode); Serial.print("Writing IR: "); Serial.println(ledMode);  break;     //d4 - Save startup mode
   
         case 61200:  strobe_mode(17,1);   break;                //e1 -
         case 60945:  thisdir = 1;         break;                //e2 - thisdir = 1;
@@ -525,13 +561,13 @@ void IREvent(uint8_t protocol, uint16_t address, uint32_t command) {
 
 
 
-void set_strand() {                                           // Setting the active strand
-  
-  Serial.print("Strand ");
-  IRProtocol = 0;
-    do { delay(1); } while (!IRProtocol);
-  if (IRCommand == strandId || IRCommand == 63495) {strandActive = 1; Serial.println("ACTIVE");} else {strandActive = 0; Serial.println("INACTIVE");}
-  IRProtocol = 0;
+void set_strand() {                                           // Setting the active strand.
+
+  IRProtocol = 0;                                             // We broke out early, so let's clear the flag again.
+  Serial.print("Strand is: ");
+  do {delay(1); } while (!IRProtocol);
+  Serial.println(IRCommand);
+  if (IRCommand == STRANDID)  {strandActive = 1; Serial.println("ACTIVE");} else {strandActive = 0; Serial.println("INACTIVE");}
 
 } // set_strand()
 
@@ -550,7 +586,7 @@ void readkeyboard() {                                         // Process serial 
     
     switch(inbyte) {
 
-      case 97:                                                // "a" - SET ALL TO ONE COLOR BY hue = 0 - 255
+      case 97:                                                // "a" - SET ALL TO ONE colour BY hue = 0 - 255
         demorun = 0;
         ledMode = 0;
         thisarg = Serial.parseInt();
@@ -588,6 +624,15 @@ void readkeyboard() {                                         // Process serial 
          demorun = 0; ledMode=(ledMode-1); if (ledMode==255) ledMode=maxMode; 
         }
         strobe_mode(ledMode,1);
+        break;
+
+      case 102:                                               // "f - Set a fixed palette
+        demorun = 0;
+        palchg = 0;
+        thisarg = Serial.parseInt();
+        gCurrentPaletteNumber = thisarg % gGradientPaletteCount;
+        targetPalette = gGradientPalettes[gCurrentPaletteNumber];
+        Serial.println(gCurrentPaletteNumber);
         break;
 
       case 103:                                               // "g" - TOGGLE glitter
@@ -659,6 +704,7 @@ void readkeyboard() {                                         // Process serial 
 
       case 119:                                               // "w" - Write current mode to EEPROM
         EEPROM.write(STARTMODE,ledMode);
+        Serial.print("Writing keyboard: ");
         Serial.println(ledMode);
         break;   
         
@@ -671,15 +717,13 @@ void readkeyboard() {                                         // Process serial 
 
 void readbutton() {                                           // Read the button and perform action
 
-//  Serial.print("Button ");
-  
   uint8_t b = checkButton();
 
   if (b == 1) {                                               // Just a click event to advance the mode
     demorun = 0;
     ledMode=(ledMode+1)%(maxMode+1);
     strobe_mode(ledMode,1);
-    Serial.print("Adv ");
+    Serial.print("Advance ");
     Serial.println(ledMode);
   }
 
@@ -691,8 +735,9 @@ void readbutton() {                                           // Read the button
   }
 
   if (b == 3) {                                               // A hold event to write current mode to EEPROM
+    demorun = 0;
     EEPROM.write(STARTMODE,ledMode);
-    Serial.print("Writing ");
+    Serial.print("Writing Button: ");
     Serial.println(ledMode);
   }
 
