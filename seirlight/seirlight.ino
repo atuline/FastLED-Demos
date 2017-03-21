@@ -37,6 +37,11 @@
  * underlying effects code. In addition, each of the effects contain very little code (the longest is about 12 lines) and do not employ nested loops or blocking delays.
  * 
  * 
+ * 
+ * 1.02 Update
+ * 
+ * - Modify 'Set Strand ACTIVE/INACTIVE so that it doesn't halt the display of any of the Arduino's.
+ * 
  * 1.01 Update
  * 
  * - Small updates/changes.
@@ -203,7 +208,7 @@
 #define qsubd(x, b)  ((x>b)?wavebright:0)                     // A digital unsigned subtraction macro. if result <0, then => 0. Otherwise, take on fixed value.
 #define qsuba(x, b)  ((x>b)?x-b:0)                            // Unsigned subtraction macro. if result <0, then => 0.
 
-#define SEIRLIGHT_VERSION 101
+#define SEIRLIGHT_VERSION 102
 
 
 #define buttonPin 6                                           // input pin to use as a digital input
@@ -256,7 +261,8 @@ TBlendType    currentBlending;                                // NOBLEND or LINE
 
 
 const uint32_t STRANDID = 65280;                              // This is the same as button A1 and is the id of THIS strand. Change to a different button press as required.
-bool strandActive=1;                                          // Must be activated by button press of B1, then A1
+bool strandActive = 0;                                        // 0=inactive, 1=active. Must be activated by button press of B1, then A1 (or the appropriate button).
+bool strandFlag = 0;                                          // Flag to let us know if we're changing the active strand.
 
 uint8_t ledMode;                                              // Starting mode is typically 0.
 uint8_t demorun = 0;                                          // 0 = regular mode, 1 = demo mode, 2 = shuffle mode.
@@ -502,7 +508,7 @@ void getirl() {                                                   // This is the
   
   if (IRProtocol) {
 
-    if(IRCommand == 64260) {set_strand();}
+    if(IRCommand == 64260 || strandFlag == 1) {set_strand();}
     
     if (strandActive==1 || IRCommand == 63495) {
     
@@ -563,11 +569,21 @@ void IREvent(uint8_t protocol, uint16_t address, uint32_t command) {
 
 void set_strand() {                                           // Setting the active strand.
 
-  IRProtocol = 0;                                             // We broke out early, so let's clear the flag again.
+  if(IRCommand == 64260) IRProtocol = 0;                      // Command is to set strand to let's clear the Protocol flag.
+
+  strandFlag = 1;                                             // We need this state flag in order to be able to continue to run the routine while changing active/inactive.
   Serial.print("Strand is: ");
-  do {delay(1); } while (!IRProtocol);
-  Serial.println(IRCommand);
-  if (IRCommand == STRANDID)  {strandActive = 1; Serial.println("ACTIVE");} else {strandActive = 0; Serial.println("INACTIVE");}
+
+  if (IRProtocol) {                                           // We have a command and the strandFlag is 1 and it's not the Set Active flag command.
+    Serial.println(IRCommand);
+    strandFlag = 0;                                           // We know we're finally setting the strand to be ACTIVE/INACTIVE, so we'll clear that state flag.
+    if (IRCommand == STRANDID)  {
+      strandActive = 1; Serial.println("ACTIVE");
+    } else {
+      strandActive = 0; Serial.println("INACTIVE");
+    }
+    IRProtocol = 0;                                             // Let's clear the the IRProtocol flag and be ready for another command.
+  }
 
 } // set_strand()
 
