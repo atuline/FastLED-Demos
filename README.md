@@ -15,7 +15,7 @@ Before attempting to use these demos, make sure you can compile and run the exam
 
 If this is your first foray into addressable LED's, then start off with a small strip of less than 20 LED's. Long strips require careful power management design and implementation, so start off small and then work up to longer strips.
 
-Spend some time analyzing these demos, make changes to them and then make your own. Don't start off as a beginner trying to compile and run the advanced demos such as irlight. Build up to it.
+Spend some time analyzing these demos, make changes to them and then make your own. Don't start off as a beginner trying to compile and run the advanced demos such as seirlight. Build up to it.
 
 Finally, before looking for some support, have a look at fastled_support_faq.txt. Key things are to:
 
@@ -32,7 +32,7 @@ Here are several display sequences for FastLED for a single strand of addressabl
 
 Almost all of these sequences are designed to be loop/non-blocking delay friendly. They perform some simple calculations, update the LED array, return back to the loop to SHOW the LED's and then continue on to the next iteration.
 
-In addition to several standalone demos, I have included a comprehensive demo called irlight (NOT for beginners), which supports multiple display sequences, multiple Arduino's, has a demo mode, EEPROM and IR remote support. There are also a couple of button controlled demos with EEPROM support.
+In addition to several standalone demos, I have included a comprehensive demo called seirlight (NOT for beginners), which supports multiple display sequences, multiple Arduino's, has a demo mode, EEPROM and IR remote support. There are also a couple of button controlled demos with EEPROM support.
 
 In addition, I have included a few sound reactive sequences, most notably fht_log_ripple, which uses the Sparkfun MEMS microphone and the FHT (Fast Hartley Transform) library to respond to sound in the frequency domain. Tricky to get going, but very cool.
 
@@ -50,7 +50,7 @@ I remember back in high school physics (in 1969) when my grade 9 physics teacher
 
 **fht_log_ripple.ino** - Uses Fast Hartley Transform (from a 3rd party library) to translate input sounds into frequency domain output. This is NOT for the beginner.
 
-**irlight.ino** - Runs on an Arduino connected to an LED strip. Compile aalight.ino, and it will include the other files in the directory. The overall structure for this code is based on funkboxing LED. In addition, to the FastLED library, it also requires another 3rd party library support IR remote control. This is NOT for the beginner. See irlight.ino comment section for more information on how to use this.
+**seirlight.ino** - Runs on an Arduino connected to an LED strip. Compile seirlight.ino, and it will include the other files in the directory. The overall structure for this code was originally based on funkboxing LED. In addition, to the FastLED library, it also requires another 3rd party library support IR remote control. This is NOT for the beginner. See seirlight.ino comment section for more information on how to use this.
 
 
 ##Controls
