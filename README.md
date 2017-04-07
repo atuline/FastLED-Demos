@@ -1,6 +1,3 @@
-#FastLED-Demos
-
-
 **By:** Andrew Tuline
 
 **Email:** atuline@gmail.com
@@ -26,7 +23,7 @@ Finally, before looking for some support, have a look at fastled_support_faq.txt
 If you're a beginner, learn to walk before you run.
 
 
-##Introduction
+## Introduction
 
 Here are several display sequences for FastLED for a single strand of addressable RGB LED's, such as NeoPixels/WS2812, WS2801 or DotStars/APA102. Each should compile and run separately and all have been tested on an Arduino Nano with appropriate inputs as required.
 
@@ -37,12 +34,12 @@ In addition to several standalone demos, I have included a comprehensive demo ca
 In addition, I have included a few sound reactive sequences, most notably fht_log_ripple, which uses the Sparkfun MEMS microphone and the FHT (Fast Hartley Transform) library to respond to sound in the frequency domain. Tricky to get going, but very cool.
 
 
-##My LED Philosophy
+## My LED Philosophy
 
 I remember back in high school physics (in 1969) when my grade 9 physics teacher talked about wave particle duality where light can be thought of as either a wave or a series of particles.  When I first started programming addressable LED's, I made sure that each LED was lit to a specific value and at a specific location just like the particles I had learned about in grade 9. This was quite tedious and I have since come to think of and to program a strand of LED's as not only a wave, but one that's been abstracted by colour palettes. The advantage is that we can come up with some very cool sequences using basic trigonometry, which we learned in Grade 10 math.
 
 
-##Notable Files
+## Notable Files
 
 **black.ino** - Turns off your LED's, so you can program in peace without having to unplug your strand.
 
@@ -53,7 +50,7 @@ I remember back in high school physics (in 1969) when my grade 9 physics teacher
 **seirlight.ino** - Runs on an Arduino connected to an LED strip. Compile seirlight.ino, and it will include the other files in the directory. The overall structure for this code was originally based on funkboxing LED. In addition, to the FastLED library, it also requires another 3rd party library support IR remote control. This is NOT for the beginner. See seirlight.ino comment section for more information on how to use this.
 
 
-##Controls
+## Controls
 
 - Sparkfun MEMS microphone (with built-in pre-amp) for sound.
 - TSOP38238 IR receiver an an el cheapo IR controller for IR control.
@@ -61,12 +58,12 @@ I remember back in high school physics (in 1969) when my grade 9 physics teacher
 - Any old button switch for push button control.
 
 
-##Microphones
+## Microphones
 
 If you go out and buy one of those cheap sound sensors from aliexpress, you will be sorely disappointed. The Sparkfun MEMS microphone includes an amplifier (with a gain of 67db), which provides a line in signal that's adequate for the Arduino works fine. Those sound sensors don't. You have been warned.
 
 
-##More
+## More
 
 Information about the awesome FastLED Library is available from: [fastled.io](http://fastled.io/)
 
