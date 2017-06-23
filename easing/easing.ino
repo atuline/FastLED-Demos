@@ -6,7 +6,7 @@
  *
  * This boring display demonstrates the easing capability of FastLED. The Red LED starts out slow, speeds up and then slows down when it gets to the end.
  *
- * It uses uint8_t variables:
+ * It uses uint8_t variables and may not work correctly on longer strands . . as noted by GitHub user fahrvergnuunen.
  *
  * easeOutVal = ease8InOutQuad(easeInVal);                       // Start with easeInVal at 0 and then go to 255 for the full easing.
  * ledNum = lerp8by8(0, NUM_LEDS, easeOutVal);                   // Map it to the number of LED's you have.
@@ -35,14 +35,14 @@
 #define LED_CK 11                                             // Clock pin for WS2801 or APA102.
 #define COLOR_ORDER BGR                                       // It's GRB for WS2812 and BGR for APA102.
 #define LED_TYPE APA102                                       // Using APA102, WS2812, WS2801. Don't forget to change LEDS.addLeds.
-#define NUM_LEDS 60                                           // Number of LED's.
+#define NUM_LEDS 250                                           // Number of LED's.
 
 // Global variables can be changed on the fly.
 uint8_t max_bright = 128;                                     // Overall brightness definition. It can be changed on the fly.
 
 struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
 
-int thisdelay = 10;
+int thisdelay = 20;
 
 
 
