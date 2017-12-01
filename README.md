@@ -52,6 +52,8 @@ I remember back in high school physics (in 1969) when my grade 9 physics teacher
 
 **seirlight.ino** - Runs on an Arduino connected to an LED strip. Compile seirlight.ino, and it will include the other files in the directory. The overall structure for this code was originally based on funkboxing LED. In addition, to the FastLED library, it also requires another 3rd party library support IR remote control. This is NOT for the beginner. See seirlight.ino comment section for more information on how to use this.
 
+**soundmems_demo.ino** - Contains 10 sound reactive sequences. Does not contain delays and everything is modularized.
+
 
 ## Controls
 
@@ -65,6 +67,9 @@ I remember back in high school physics (in 1969) when my grade 9 physics teacher
 
 If you go out and buy one of those cheap sound sensors from aliexpress, you will be sorely disappointed. The Sparkfun MEMS microphone includes an amplifier (with a gain of 67db), which provides a line in signal that's adequate for the Arduino works fine. Those sound sensors don't. You have been warned.
 
+### Testing
+
+These sequences have been tested on an Arduino Nano with 60 APA102's. In many cases, such as seirlight, they will not go beyond 255 LED's without a major re-write.
 
 ## More
 
