@@ -1,6 +1,6 @@
 /* aanimations
  *
- * By: Can't recall where I found this.
+ * By: Can't recall where I found this. Maybe Stefan Petrick.
  * 
  * Modified by: Andrew Tuline
  *

@@ -30,7 +30,7 @@ struct CRGB leds[NUM_LEDS];                                   // Initialize our 
 // Palette definitions
 CRGBPalette16 currentPalette;
 CRGBPalette16 targetPalette;
-TBlendType    currentBlending;
+TBlendType    currentBlending = LINEARBLEND;
 
 
 
@@ -43,7 +43,6 @@ void setup() {
 //  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);  // Use this for WS2812
 
   currentPalette = RainbowColors_p;
-  currentBlending = LINEARBLEND;
   
   FastLED.setBrightness(max_bright);
   set_max_power_in_volts_and_milliamps(5, 500);               // FastLED Power management set at 5V, 500mA.
