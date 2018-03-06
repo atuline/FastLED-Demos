@@ -16,7 +16,6 @@
  *
  */
 
-
 //=================================================
 //  MULTI-CLICK:  One Button, Multiple Events
 
@@ -25,6 +24,13 @@ int debounce = 20;          // ms debounce period to prevent flickering when pre
 int DCgap = 250;            // max ms between clicks for a double click event
 int holdTime = 1000;        // ms hold period: how long to wait for press+hold event
 
+int invert = 1;             // invert true/false 
+
+/* 
+invert      If invert == 0, interprets a high state as pressed, low as
+ *          released. If invert != 0, interprets a high state as 
+ *          released, low as pressed  (can also use true or false).
+*/
 
 // Button variables
 boolean buttonVal = HIGH;   // value read from button
@@ -40,9 +46,11 @@ boolean holdEventPast = false;    // whether or not the hold event happened alre
 
 
 
+
 uint8_t checkButton() {    
    uint8_t event = 0;
    buttonVal = digitalRead(buttonPin);
+   if (invert !=0) buttonVal = !buttonVal;  // invert logic
    // Button pressed down
    if (buttonVal == LOW && buttonLast == HIGH && (millis() - upTime) > debounce)
    {
