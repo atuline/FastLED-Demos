@@ -6,6 +6,16 @@ Date: December 2017
 
 These sound reactive demos are based on Mark Kriegsman's demoreel00 format.
 
+IMPORTANT NOTE:
+
+The Sparkfun MEMS microphone SHOULD be powered with 3.3V. If you do so, you need to connect the 3.3V line to the AREF pin on your Arduino.
+
+Furthermore, you will need to uncommment the following line in setup:
+
+//  analogReference(EXTERNAL);                                                    // Comment out this line for 3.3V Arduino's, ie. Flora, etc.
+
+If you power your microphone from 5V or are using a 3.3V Arduino, such as a Flora, etc, then leave the line commented out.
+
 
 Features:
 
@@ -84,7 +94,7 @@ bool thisdir = 0;                                                               
 void setup() {
 
   delay(3000);                                                                  // A delay in case things don't work correctly. I use this for Pro Micro.
-  analogReference(EXTERNAL);                                                    // Comment out this line for 3.3V Arduino's, ie. Flora, etc.
+//  analogReference(EXTERNAL);                                                  // Comment out this line for 3.3V Arduino's, ie. Flora, etc, or if you are powering microphone with 5V.
   
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);  // Use this for WS2801 or APA102
 //  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);          // Use this for WS2812
