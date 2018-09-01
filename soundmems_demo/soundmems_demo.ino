@@ -4,11 +4,17 @@ By: Andrew Tuline
 
 Date: December 2017
 
-These sound reactive demos are based on Mark Kriegsman's demoreel00 format.
+Updated: September 2018
+
+
+Now with FIFTEEN, YES, FIFTEEN 2D sound reactive routines. Some look similar to the others, so I've spread them out.
+
+These sound reactive program does not use FFT or an MSGEQ7 chip, but rather just uses the current sample, the average (of the last 64 samples) and peak detection.
+
 
 IMPORTANT NOTE:
 
-The Sparkfun MEMS microphone SHOULD be powered with 3.3V. If you do so, you need to connect the 3.3V line to the AREF pin on your Arduino.
+The Sparkfun MEMS microphone I use SHOULD be powered with 3.3V. If you do so, you need to connect the 3.3V pin on the Arduino to the AREF pin on your Arduino.
 
 Furthermore, you will need to uncommment the following line in setup:
 
@@ -17,31 +23,36 @@ Furthermore, you will need to uncommment the following line in setup:
 If you power your microphone from 5V or are using a 3.3V Arduino, such as a Flora, etc, then leave the line commented out.
 
 
+
 Features:
 
-- 10, count 'em 10 different sound reactive demos.
+- 10^h^h15, count 'em 10^h^h15 different awesome sound reactive display routines.
 - Broken out functionality into separate .h files for readability.
-- Only ONE delay statement in the setup. That's it. Delay statements should be avoided at all costs.
+- Only ONE delay statement in the setup. That's it. Delay statements have no place in the loop.
 - Uses a variable rate EVERY_N_MILLISI() function instead.
 - Trying to localize and tighten up the variable definitions as much as possible.
 - Uses the 3.3V Sparkfun MEMS microphone with a whopping 67 dba gain.
 - Uses a potentiometer to adjust sensitivity.
-- Uses FastLED palette, palette transitioning, beats, fast math as well as perlin noise functionality.
+- Uses FastLED palettes, palette transitioning, beats, fading, fast math as well as perlin noise functionality.
 - No floating point math. I use 8 or 16 bit for better performance.
+- Shows that you don't need gobs of code to come up with a cool display sequence.
 
 
 Not features:
 
 - Not object oriented.
 - Not passing variables or structs to/from functions.
-- Sorry, but I prefer Java style curly brackets and not C style. Maybe that's because I don't use a real IDE.
+- Sorry, but I prefer Java style curly brackets and not C style. Maybe that's because I don't use a real IDE and I'm not a real programmer.
+- This probably won't scale beyond 255 LED's. I'll leave that job up to you.
+
 
 Notes:
 
-- Comment out the analogreference(EXTERNAL) if using a 3.3V Arduino
-- This requires a potentiometer to adjust sensitivity.
-- This runs at about 430 loops per second on an Arduino Nano with 60 APA102's. Do NOT add delay statements or I will find you . . .
-- This probably won't scale beyond 255 LED's.
+- This comes preconfigured for 60 APA102 LED's and a 3.3V Sparkfun MEMS microphone. Reconfigure and compile this for your own environment.
+- Comment the analogreference(EXTERNAL) line if using a 3.3V Arduino OR a 5V microphone.
+- This requires a potentiometer to adjust sensitivity. I use a linear 10K.
+- This runs at about 430 loops per second on an Arduino Nano with 60 APA102's. If you add routines, do NOT add delay statements or I will find you, and . . .
+
 
 */
 
@@ -64,16 +75,16 @@ Notes:
 #define NUM_LEDS 60                                                             // Number of LED's.
 
 // Fixed sound hardware definitions cannot change on the fly.
-#define MIC_PIN    5                                                            // Microphone
-#define POT_PIN    4                                                            // Potentiometer
+#define MIC_PIN    5                                                            // Microphone on A5.
+#define POT_PIN    4                                                            // Potentiometer on A4.
 
 // Global FastLED variables
 uint8_t max_bright = 255;                                                       // Maximum brightness, does change in other programs.
 struct  CRGB leds[NUM_LEDS];                                                    // Initialize our LED array.
 
 
-CRGBPalette16 currentPalette(OceanColors_p);
-CRGBPalette16 targetPalette(OceanColors_p);
+CRGBPalette16 currentPalette(PartyColors_p);
+CRGBPalette16 targetPalette(PartyColors_p);
 TBlendType    currentBlending = LINEARBLEND;                                    // NOBLEND or LINEARBLEND 
 
 
@@ -82,9 +93,10 @@ uint8_t timeval = 20;                                                           
 uint16_t loops = 0;                                                             // Our loops per second counter.
 
 // Global sound variables used in other routines.
-bool     samplepeak = 0;                                                        // This sample is well above the average, and is a 'peak'.
-uint16_t sampleavg = 0;                                                         // Average of the last 64 samples.
 uint16_t oldsample = 0;                                                         // Previous sample is used for peak detection and for 'on the fly' values.
+bool     samplepeak = 0;                                                        // The oldsample is well above the average, and is a 'peak'.
+uint16_t sampleavg = 0;                                                         // Average of the last 64 samples.
+
 
 // Global visual variables used in display and other routines.
 bool thisdir = 0;                                                               // Used in a display routine as well as a support routine.
@@ -94,15 +106,16 @@ bool thisdir = 0;                                                               
 void setup() {
 
   delay(3000);                                                                  // A delay in case things don't work correctly. I use this for Pro Micro.
-//  analogReference(EXTERNAL);                                                  // Comment out this line for 3.3V Arduino's, ie. Flora, etc, or if you are powering microphone with 5V.
+  
+  analogReference(EXTERNAL);                                                    // Comment out this line for 3.3V Arduino's, ie. Flora, etc.
   
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);  // Use this for WS2801 or APA102
-//  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);          // Use this for WS2812
+// LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);          // Use this for WS2812
 
   FastLED.setBrightness(max_bright);
   set_max_power_in_volts_and_milliamps(5, 500);                                 // FastLED Power management set at 5V, 500mA.
   
-  Serial.begin(57600);
+  Serial.begin(57600);                                                          // Serial port speed for debugging.
    
 } // setup()
 
@@ -110,32 +123,40 @@ void setup() {
 
 // Include various routines. Makes for an easier to read main program.
 
-#include "soundmems.h"                                                          // Sample the sounds and provide a current sample, average of last 64 samples and peak detector.
+#include "soundmems.h"                                                          // Sample the sounds and provide a current sample, average of last 64 samples and boolean peak (for twinkles).
 
 #include "support.h"                                                            // A few extra routines for good luck.
 
-#include "fillnoise8.h"                                                         // Here's the various sound reactive displays.
-#include "jugglep.h"
-#include "matrix.h"
-#include "pixel.h"
-#include "onesine.h"
-#include "plasma.h"
-#include "ripple.h"
-#include "noisefire.h"
-#include "rainbowbit.h"
-#include "rainbowg.h"
+// Main sound reactive routines
+#include "pixels.h"         // Long line of colours
+#include "fillnoise.h"      // Center to edges with base color and twinkle
+#include "jugglep.h"        // Long line of sinewaves
+#include "ripple.h"         // Juggle with twinkles
+#include "pixel.h"          // Long line of colours
+#include "matrix.h"         // Start to end with twinkles
+#include "onesine.h"        // Long line of shortlines
+#include "noisefire.h"      // Start to end
+#include "rainbowbit.h"     // Long line of short lines with twinkles
+#include "noisefiretest.h"  // Center to edges
+#include "rainbowg.h"       // Long line with flashes
+#include "noisewide.h"      // Center to edges
+#include "plasma.h"         // Long line of short lines
+#include "besin.h"          // center to edges with black
+#include "noisepal.h"       // Long line
+
+// Test sound reactive routines
+
 
 
 typedef void (*SimplePatternList[])();                                          // List of patterns to cycle through.  Each is defined as a separate function below.
 
-SimplePatternList gPatterns = {fillnoise8, jugglep, matrix, noisefire, onesine, pixel, plasma, rainbowbit, rainbowg, ripple};                                         // HERE IS WHERE YOU ADD YOUR ROUTINE TO THE LIST!!!!
-// fillnoise8, jugglep, matrix, noisefire, onesine, pixel, plasma, rainbowbit, rainbowg, ripple
+SimplePatternList gPatterns = {pixels, fillnoise, jugglep, ripple, pixel, matrix, onesine, noisefire, rainbowbit, noisefiretest, rainbowg, noisewide, plasma, besin, noisepal};  // HERE IS WHERE YOU ADD YOUR ROUTINE TO THE LIST!!!!
 
 uint8_t gCurrentPatternNumber = 0;                                              // Index number of which pattern is current.
 
 
 
-void loop() {                                                                   // The >>>>>>>>>> L-O-O-P <<<<<<<<<<<<<<<<<<<<<<<<<<<<  is buried here!!!11!1!
+void loop() {                                                                   // The >>>>>>>>>> L-O-O-P <<<<<<<<<<<<<<<<<<<<<<<<<<<<  is buried way down here!!!11!1!
 
   soundmems();
   
@@ -151,9 +172,13 @@ void loop() {                                                                   
     gPatterns[gCurrentPatternNumber]();                                         // Call the current pattern function.
   }
   
-  EVERY_N_SECONDS(5) {                                                          // Change the target palette to a related colours every 5 seconds.
+  EVERY_N_SECONDS(5) {                                                          // Change the target palette to a 'related colours' palette every 5 seconds.
     uint8_t baseclr = random8();                                                // This is the base colour. Other colours are within 16 hues of this. One color is 128 + baseclr.
-    targetPalette = CRGBPalette16(CHSV(baseclr, 255, random8(128,255)), CHSV(baseclr+128, 255, random8(128,255)), CHSV(baseclr + random8(16), 192, random8(128,255)), CHSV(baseclr + random8(16), 255, random8(128,255)));
+
+    targetPalette = CRGBPalette16(  CHSV(baseclr + random8(64), 255, random8(128,255)),
+                                    CHSV(baseclr + random8(64), 255, random8(128,255)),
+                                    CHSV(baseclr + random8(64), 192, random8(128,255)),
+                                    CHSV(baseclr + random8(64), 255, random8(128,255)));    
   }
 
   FastLED.show();                                                               // Send the 'leds' array out to the actual LED strip.

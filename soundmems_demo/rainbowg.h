@@ -8,7 +8,7 @@ void rainbowg() {                                                               
   uint8_t beatB = beatsin8(13, 0, 255);
   uint8_t beatC = beatsin8(11, 0, 255);
 
-  currentPalette = PartyColors_p;
+//  currentPalette = PartyColors_p;
   
   for (int i=0; i < NUM_LEDS; i++) {
     int colorIndex = (beatA+beatB+beatC)/3 * i * 4 / NUM_LEDS;

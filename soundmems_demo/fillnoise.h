@@ -1,7 +1,7 @@
-#ifndef FILLNOISE8_H
-#define FILLNOISE8_H
+#ifndef FILLNOISE_H
+#define FILLNOISE_H
 
-void fillnoise8() {                                                             // Add a Perlin noise soundbar. This looks really cool.
+void fillnoise() {                                                             // Add a Perlin noise soundbar. This looks really cool.
 
 // Local definitions
   #define xscale 160
@@ -30,6 +30,6 @@ void fillnoise8() {                                                             
   
   fadeToBlackBy(leds+NUM_LEDS/2-1, 2, 128);                                     // Fade the center, while waveit moves everything out to the edges.
                                                                               
-} // fillnoise8()
+} // fillnoise()
 
 #endif
