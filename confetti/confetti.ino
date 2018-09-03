@@ -26,7 +26,7 @@ Confetti flashes colours within a limited hue. It's been modified from Mark's or
 #define NUM_LEDS 20                                           // Number of LED's.
 
 // Initialize changeable global variables.
-uint8_t max_bright = 64;                                      // Overall brightness definition. It can be changed on the fly.
+uint8_t max_bright = 128;                                      // Overall brightness definition. It can be changed on the fly.
 
 struct CRGB leds[NUM_LEDS];                                   // Initialize our LED array.
 
@@ -61,7 +61,7 @@ void loop () {
   EVERY_N_MILLISECONDS(thisdelay) {                           // FastLED based non-blocking delay to update/display the sequence.
     confetti();
   }
-  show_at_max_brightness_for_power();  
+  FastLED.show();  
 } // loop()
 
 

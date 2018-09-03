@@ -149,7 +149,7 @@ void setup () {
 	FastLED.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);        // Use this for WS2812B
 	FastLED.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);  // Use this for WS2801 or APA102
 	FastLED.addLeds<LED_TYPE,LED_DT,LED_CK,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip).setDither(max_bright < 255);
-
+	FastLED.addLeds<LED_TYPE,LED_DT,LED_CK,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(0xffb0e0);
 	FastLED.setBrightness(max_bright);                          // You can change the overall brightness on the fly, i.e. with a potentiometer.
 	set_max_power_in_volts_and_milliamps(5, 500);               // This is used by the power management functionality and is currently set at 5V, 500mA.
 
@@ -175,7 +175,7 @@ void loop() {
 	  twinkle();
 	}
 
-	FastLED.show();                         // Run the FastLED.show() at full loop speed.
+	FastLED.show();                         					// Run the FastLED.show() at full loop speed.
 	Serial.println(LEDS.getFPS());                              // Display frames per second on the serial monitor.  
 } // loop()
 
@@ -234,6 +234,14 @@ https://plus.googleapis.com/112916219338292742137/posts/FvLgYPF52Ma
 
 Get Palettes here:
 http://soliton.vm.bytemark.co.uk/pub/cpt-city/index.html
+
+
+Tutorial
+
+https://learn.adafruit.com/simple-beautiful-color-changing-light-strand/creating-color-palettes
+
+https://www.youtube.com/watch?v=7CDgxgyALWQ\
+
 
 Find palette and click on above toolbar link.
 
@@ -305,6 +313,33 @@ void SetupRandomPalette() {
 leds[i] = ColorFromPalette(currentPalette, colorIndex, brightness, currentBlending);
 
 
+// CHSV Palettes
+
+Definitions:
+
+CHSVPalette16 RainbowColorsHSV_p;
+CHSVPalette16 currentPalette = RainbowColorsHSV_p; 
+
+
+Setup:
+
+  for( uint8_t j = 0; j < 16; j++) {
+    uint8_t hue = j * 16;
+    currentPalette[j] = CHSV( hue, 255, 255);
+  }
+
+Loop:
+
+  CHSVcolor = ColorFromPalette(currentPalette, paletteIndex++);
+  fill_solid(leds, NumLeds, color);
+
+// Not sure if this works.
+
+  You could, however:
+
+  CRGBcolor = ColorFromPalette(currentPalette, paletteIndex++);
+  fill_solid(leds, NumLeds, color);
+
 
 
 // Timing ----------------------------------------------------------------------------------------------------------
@@ -321,6 +356,7 @@ leds[k] += CHSV(thathue, allsat, thatbright);
 leds[k] = CRGB::Red;
 
 
+leds[k].g++;												// Or .r or .b
 
 
 
@@ -349,6 +385,11 @@ fill_gradient(leds, NUM_LEDS, CHSV(50, 255,255), CHSV(100,255,255), LONGEST_HUES
 fadeToBlackBy(leds, NUM_LEDS, fadeval);                     // 8 bit, 1 = slow, 255 = fast
 nscale8(leds,NUM_LEDS,fadeval);                             // 8 bit, 1 = fast, 255 = slow
 leds[i].fadeToBlackBy(fadeval);
+
+fadeToBlackBy(leds+4*3, 3, fadeval);      // 8 bit, 1 = slow, 255 = fast
+nscale8(leds+4*3, 3,fadeval);                   // 8 bit, 1 = fast, 255 = slow
+
+
 
 // Blend
 leds[i] = blend(CRGB::Red, CRGB::Blue, sin8(mysine));
@@ -391,6 +432,17 @@ sum = qsub8(i, j);                                            // Does not go bel
 
 memset(leds, 0, NUM_LEDS * 3);                                // Quick clearing of the LED's.
 memcpy8(temp, leds, sizeof(leds));                            // Copy values from temp to leds
+
+
+
+  if (thisdir == 0) {                                                                 // Now we're copying LED's down the array, again depending on the direction.
+//    for (int i = NUM_LEDS-1; i >0 ; i-- ) leds[i] = leds[i-1];                      // Be VERY careful not to go over your define array length, or crashy crashy.
+    memmove(leds+1, leds, (NUM_LEDS-1)*3);                                            // Oh look, the FastLED method.
+  } else {
+//    for (int i = 0; i < NUM_LEDS-1 ; i++ ) leds[i] = leds[i+1];                     // We can go the other way as well.
+    memmove(leds, leds+1, (NUM_LEDS-1)*3);
+  }
+
 
 
 
