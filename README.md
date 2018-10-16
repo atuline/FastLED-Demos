@@ -15,7 +15,7 @@ Before attempting to use these demos, make sure you can compile and run the exam
 
 If this is your first foray into addressable LED's, then start off with a small strip of less than 20 LED's. Long strips require careful power management design and implementation, so start off small and then work up to longer strips.
 
-Spend some time analyzing these demos, make changes to them and then make your own. Don't start off as a beginner trying to compile and run the advanced demos such as seirlight. Build up to it.
+Spend some time analyzing these demos, make changes to them and then make your own. Don't start off as a beginner trying to compile and run the advanced demos such as seirlight or notamesh. Build up to it.
 
 Finally, before looking for some support, have a look at fastled_support_faq.txt. Key things are to:
 
@@ -36,6 +36,8 @@ In addition to several standalone demos, I have included a comprehensive demo ca
 
 In addition, I have included a few sound reactive sequences, most notably fht_log_ripple, which uses the Sparkfun MEMS microphone and the FHT (Fast Hartley Transform) library to respond to sound in the frequency domain. Tricky to get going, but very cool.
 
+Finally, my recent 'notamesh', allows you to program a delay into several Arduinos and once they've been rebooted (simultaneously), will look like they're synchronized and with a slight delay between them. Very cool effect.
+
 
 ## My LED Philosophy
 
@@ -49,6 +51,8 @@ I remember back in high school physics (in 1969) when my grade 9 physics teacher
 **button_demoReel100** - Use button to control the mode. Press button for > 1 second to save current mode to EEPROM (as startup mode).
 
 **fht_log_ripple.ino** - Uses Fast Hartley Transform (from a 3rd party library) to translate input sounds into frequency domain output. This is NOT for the beginner.
+
+**notamesh.ino** - Run on an Arduino connected to an LED strip. Compile seirlight.ino, and it will include the other files in the directory. The overall structure for this code was originally based on funkboxing LED. In addition, to the FastLED library, it also requires another 3rd party library support IR remote control. This is NOT for the beginner. See notamesh.ino comment section for more information on how to use this.
 
 **seirlight.ino** - Runs on an Arduino connected to an LED strip. Compile seirlight.ino, and it will include the other files in the directory. The overall structure for this code was originally based on funkboxing LED. In addition, to the FastLED library, it also requires another 3rd party library support IR remote control. This is NOT for the beginner. See seirlight.ino comment section for more information on how to use this.
 
