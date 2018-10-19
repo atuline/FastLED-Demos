@@ -62,7 +62,7 @@ I remember back in high school physics (in 1969) when my grade 9 physics teacher
 ## Controls
 
 - Sparkfun MEMS microphone (with built-in pre-amp) for sound.
-- TSOP38238 IR receiver an an el cheapo IR controller for IR control.
+- TSOP38238 IR receiver an el cheapo IR controller for IR control.
 - 10K potentiometer for analog control.
 - Any old button switch for push button control.
 
