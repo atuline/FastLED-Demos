@@ -151,8 +151,8 @@
  * --------                     --------------------------------
  * Increase brightness          A1
  * Decrease brightness          A2
- * Set mode 0 (black)           A3  Disables the demo mode and reboots the Arduino in order to sync millis() if using notamesh.
- * Toggle demo mode             A4  It cycles through the routines based on the millis() counter.
+ * Set mode 0 (black)           A3  Reboots the Arduino in order to sync millis() if using notamesh.
+ * Enable demo mode             A4  It cycles through the routines based on the millis() counter.
  * 
  *                              B1  
  * Decrease strand length       B2  The # of LED's programmed are white.
@@ -165,9 +165,9 @@
  *                              C4
  * 
  * Enable/disable glitter       D1  Toggles glitter (not with all modes).
- * Prevous  display mode        D2  Also disables demo mode.
+ * Prevous display mode         D2  Also disables demo mode.
  * Next display mode            D3  Also disables demo mode.
- * Save Current mode to EEPROM  D4  This will be the startup mode.
+ * Save Current mode to EEPROM  D4  This will be the startup mode, and disables demo mode.
  * 
  * 
  * Select mode 3                E1
@@ -262,7 +262,7 @@ bool strandFlag = 1;                                          // Flag to let us 
 uint16_t meshdelay;                                           // Timer for the notamesh. Works with INITDEL.
 
 uint8_t ledMode = 0;                                          // Starting mode is typically 0. Change INITMODE if you want a different starting mode.
-uint8_t demorun = 0;                                          // 0 = regular mode, 1 = demo mode, 2 = shuffle mode.
+uint8_t demorun = 1;                                          // 0 = regular mode, 1 = demo mode, 2 = shuffle mode.
 uint8_t maxMode = 38;                                         // Maximum number of modes.
 uint8_t demotime = 10;                                        // Set the length of the demo timer.
 
@@ -344,7 +344,7 @@ void setup() {
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER >(leds, MAX_LEDS);           // APA102 or WS2801 definition
 //  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER >(leds, MAX_LEDS);                 // WS2812 definition
   
-  set_max_power_in_volts_and_milliamps(5, 500);                                   //5V, 500mA
+  set_max_power_in_volts_and_milliamps(5, 1000);                                   //5V, 1A
 
   random16_set_seed(4832);                                                        // Awesome randomizer of awesomeness
   random16_add_entropy(analogRead(2));
@@ -414,6 +414,7 @@ void strobe_mode(uint8_t newMode, bool mc){                   // mc stands for '
     fill_solid(leds,NUM_LEDS,CRGB(0,0,0));                    // Clean up the array for the first time through. Don't show display though, so you may have a smooth transition.
     Serial.print("Mode: "); 
     Serial.println(newMode);
+    Serial.println(millis());
   }
 
   switch (newMode) {                                          // First time through a new mode, so let's initialize the variables for a given display.
@@ -475,6 +476,7 @@ void demo_check(){
           if(demorun == 2) ledMode = random8(0,maxMode); else {
             ledMode = secondHand/demotime;
           }
+          meshwait();
           strobe_mode(ledMode,1);                                 // Does NOT reset to 0.
       } // if secondHand
     } // if lastSecond
@@ -499,8 +501,8 @@ void getirl() {                                                   // This is the
       switch(IRCommand) {
         case IR_A1:  max_bright=min(max_bright*2,255); LEDS.setBrightness(max_bright); break;                                       //a1 - Increase max bright
         case IR_A2:  max_bright=max(max_bright/2,1); LEDS.setBrightness(max_bright); break;                                         //a2 - Decrease max bright
-        case IR_A3:  demorun = 0; ledMode = 0; strobe_mode(ledMode,1); FastLED.show(); bootme(); break;                                                       //a3 - Change to mode 0
-        case IR_A4:  demorun = !demorun; if(demorun) {Serial.println("Demo mode"); meshwait();} else {Serial.println("Not demo mode");} break;  //a4 - Toggle demo mode
+        case IR_A3:  ledMode = 0; strobe_mode(ledMode,1); FastLED.show(); bootme(); break;                                          //a3 - Change to mode 0, display and reboot
+        case IR_A4:  demorun = 1; if(demorun) {Serial.println("Demo mode"); meshwait();} else {Serial.println("Not demo mode");} break;  //a4 - Enable demo mode
   
         case IR_B1:  break;                                     //b1 -
         case IR_B2:  set_strandlen(); break;                    //b2 - Decrease # of LED's and write to EEPROM
