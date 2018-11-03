@@ -30,9 +30,21 @@
  * 
  **********************************************************************************************************************************************************
  * 
- * 
+ 
  * 
  * Introduction ******************************
+ * 
+ * 1.05 Update
+ * 
+ * Set/display a favourite
+ * 
+ * 
+ * 1.04 Update
+ * 
+ * Make programming length and delay to be unit selectable.
+ * Change demo mode to start at ledMode 2.
+ * Set default to non-demo mode.
+ * 
  * 
  * This is a modification of my seirlight and previously aalight programs and provides the following:
  * 
@@ -120,13 +132,36 @@
  * 
  * Notamesh Initial Configuration **************
  * 
- * Power up an Arduino/strip (one at a time) and:
+ * You'll need to 'activate' your strand for EEPROM programming. To do so:
+ * 
+ * - Press B1 to put the Arduino into 'Select' mode.
+ * - Press the button equivalent to your strandID, i.e. B4 to 'activate' your Arduino for EEPROM programming
+ * 
+ * To increase/decrease the mesh delay for the currently active Arduino:
  * 
  * - Press E2 to decrease the amount of mesh delay by 100ms.
  * - Press E3 to decrease the amount of mesh delay by 100ms.
  * 
  * LED's will light up as 'white' to indicate the mesh delay (1 led per 100ms). The mesh delay
- * will be saved to EEPROM after each keypress. Once done, press A3 to reset the Arduino.
+ * will be saved to EEPROM after each keypress. Once done, press button 'A3' to reset the Arduino.
+ * 
+ * To increase/decrease the length of your strand for the currently active Arduino: 
+ * 
+ * - Press B2 to decrease the length of the strand.
+ * - Press B3 to increase the length of the strand.
+ * 
+ * LED's will light up as 'white' to indicate the strand length which will be saved
+ * to EEPROM after each keypress. Once done, press button 'A3' to reset the Arduino.
+ * 
+ * 
+ * Setting Favourites Configuration
+ * 
+ * - Press the D2 | D3 buttons to find a mode you really like.
+ * - Press B1 to put the Arduino into 'Select' mode.
+ * - Press the button equivalent to your strandID, i.e. B4 to 'activate' your Arduino for EEPROM programming
+ * - Press E1 to set Favourite 1 mode or press E4 to set Favourite 2 mode.
+ * - Once done, press button 'A3' to reset the Arduino.
+ * - You should then be able to press E1 or E4 to select the programmed favourite 1 or 2 modes.
  * 
  * 
  * 
@@ -147,39 +182,39 @@
  * columns, so C2 is the 3rd row, 2nd column. See commands.h for the mapping.
  * 
  * 
- * Command                      IR Button location & description
- * --------                     --------------------------------
- * Increase brightness          A1
- * Decrease brightness          A2
- * Set mode 0 (black)           A3  Reboots the Arduino in order to sync millis() if using notamesh.
- * Enable demo mode             A4  It cycles through the routines based on the millis() counter.
+ * Command                          IR Button location & description
+ * --------                         --------------------------------
+ * Increase brightness              A1  Increase brightness
+ * Decrease brightness              A2  Decrease brightness
+ * Reset and set mode 0             A3  Reboots the Arduino in order to sync millis() if using notamesh.
+ * Enable demo mode                 A4  Demo mode cycles through the routines based on the millis() counter.
  * 
- *                              B1  
- * Decrease strand length       B2  The # of LED's programmed are white.
- * Increase strand length       B3  The # of LED's programmed are white.
- *                              B4
+ * Select Arduino                   B1  This allows the EEPROM to be updated. Then press A1 through F4. A1 is the first one. Set the StrandID value related to a keypress at compile time.
+ * Decrease strand length           B2  The # of LED's programmed are white, only if strand is active (with the Select Arduino command.)
+ * Increase strand length           B3  The # of LED's programmed are white, only if strand is active (with the Select Arduino command.)
+ *                                  B4
  * 
- * Toggle direction             C1 It's either -1 or 1.
- * Slower animation             C2 Increase value of EVERY_N_MILLISECONDS()
- * Faster animation             C3 Decrease value of EVERY_N_MILLISECONDS()
- *                              C4
+ *                                  C1
+ * Slower animation                 C2 Increase value of EVERY_N_MILLISECONDS()
+ * Faster animation                 C3 Decrease value of EVERY_N_MILLISECONDS()
+ * Toggle direction                 C4 Toggle direction of some sequences.
  * 
- * Enable/disable glitter       D1  Toggles glitter (not with all modes).
- * Prevous display mode         D2  Also disables demo mode.
- * Next display mode            D3  Also disables demo mode.
- * Save Current mode to EEPROM  D4  This will be the startup mode, and disables demo mode.
- * 
- * 
- * Select mode 3                E1
- * Shorter mesh delay           E2  Decrease delay by 100ms before starting (using white LED's)
- * Longer mesh delay            E3  Increase delay by 100ms before starting (using white LED's)
- * Select mode 34               E4
+ * Enable/disable glitter           D1  Toggles glitter on some sequences.
+ * Previous display mode            D2  Also disables demo mode.
+ * Next display mode                D3  Also disables demo mode.
+ * Save Current mode to EEPROM      D4  This will be the startup mode, and disables demo mode temporarily. Disable startup demo mode at compile time.
  * 
  * 
- * Stop palette rotation        F1   Stop palette rotation at current palette.
- * Select previous palette      F2   Stop palette rotation and select previous palette immediately.
- * Select next palette          F3   Stop palette rotation and select next palette immediately.
- * Enable palette rotation      F4   Enable palette transitioning every 5 seconds.
+ * Set/display favourite 1          E1  Put in select mode to set current mode as favourite 1.
+ * Shorter mesh delay               E2  Decrease delay by 100ms before starting (using white LED's), only if strand is active (with the Select Arduino command.)
+ * Longer mesh delay                E3  Increase delay by 100ms before starting (using white LED's), only if strand is active (with the Select Arduino command.)
+ * Set/display favourite 2          E4  Put in select mode to set current mode as favourite 2.
+ * 
+ * 
+ * Stop palette rotation            F1   Stop palette rotation at current palette.
+ * Select previous palette          F2   Stop palette rotation and select previous palette immediately.
+ * Select next palette              F3   Stop palette rotation and select next palette immediately.
+ * Enable palette rotation          F4   Enable palette transitioning every 5 seconds.
  * 
  * 
  * 
@@ -194,7 +229,7 @@
 #define qsubd(x, b)  ((x>b)?wavebright:0)                     // A digital unsigned subtraction macro. if result <0, then => 0. Otherwise, take on fixed value.
 #define qsuba(x, b)  ((x>b)?x-b:0)                            // Unsigned subtraction macro. if result <0, then => 0.
 
-#define NOTAMESH_VERSION 103                                  // Just a continuation of seirlight and previously aalight.
+#define NOTAMESH_VERSION 105                                  // Just a continuation of seirlight and previously aalight.
 
 #include "FastLED.h"                                          // https://github.com/FastLED/FastLED
 #include "IRLremote.h"                                        // https://github.com/NicoHood/IRLremote
@@ -248,21 +283,24 @@ TBlendType currentBlending = LINEARBLEND;                     // NOBLEND or LINE
 #define STARTMODE 1                                           // EEPROM location for the starting mode.
 #define STRANDLEN 2                                           // EEPROM location for the actual Length of the strand, which is < MAX_LEDS
 #define STRANDEL  3                                           // EEPROM location for the mesh delay value.
+#define FAV1      4                                           // EEPROM location of first favourite routine.
+#define FAV2      5                                           // EEPROM location of second favourite routine.
 
 #define INITVAL   0x55                                        // If this is the value in ISINIT, then the Arduino has been initialized. Startmode should be 0 and strandlength should be 
 #define INITMODE  0                                           // Startmode is 0, which is black.
 #define INITLEN   20                                          // Start length is 20 LED's.
 #define INITDEL   0                                           // Starting mesh delay value of the strand in milliseconds.
+#define INITFAV   0                                           // Starting favourite modes.
 
 // These are deprecated values for use with seirlight. I may bring them back in the future. Don't delete them.
-const uint32_t STRANDID = IR_B3;                              // This is the same as button A2 and is the id of THIS strand. Change to a different button press as required.
-bool strandActive = 1;                                        // 0=inactive, 1=active. Must be activated by button press of B1, then A1 (or the appropriate button).
-bool strandFlag = 1;                                          // Flag to let us know if we're changing the active strand.
+const uint32_t STRANDID = IR_B4;                              // This is the ID button of the strand and should be unique for each strand in a series (if you want them to be different).
+bool strandActive = 0;                                        // 0=inactive, 1=active. Must be activated by button press of B1, then B3 (or the appropriate button).
+bool strandFlag = 0;                                          // Flag to let us know if we're changing the active strand.
 
 uint16_t meshdelay;                                           // Timer for the notamesh. Works with INITDEL.
 
 uint8_t ledMode = 0;                                          // Starting mode is typically 0. Change INITMODE if you want a different starting mode.
-uint8_t demorun = 1;                                          // 0 = regular mode, 1 = demo mode, 2 = shuffle mode.
+uint8_t demorun = 0;                                          // 0 = regular mode, 1 = demo mode, 2 = shuffle mode.
 uint8_t maxMode = 38;                                         // Maximum number of modes.
 uint8_t demotime = 10;                                        // Set the length of the demo timer.
 
@@ -355,6 +393,8 @@ void setup() {
     EEPROM.write(STRANDLEN, INITLEN);                                             // Initialize the starting length to 20 LED's.
     EEPROM.write(ISINIT, INITVAL);                                                // Initialize the starting value (so we know it's initialized) to INITVAL.
     EEPROM.write(STRANDEL, INITDEL);                                              // Initialize the notamesh delay to 0.
+    EEPROM.write(FAV1, INITFAV);                                                  // Initialize first favourite mode to 0.
+    EEPROM.write(FAV2, INITFAV);                                                  // Initialize second favourite mode to 0.
   }
  
   ledMode = EEPROM.read(STARTMODE);                                               // Location 0 is the starting mode.
@@ -419,8 +459,8 @@ void strobe_mode(uint8_t newMode, bool mc){                   // mc stands for '
 
   switch (newMode) {                                          // First time through a new mode, so let's initialize the variables for a given display.
 
-    case  0: if(mc) {fill_solid(leds,NUM_LEDS,CRGB(0,0,0));} break;                     // All off, not animated.
-    case  1: if(mc) {fill_solid(leds, NUM_LEDS,CRGB(255,255,255));} break;              // All on, not animated.
+    case  0: if(mc) {fill_solid(leds,NUM_LEDS,CRGB(1,0,0));} break;                     // All off, not animated.
+    case  1: if(mc) {thisdelay=20; hxyinc = random16(1,15); octaves=random16(1,3); hue_octaves=random16(1,5); hue_scale=random16(10, 50);  x=random16(); xscale=random16(); hxy= random16(); hue_time=random16(); hue_speed=random16(1,3); x_speed=random16(1,30);} noise16_pal(); break;
     case  2: if(mc) {thisdelay=10; allfreq=2; thisspeed=1; thatspeed=2; thishue=0; thathue=128; thisdir=1; thisrot=1; thatrot=1; thiscutoff=128; thatcutoff=192;} two_sin(); break;
     case  3: if(mc) {thisdelay=20; allfreq=4; bgclr=0; bgbri=0; thisbright=255; startindex=64; thisinc=2; thiscutoff=224; thisphase=0; thiscutoff=224; thisrot=0; thisspeed=4; wavebright=255;} one_sin_pal(); break;
     case  4: if(mc) {thisdelay=10; palchg=2;} noise8_pal(); break;
@@ -492,37 +532,41 @@ void getirl() {                                                   // This is the
   
   if (IRProtocol) {
 
-//    if(IRCommand == IR_B2 || strandFlag == 1) {set_strand();}
-    
-    if (strandActive==1) {
+    if(strandFlag == 1) set_strand();       // Set the strand length
     
       Serial.print("Command: ");
       Serial.println(IRCommand);
       switch(IRCommand) {
         case IR_A1:  max_bright=min(max_bright*2,255); LEDS.setBrightness(max_bright); break;                                       //a1 - Increase max bright
         case IR_A2:  max_bright=max(max_bright/2,1); LEDS.setBrightness(max_bright); break;                                         //a2 - Decrease max bright
-        case IR_A3:  ledMode = 0; strobe_mode(ledMode,1); FastLED.show(); bootme(); break;                                          //a3 - Change to mode 0, display and reboot
+        case IR_A3:  fill_solid(leds,NUM_LEDS,CRGB(0,0,0)); FastLED.show(); bootme(); break;                                          //a3 - Change to mode 0, display and reboot
         case IR_A4:  demorun = 1; if(demorun) {Serial.println("Demo mode"); meshwait();} else {Serial.println("Not demo mode");} break;  //a4 - Enable demo mode
   
-        case IR_B1:  break;                                     //b1 -
-        case IR_B2:  set_strandlen(); break;                    //b2 - Decrease # of LED's and write to EEPROM
-        case IR_B3:  set_strandlen(); break;                    //b3 - Increase # of LED's and write to EEPROM
-        case IR_B4:  break;                                     //b4 -
+        case IR_B1:  set_strand(); break;                                            //b1 - Set Strand Active or Inactive for EEPROM programming.
+        case IR_B2:  if (strandActive==1) set_strandlen(); break;                    //b2 - Decrease # of LED's and write to EEPROM
+        case IR_B3:  if (strandActive==1) set_strandlen(); break;                    //b3 - Increase # of LED's and write to EEPROM
+        case IR_B4:  break;                                                          //b4 -
   
-        case IR_C1:  thisdir = thisdir*-1;Serial.print("thisdir = "); Serial.println(thisdir);  break;                //c1 - Change the direction of the LEDs
-        case IR_C2:  thisdelay++;         break;                                                                      //c2 - Slow down the sequence.
-        case IR_C3:  thisdelay--;         break;                                                                      //c3 - Speed up the sequence.
-        case IR_C4:  break;                                                                                           //c4
+        case IR_C1:  break;                                                                                           //c1
+        case IR_C2:  thisdelay++; break;                                                                              //c2 - Slow down the sequence as much as you want.
+        case IR_C3:  thisdelay--; if(thisdelay >30000) thisdelay = 0; break;                                          //c3 - Speed up the sequence, but don't go too far.
+        case IR_C4:  thisdir = thisdir*-1;Serial.print("thisdir = "); Serial.println(thisdir);  break;                //c4 - Change the direction of the LEDs
   
         case IR_D1:  glitter = !glitter; Serial.println("Glitter baby!");   break;                                                              //d1 - Glitter
         case IR_D2:  demorun = 0; ledMode=(ledMode-1); if (ledMode==255) ledMode=maxMode; meshwait(); strobe_mode(ledMode,1); break;            //d2 - strobe_mode(ledMode--);
         case IR_D3:  demorun = 0; ledMode=(ledMode+1)%(maxMode+1); meshwait(); strobe_mode(ledMode,1); break;                                   //d3 - strobe_mode(ledMode++);
-        case IR_D4:  EEPROM.write(STARTMODE,ledMode); Serial.print("Writing startup mode: "); Serial.println(ledMode);  break;                          //d4 - Save startup mode
+        case IR_D4:  EEPROM.write(STARTMODE,ledMode); Serial.print("Writing startup mode: "); Serial.println(ledMode);  break;                  //d4 - Save startup mode
 
-        case IR_E1:  demorun = 0; ledMode = 3; meshwait(); strobe_mode(ledMode,1);   break;             //e1
-        case IR_E2:  set_meshdel(); break;                                                              //e2 - Shorter mesh delay by 100ms
-        case IR_E3:  set_meshdel(); break;                                                              //e3 - Longer mesh delay by 100ms
-        case IR_E4:  demorun = 0; ledMode = 34; meshwait(); strobe_mode(ledMode,1);   break;            //e4
+//        case IR_E1:  demorun = 0; ledMode = 3; meshwait(); strobe_mode(ledMode,1);   break;             //e1
+        case IR_E1:  if (strandActive==1) {set_strandfav(); } else {demorun = 0; ledMode = EEPROM.read(FAV1);  meshwait(); strobe_mode(ledMode,1);}   break;    //e1
+        case IR_E2:  if (strandActive==1) set_meshdel(); break;                                         //e2 - Shorter mesh delay by 100ms
+        case IR_E3:  if (strandActive==1) set_meshdel(); break;                                         //e3 - Longer mesh delay by 100ms
+//        case IR_E4:  demorun = 0; ledMode = 34; meshwait(); strobe_mode(ledMode,1);   break;            //e4
+        case IR_E4:  if (strandActive==1) {set_strandfav(); } else {demorun = 0; ledMode = EEPROM.read(FAV2);  meshwait(); strobe_mode(ledMode,1);}   break;    //e1
+
+        if (strandActive==1) {set_strandfav(); } else {demorun = 0; ledMode = EEPROM.read(FAV1);  meshwait(); strobe_mode(ledMode,1);}   break;             //e1
+
+
 
         case IR_F1:  palchg = 0; Serial.print("Stop and select current Palette "); Serial.println(gCurrentPaletteNumber); break;                                                                                               //f1 - Stop and select current Palette
         case IR_F2:  palchg = 1; Serial.print("Stop and select previous Palette "); gCurrentPaletteNumber -= 1; if(gCurrentPaletteNumber == 255) gCurrentPaletteNumber = gGradientPaletteCount; Serial.println(gCurrentPaletteNumber); gCurrentPalette = (gGradientPalettes[gCurrentPaletteNumber]); break;    //f2 - Stop and select previous Palette
@@ -532,8 +576,6 @@ void getirl() {                                                   // This is the
         default:     break;                // We could do something by default
 
       } // switch IRCommand
-
-    } // if strandActive
 
     IRProtocol = 0;                                             // Reset IRProtocol variable to not read the same value twice.
 
@@ -572,65 +614,82 @@ void IREvent(uint8_t protocol, uint16_t address, uint32_t command) {
 } // IREvent()
 
 
-/*
-void set_strand() {                                           // Setting the active strand.
 
-  if(IRCommand == IR_B1) IRProtocol = 0;                      // Command is to set strand to let's clear the Protocol flag.
+void set_strand() {                                             // Setting the active strand.
 
-  strandFlag = 1;                                             // We need this state flag in order to be able to continue to run the routine while changing active/inactive.
-  Serial.print("Strand is: ");
-
-  if (IRProtocol) {                                           // We have a command and the strandFlag is 1 and it's not the Set Active flag command.
+  if (IRCommand == IR_B1) {IRProtocol = 0; strandFlag = 1;}      // Command is to set strand to let's clear the Protocol flag.
+                                                                // We need this state flag in order to be able to continue to run the routine while changing active/inactive.
+  if (IRProtocol) {                                             // We have a command and the strandFlag is 1 and it's not the Set Active flag command.
     Serial.println(IRCommand);
-    strandFlag = 0;                                           // We know we're finally setting the strand to be ACTIVE/INACTIVE, so we'll clear that state flag.
+    Serial.print("Strand is: ");
+    strandFlag = 0;                                             // We know we're finally setting the strand to be ACTIVE/INACTIVE, so we'll clear that state flag.
     if (IRCommand == STRANDID)  {
       strandActive = 1; Serial.println("ACTIVE");
     } else {
       strandActive = 0; Serial.println("INACTIVE");
     }
     IRProtocol = 0;                                             // Let's clear the the IRProtocol flag and be ready for another command.
+    Serial.println("Finished strand length.");
   }
 
 } // set_strand()
-*/
+
+
+
+void set_strandfav() {                                        // Set a couple of strand favourites.
+
+  if(strandActive == 1) {
+    if (IRCommand == IR_E1) EEPROM.write(FAV1, ledMode);
+    if (IRCommand == IR_E4) EEPROM.write(FAV2, ledMode);
+  }  // if strandActive
+  IRProtocol = 0;                                             // Let's clear the the IRProtocol flag and be ready for another command.
+} // set_strandfav()
+
+
+
 
 
 void set_strandlen() {                                                // Setting our strand length with button presses.
 
-  demorun = 0;                                                        // First we disable the demo mode.
-  ledMode = 0;                                                        // And set to mode 0 (black).
-  fill_solid(leds,MAX_LEDS, CRGB::Black);                             // Let's make it black manually.
+  Serial.println("Setting strand length.");
   
-  if (IRCommand == IR_B2) {
-    NUM_LEDS--; if (NUM_LEDS >255) NUM_LEDS=0;                        // Don't be stupid with our strand length selection.
-  } else {
-   NUM_LEDS++;  if (NUM_LEDS >= MAX_LEDS) NUM_LEDS=MAX_LEDS-1;        // Again, don't be stupid with our strand length selection.
+  if(strandActive == 1) {                                               // Only do this if the strand is active.
+    demorun = 0;                                                        // First we disable the demo mode.
+    ledMode = 0;                                                        // And set to mode 0 (black).
+    fill_solid(leds,MAX_LEDS, CRGB::Black);                             // Let's make it black manually.
+    
+    if (IRCommand == IR_B2) {
+      NUM_LEDS--; if (NUM_LEDS >255) NUM_LEDS=0;                        // Don't be stupid with our strand length selection.
+    } else {
+     NUM_LEDS++;  if (NUM_LEDS >= MAX_LEDS) NUM_LEDS=MAX_LEDS-1;        // Again, don't be stupid with our strand length selection.
+    }
+    fill_solid(leds,NUM_LEDS,CRGB(255,255,255));                        // Turn on the number of LEDs that we have selected as our length.
+    EEPROM.write(STRANDLEN,NUM_LEDS);                                   // Write that value to EEPROM.
+    Serial.print("Writing IR: "); Serial.print(NUM_LEDS); Serial.println(" LEDs");
   }
-  fill_solid(leds,NUM_LEDS,CRGB(255,255,255));                        // Turn on the number of LEDs that we have selected as our length.
-  EEPROM.write(STRANDLEN,NUM_LEDS);                                   // Write that value to EEPROM.
-  Serial.print("Writing IR: "); Serial.print(NUM_LEDS); Serial.println(" LEDs");
-  
 } // set_strandlen()
 
 
 
-void set_meshdel() {                                                  // Setting our notamesh delay for whatever strands are powered up.
+void set_meshdel() {                                                    // Setting our notamesh delay for whatever strands are powered up.
 
-  demorun = 0;                                                        // First we disable the demo mode.
-  ledMode = 0;                                                        // And set to mode 0 (black).
-  fill_solid(leds,MAX_LEDS, CRGB::Black);                             // Let's make it black manually.
+  if(strandActive == 1) {                                               // Only do this if the strand is active.
+    demorun = 0;                                                        // First we disable the demo mode.
+    ledMode = 0;                                                        // And set to mode 0 (black).
+    fill_solid(leds,MAX_LEDS, CRGB::Black);                             // Let's make it black manually.
+    
+    if (IRCommand == IR_E2) {                                           // Which button did we press (either E2 or E3).
+      meshdelay = meshdelay - 1;
+      if (meshdelay >10000) meshdelay = 0;                              // Again, don't be stupid with our buttons.
+    } else {
+     meshdelay = meshdelay + 1;                                         // Increase the delay as much as you want. . .
+    }
+    
+    fill_solid(leds,meshdelay,CRGB(255,255,255));                       // Turn on the number of LED's that we have selected (100ms is 1 LED)
+    EEPROM.write(STRANDEL,meshdelay);                                   // Write out the delay to EEPROM.
+    Serial.print("Writing IR: "); Serial.print(meshdelay*100); Serial.println("ms delay.");
+  } // if strandActive
   
-  if (IRCommand == IR_E2) {                                           // Which button did we press (either E2 or E3).
-    meshdelay = meshdelay - 1;
-    if (meshdelay >10000) meshdelay = 0;                              // Again, don't be stupid with our buttons.
-  } else {
-   meshdelay = meshdelay + 1;                                         // Increase the delay as much as you want. . .
-  }
-  
-  fill_solid(leds,meshdelay,CRGB(255,255,255));                       // Turn on the number of LED's that we have selected (100ms is 1 LED)
-  EEPROM.write(STRANDEL,meshdelay);                                   // Write out the delay to EEPROM.
-  Serial.print("Writing IR: "); Serial.print(meshdelay*100); Serial.println("ms delay.");
-
 } // set_meshdel()
 
 

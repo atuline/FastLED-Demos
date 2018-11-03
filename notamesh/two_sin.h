@@ -25,7 +25,7 @@ void two_sin() {                                                              //
   thishue = thishue + thisrot;                                                // Hue rotation is fun for thiswave.
   thathue = thathue + thatrot;                                                // It's also fun for thatwave.
   
-  for (int k=0; k<NUM_LEDS-1; k++) {
+  for (int k=0; k<NUM_LEDS; k++) {
     int thisbright = qsuba(cubicwave8((k*allfreq)+thisphase), thiscutoff);     // qsub sets a minimum value called thiscutoff. If < thiscutoff, then bright = 0. Otherwise, bright = 128 (as defined in qsub)..
     int thatbright = qsuba(cubicwave8((k*allfreq)+128+thatphase), thatcutoff); // This wave is 180 degrees out of phase (with the value of 128).
 
