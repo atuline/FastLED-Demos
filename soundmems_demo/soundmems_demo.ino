@@ -7,7 +7,7 @@ Date: December 2017
 Updated: September 2018
 
 
-Now with FIFTEEN, YES, FIFTEEN 2D sound reactive routines. Some look similar to the others, so I've spread them out.
+Now with FIFTEEN, YES, FIFTEEN 1D sound reactive routines. Some look similar to the others, so I've spread them out.
 
 These sound reactive program does not use FFT or an MSGEQ7 chip, but rather just uses the current sample, the average (of the last 64 samples) and peak detection.
 
