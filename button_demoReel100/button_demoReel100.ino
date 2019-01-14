@@ -20,9 +20,9 @@
  * 
  * Requirements:
  * 
- * In addition, to FastLED, you need to download and install JChristensen's button library, available at:
+ * Jeff Saltzman's jsbutton.h routine is now included with this demo. Please ensure that it is 
+ * downloaded alongside button_demoReel100.ino and in the same directory.
  * 
- * https://github.com/JChristensen/Button
  * 
  */
 
