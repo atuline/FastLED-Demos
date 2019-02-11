@@ -313,7 +313,7 @@ uint8_t currentPatternIndex = 0;                                // Index number 
 #define INITFAV   0                                           // Starting favourite modes.
 
 
-const uint32_t STRANDID = IR_C1;                              // This is the ID button of the strand and should be unique for each strand in a series (if you want them to be different).
+const uint32_t STRANDID = IR_A2;                              // This is the ID button of the strand and should be unique for each strand in a series (if you want them to be different).
 bool strandActive = 0;                                        // Used for configuration changes only. 0=inactive, 1=active. Must be activated by button press of B1, followed by C1 (or the appropriate STRANDID button).
 bool strandFlag = 0;                                          // Flag to let us know if we're changing the active strand.
 
@@ -434,6 +434,7 @@ void setup() {
 
   Serial.print("Initial delay: "); Serial.print(meshdelay*100); Serial.println("ms delay.");
   Serial.print("Initial strand length: "); Serial.print(NUM_LEDS); Serial.println(" LEDs");
+  Serial.print("Strand ID: "); Serial.println(STRANDID);
 
   currentPalette = CRGBPalette16(CRGB::Black);
   targetPalette = (gGradientPalettes[0]);
@@ -563,7 +564,7 @@ void getirl() {                                                   // This is the
         case IR_A3:  fill_solid(leds,NUM_LEDS,CRGB(0,0,0)); FastLED.show(); bootme(); break;                                              //a3 - Change to mode 0, display and reboot
         case IR_A4:  demorun = 1; if(demorun) {Serial.println("Demo mode"); meshwait();} else {Serial.println("Not demo mode");} break;   //a4 - Enable demo mode
   
-        case IR_B1:  set_strand(); break;                                                                                                 //b1 - Set Strand Active or Inactive for EEPROM programming.
+        case IR_B1:  Serial.println("Activate request"); set_strand(); break;                                                                                                 //b1 - Set Strand Active or Inactive for EEPROM programming.
         case IR_B2:  if (strandActive==1) set_strandlen(); break;                                                                         //b2 - Decrease # of LED's and write to EEPROM
         case IR_B3:  if (strandActive==1) set_strandlen(); break;                                                                         //b3 - Increase # of LED's and write to EEPROM
         case IR_B4:  squelch--; if(squelch >240) squelch = 0; Serial.print("Squelch: "); Serial.println(squelch);  break;                 //b4 -  Reduce squelch value

@@ -17,12 +17,9 @@ void onesine() {
   
   thisphase += sampleavg/2 + beatsin16(20,-10,10);                              // Move the sine waves along as a function of sound plus a bit of sine wave.
 
-  colorIndex = millis() >> 4;                                                   // millis() can be used for so many things. It's my favourite.
-  
   for (int k=0; k<NUM_LEDS; k++) {                                              // For each of the LED's in the strand, set a brightness based on a wave as follows:
     int thisbright = qsuba(cubicwave8((k*allfreq)+thisphase), thiscutoff);      // qsub sets a minimum value called thiscutoff. If < thiscutoff, then bright = 0. Otherwise, bright = 128 (as defined in qsub)..
     leds[k] = ColorFromPalette( currentPalette, millis()/2, thisbright, currentBlending);    // Let's now add the foreground colour. By Andrew Tuline.
-    colorIndex +=3;
   }
 
 } // onesine()
