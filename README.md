@@ -1,4 +1,4 @@
-#FastLED-Demos
+# FastLED-Demos
 
 
 **By:** Andrew Tuline
@@ -27,7 +27,7 @@ Finally, before looking for some support, have a look at fastled_support_faq.txt
 - Learn the basics before trying the advanced routines.
 
 
-##Introduction
+## Introduction
 
 Here are several display sequences for FastLED for a single strand of addressable RGB LED's, such as NeoPixels/WS2812, WS2801 or DotStars/APA102. Each should compile and run separately and all have been tested on an Arduino Nano with appropriate inputs as required.
 
@@ -38,7 +38,7 @@ In addition to several standalone demos, I have included comprehensive demos cal
 In addition, I have included a few other sound reactive sequences, most notably fht_log_ripple, which uses the ADMP401 MEMS microphone and the FHT (Fast Hartley Transform) library to respond to sound in the frequency domain. Tricky to get going, but very cool.
 
 
-##Notable Files
+## Notable Files
 
 **black.ino** - Turns off your LED's, so you can program in peace without having to unplug your strand.
 
@@ -51,7 +51,7 @@ In addition, I have included a few other sound reactive sequences, most notably 
 **notasound.ino** - HUGE IR controlled sound reactive demo display.
 
 
-##Introducing notamesh and notasound##
+## Introducing notamesh and notasound
 
 Introducing two new display demos for Arduino and FastLED.
 
@@ -112,7 +112,7 @@ Once they’re all programmed and running, you would then press the ‘Reset’ 
 - No FFT or MSGEQ7 required.
 
 
-##My FastLED Animation Philosophy##
+## My FastLED Animation Philosophy
 
 - Do NOT use delay statements in the loop as that breaks input routines (i.e. button).
 - Do not use nested loops (for performance reasons).
@@ -125,7 +125,7 @@ Once they’re all programmed and running, you would then press the ‘Reset’ 
 - Be generous with comments.
 
 
-##Controls
+## Controls
 
 - ADMP401 MEMS microphone (with built-in pre-amp) for sound.
 - TSOP38238 IR receiver and a 24 button IR controller for IR control.
@@ -133,12 +133,12 @@ Once they’re all programmed and running, you would then press the ‘Reset’ 
 - Any old button switch for push button control.
 
 
-##Microphones
+## Microphones
 
 If you go out and buy one of those cheap sound sensors from aliexpress, you will be sorely disappointed. The ADMP401 MEMS microphone includes an amplifier (with a gain of 67db), which provides a line in signal that's adequate for the Arduino works just fine. Those sound sensors don't. You have been warned.
 
 
-##More
+## More
 
 Information about the awesome FastLED Library is available from: [fastled.io](http://fastled.io/)
 
