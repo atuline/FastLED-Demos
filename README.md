@@ -67,10 +67,10 @@ You can configure multiple Arduino microcontrollers with the same display sequen
 You have 5 IR controlled Arduino based displays, all within eyesight of each other, and all running notamesh. At compile time, each will be configured for the type of LED’s in use as well as a unique ID for each and with demo mode enabled.
 Upon first time power-up, each strand will be configured with the length of the strand, as well as a delay. For instance, each Arduino has 40 LED’s connected to it. 
 
-Arduino A1 – 0ms delay
-Arduino A2 – 100ms delay
-Arduino A3 – 200ms delay
-and so on . . . .
+- Arduino A1 – 0ms delay
+- Arduino A2 – 100ms delay
+- Arduino A3 – 200ms delay
+- and so on . . . .
 
 
 Once they’re all programmed and running, you would then press the ‘Reset’ button on the IR controller in order to synchronize millis() and the Arduinos would begin displaying the demo mode, with each Arduino slightly out of sync with the others.
