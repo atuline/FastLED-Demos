@@ -293,7 +293,7 @@ TBlendType currentBlending = LINEARBLEND;                     // NOBLEND or LINE
 #define INITFAV   0                                           // Starting favourite modes.
 
 // These are deprecated values for use with seirlight. I may bring them back in the future. Don't delete them.
-const uint32_t STRANDID = IR_B4;                              // This is the ID button of the strand and should be unique for each strand in a series (if you want them to be different).
+const uint32_t STRANDID = IR_C1;                              // This is the ID button of the strand and should be unique for each strand in a series (if you want them to be different).
 bool strandActive = 0;                                        // 0=inactive, 1=active. Must be activated by button press of B1, then B3 (or the appropriate button).
 bool strandFlag = 0;                                          // Flag to let us know if we're changing the active strand.
 
