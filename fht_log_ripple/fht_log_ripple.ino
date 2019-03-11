@@ -1,8 +1,10 @@
-/* fht_log_ripple
+ /* fht_log_ripple
  * 
  * By: Andrew Tuline
  * 
  * Date: January, 2017
+ * 
+ * Update: March, 2019 (with high speed A/D sampling)
  * 
  * 
  *  This is an example of the FHT library with FastLED for an AVR based Arduino. This uses a Fast Hartley Transform with beat (err, low frequency peak) 
@@ -31,15 +33,15 @@
  * - Mic out connected to A5 on Nano.
  * - Gnd to Gnd on Nano.
  * 
- * 10K linear potentiometer
- * - One end connected to 5V on Nano.
- * - One end connected to Gnd on Nano.
- * - Middle connected to A4 on Nano.
+ * The microphone used for this routine is a Sparkfun ADMP401 MEMS microphone, which runs at 3.3V. With this microphone, we need to tie the AREF pin to 3.3V (if
+ * using a 5V Arduino UNO/Nano/?. In setup(), you would perform:
  * 
+ * analogReference(EXTERNAL); 
  * 
- * Notes: If you are using a microphone powered by the 3.3V signal, such as the Sparkfun MEMS microphone, then connect 3.3V to the AREF pin.
- *        If you are using a sound sensor from aliexpress, then you're probably SOL.
- *        If you don't have a 3.3V and AREF pin for your 3.3V microphone, then I'd be looking for a different Arduino.
+ * or use the direct port equivalent, which is:
+ * 
+ * ADMUX |= (0 << REFS0);
+ * 
  * 
  */
 
@@ -65,13 +67,10 @@ TBlendType    currentBlending;                                // NOBLEND or LINE
 // Fast Hartley Transform Definitions
 #define LOG_OUT 1                                             // Use the logarithmic scale.             
 #define FHT_N 256                                             // Set to 256 point fht.
-#define inputPin A5                                           // MEMS Microphone input pin.
-#define DC_OFFSET -10                                         // DC offset of the input. Leave at 0 if unsure.
+#define MIC_PIN 5                                           // MEMS Microphone input pin.
+#define DC_OFFSET  509                                        // DC offset in mic signal. Should probably be about 512.
 #include <FHT.h>                                              // FHT library at http://wiki.openmusiclabs.com/wiki/ArduinoFHT
 
-// Potentiometer definition and variable
-#define potPin A4                                             // Let's attach the potentiometer to A4 of the Arduino.
-uint8_t noiseval;                                             // Adjust the potentiometer to increase/decrease detection sensitivity. 52 seems to be a good value.
 
 // Ripple variables
 uint8_t colour;                                               // Ripple colour is randomized and incremented.
@@ -88,7 +87,7 @@ unsigned long interval = 60;                                  // 60ms interval s
 
 void setup() {
   
-  analogReference(EXTERNAL);                                  // Connect 3.3V to AREF pin for any microphones using 3.3V
+//  analogReference(EXTERNAL);                                  // This is configured in the get_sound routine. In general, you would connect 3.3V to AREF pin for any microphones using 3.3V
   
   Serial.begin(57600);                                        // Initialize serial port for debugging.
   delay(1000);                                                // Soft startup to ease the flow of electrons.
@@ -101,6 +100,28 @@ void setup() {
 
   currentPalette = PartyColors_p;                             // Nice bright starting colours.
   currentBlending = LINEARBLEND;
+
+// Setup the ADC for polled 10 bit sampling on analog pin 5 at 19.2kHz.
+  cli();                                  // Disable interrupts.
+  ADCSRA = 0;                             // Clear this register.
+  ADCSRB = 0;                             // Ditto.
+  ADMUX = 0;                              // Ditto.
+  ADMUX |= (MIC_PIN & 0x07);              // Set A5 analog input pin.
+  ADMUX |= (0 << REFS0);                  // Set reference voltage  (analog reference(external), or using 3.3V microphone on 5V Arduino.
+                                          // Set that to 1 if using 5V microphone or 3.3V Arduino.
+//  ADMUX |= (1 << ADLAR);                  // Left justify to get 8 bits of data.                                          
+  ADMUX |= (0 << ADLAR);                  // Right justify to get full 10 A/D bits.
+
+//  ADCSRA |= bit (ADPS0) | bit (ADPS2);                //  32 scaling or 38.5 KHz sampling
+//  ADCSRA |= bit (ADPS1) | bit (ADPS2);                //  Set ADC clock with 64 prescaler where 16mHz/64=250kHz and 250khz/13 instruction cycles = 19.2khz sampling.
+  ADCSRA |= bit (ADPS0) | bit (ADPS1) | bit (ADPS2);    // 128 prescaler with 9.6 KHz sampling
+
+
+  ADCSRA |= (1 << ADATE);                 // Enable auto trigger.
+//  ADCSRA |= (1 << ADIE);                  // Enable interrupts when measurement complete (if using ISR method). Sorry, we're using polling here.
+  ADCSRA |= (1 << ADEN);                  // Enable ADC.
+  ADCSRA |= (1 << ADSC);                  // Start ADC measurements.
+  sei();                                  // Re-enable interrupts.
 
 } // setup()
 
@@ -121,7 +142,7 @@ void loop() {
   isripple();                                                 // Is there a low frequency peak detected? If so, trigger a new ripple.
   ripple();                                                   // Let's cycle through the ripple routine.
 
-  FastLED.show();                         // Run the FastLED.show() at full loop speed.
+  FastLED.show();                                             // Run the FastLED.show() at full loop speed.
 
 } // loop()
 
@@ -129,35 +150,42 @@ void loop() {
 
 void GetFHT() {
 
-//  Serial.println(analogRead(inputPin) - 512 - DC_OFFSET);
-  
-  cli();
-  for (int i = 0 ; i < FHT_N ; i++) fht_input[i] = analogRead(inputPin) - 512 - DC_OFFSET;
-  sei();
-  
+  get_sound();                                                // High speed sample of sound which is input into the FHT array.
   fht_window();                                               // Window the data for better frequency response.
   fht_reorder();                                              // Reorder the data before doing the fht.
   fht_run();                                                  // Process the data in the fht.
   fht_mag_log();                                              // Let's use logarithmic bins.
 
-//  Serial.println(abs(fht_log_out[3]));                      // Alternatives are fht_log_out[], fht_lin_out[], and fht_oct_out[]
-//  if (abs(fht_log_out[3]) - noiseval > 0) Serial.println (abs(fht_log_out[3]) - noiseval);
-
-//  Serial.println(noiseval);
-  
 } // GetFHT()
+
+
+
+void get_sound() {                                            // Uses high speed polled analog sampling and NOT analogRead().
+
+    cli();                                                    // Disable interrupts for the duration of the sampling.
+    for (int i = 0 ; i < FHT_N ; i++) {                       // Save 256 samples. No more, no less.
+      while(!(ADCSRA & 0x10));                                // Wait for adc to be ready.
+      ADCSRA = 0xf5;                                          // Restart adc
+      fht_input[i] = ADC - DC_OFFSET;                         // Get the full 10 bit A/D conversion and center it.
+    }
+    sei();                                                    // Re-enable interrupts.
+    
+} // get_sound()
 
 
 
 void isripple() {
 
-  noiseval = map(analogRead(potPin), 0, 1023, 16, 96);        // Read potentiometer and map for sensitivity.
+  uint8_t noiseval = 32;                                        // Our detection value.
+
+//  noiseval = map(analogRead(potPin), 0, 1023, 16, 96);        // Read potentiometer and map for sensitivity. Removed.
 
   currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {           // Wait for interval ms before allowing a new ripple to be generated.
     previousMillis = currentMillis;
-    if (abs(fht_log_out[3]) - noiseval > 0) step = -1;        // If the sound > threshold then start a ripple.
+    if (abs(fht_log_out[3]) - noiseval > 0) step = -1;        // If the low frequency sound > threshold then start a ripple.
   } 
+
 } // isripple()
 
 
