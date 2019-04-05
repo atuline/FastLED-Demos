@@ -51,6 +51,18 @@
  * 
  * VERSIONS ***********************************************************************************************************************************************
  * 
+ * 1.07 Sampling fix, general fixes and a display change.
+ * 
+ * Change sampling algorithm to direct method. Can sample at various rates, but more complex to use.
+ * Changed some of the averaging and squelching math.
+ * Fix the samplepeak detection for the various routines. Each display routine must now reset samplepeak.
+ * Had a problem with it crashing 80s in. Lowered the max_bright and problem went away. Strange.
+ * Turned mode 0 from solid red to a noise routine.
+ * Fixed a couple of displays that addressed leds[NUM_LEDS]
+ * Adjusted the default squelch value.
+ * Changed mic port to match the PCB I'm using.
+ * 
+ * 
  * 1.06 Big update/change by merging notamesh framework with the soundmems demo routines to combine sound reactive functionality with IR control.
  * 
  * Use notamesh framework and combine/update soundmems demos.
@@ -148,7 +160,7 @@
  * An Arduino initialization flag will be set.
  * The starting mode will be 0 (all red LED's).
  * The starting NUM_LEDS length will be 20 LED's.
- * The starting notasound delay will be 0 ms.
+ * The starting notasound delay will be 0 ms (this only works with notamesh).
  * 
  * 
  * 
@@ -165,7 +177,7 @@
  * be saved to EEPROM after each keypress. Once done, press A3 to reset the Arduino.
  * 
  * 
- * To increase/decrease the mesh delay:
+ * To increase/decrease the mesh delay (which only works with notamesh):
  * 
  * Press B1 to put the Arduino into 'Select strand' mode.
  * Press the button equivalent to your STRANDID, i.e. C1 to 'activate' your Arduino for EEPROM programming.
@@ -193,8 +205,11 @@
  * The notasound initial configuration is important so that there's a different delay between each LED strip.
  * Press A3 once all notasound Arduinos are running in order to synchronize them with the same millis() value.
  * From there, you should be able to select demo mode or individual sequences below.
- * The routines should run and you should get a cool synchronized display combined with a delay so that it looks like they're communicating.
+ * The routines should run and you should get a cool synchronized display across the strips.
  * 
+ * Note: Although the delay functionality doesn't work with notasound, each strand running the same sequence will look a bit different,
+ * depending on the location of the microphone. 
+ * * 
  * 
  * 
  * IR Keys and Operation ********************************************************************************************************************************
@@ -213,8 +228,8 @@
  * Enable demo mode                 A4  Demo mode cycles through the routines based on the millis() counter.
  * 
  * Select Arduino (STRANDID)        B1  This allows the EEPROM to be updated. Then press STRANDID A1 through F4 (as configured as compile time).
- * Decrease strand length           B2  The # of LED's programmed are white, only if strand is active (with the Select Arduino command.)
- * Increase strand length           B3  The # of LED's programmed are white, only if strand is active (with the Select Arduino command.)
+ * Decrease strand length           B2  The # of LED's programmed are white, only if strand is active (via B1 & STRANDID).
+ * Increase strand length           B3  The # of LED's programmed are white, only if strand is active (via B1 & STRANDID).
  * Decrease noise squelch           B4  Allows more ambient noise is displayed.
  * 
  * Increase noise squelch           C1  Increases noise squelch, so that ambient noise = 0.
@@ -228,8 +243,8 @@
  * Save Current mode to EEPROM      D4  This will be the startup mode, and disables demo mode temporarily. Disable startup demo mode at compile time.
  * 
  * Set/display favourite 1          E1  Put in select mode to set current mode as EEPROM based favourite 1.
- * Shorter mesh delay               E2  Decrease delay by 100ms before starting (using white LED's), only if strand is selected (B1).
- * Longer mesh delay                E3  Increase delay by 100ms before starting (using white LED's), only if strand is selected (B1).
+ * Shorter mesh delay               E2  Decrease delay by 100ms before starting (using white LED's), only if strand is active (via B1 & STRANDID).
+ * Longer mesh delay                E3  Increase delay by 100ms before starting (using white LED's), only if strand is active (via B1 & STRANDID).
  * Set/display favourite 2          E4  Put in select mode to set current mode as EEPROM based favourite 2.
  * 
  * Stop palette rotation            F1   Stop palette rotation at current palette.
@@ -248,7 +263,7 @@
 #define qsubd(x, b)  ((x>b)?wavebright:0)                     // A digital unsigned subtraction macro. if result <0, then => 0. Otherwise, take on fixed value.
 #define qsuba(x, b)  ((x>b)?x-b:0)                            // Unsigned subtraction macro. if result <0, then => 0.
 
-#define NOTASOUND_VERSION 106                                 // Just a continuation of notamesh, previously seirlight and previous to that was irlight, then aalight and then atlight.
+#define NOTASOUND_VERSION 107                                 // Just a continuation of notamesh, previously seirlight and previous to that was irlight, then aalight and then atlight.
 
 #include "FastLED.h"                                          // https://github.com/FastLED/FastLED
 #include "IRLremote.h"                                        // https://github.com/NicoHood/IRLremote
@@ -274,15 +289,15 @@
 #define LED_CK 11                                             // Serial clock pin for WS2801 or APA102
 #define COLOR_ORDER BGR                                       // It's GRB for WS2812
 #define LED_TYPE APA102                                       // Alternatively WS2801, or WS2812
-#define MAX_LEDS 64                                           // Maximum number of LED's defined (at compile time).
+#define MAX_LEDS 128                                           // Maximum number of LED's defined (at compile time).
 
 // Fixed sound hardware definitions cannot change on the fly.
-#define MIC_PIN    5                                          // Microphone on A5.
+#define MIC_PIN    4                                          // Microphone on A4.
 
 // Initialize changeable global variables.
 uint8_t NUM_LEDS;                                             // Number of LED's we're actually using, and we can change this only the fly for the strand length.
 
-uint8_t max_bright = 255;                                     // Overall brightness definition. It can be changed on the fly.
+uint8_t max_bright = 64;                                     // Overall brightness definition. It can be changed on the fly.
 
 struct CRGB leds[MAX_LEDS];                                   // Initialize our LED array. We'll be using less in operation.
 
@@ -307,8 +322,8 @@ uint8_t currentPatternIndex = 0;                                // Index number 
 #define FAV2      5                                           // EEPROM location of second favourite routine.
 
 #define INITVAL   0x55                                        // If this is the value in ISINIT, then the Arduino has been initialized. Startmode should be 0 and strandlength should be 
-#define INITMODE  0                                           // Startmode is 0, which is black.
-#define INITLEN   20                                          // Start length is 20 LED's.
+#define INITMODE  0                                           // Startmode is 0, which is red.
+#define INITLEN   40                                          // Start length is 20 LED's.
 #define INITDEL   0                                           // Starting mesh delay value of the strand in milliseconds.
 #define INITFAV   0                                           // Starting favourite modes.
 
@@ -319,9 +334,9 @@ bool strandFlag = 0;                                          // Flag to let us 
 
 uint16_t meshdelay;                                           // Timer for the notasound. Works with INITDEL.
 
-uint8_t ledMode = 0;                                          // Starting mode is typically 0. Change INITMODE if you want a different starting mode.
+uint8_t ledMode = 1;                                          // Starting mode is typically 0. Change INITMODE if you want a different starting mode.
 uint8_t demorun = 0;                                          // 0 = regular mode, 1 = demo mode, 2 = shuffle mode.
-uint8_t maxMode = 17;                                         // Maximum number of modes.
+uint8_t maxMode = 16;                                         // Maximum number of modes.
 uint8_t demotime = 10;                                        // Set the length of the demo timer.
 
 uint8_t IRProtocol = 0;                                       // Temporary variables to save latest IR input
@@ -334,14 +349,14 @@ uint16_t loops = 0;                                           // Our loops per s
 
 
 // Global sound variables used in other routines.
-uint16_t  oldsample = 0;                                      // Previous sample is used for peak detection and for 'on the fly' values.
-bool     samplepeak = 0;                                      // The oldsample is well above the average, and is a 'peak'.
-uint16_t  sampleavg = 0;                                      // Average of the last 32 samples.
-uint16_t qsampleavg = 0;                                      // Average of the last 8 samples.
-uint16_t    max_vol = 0;                                      // Maximum volume (may need to get multiplied, so keep it as a uint16_t).
-uint8_t     squelch = 0;                                      // Noise squelching.
 
-//Reko Meriö's global variables
+// Global variable(s) used by other routines.
+uint8_t sampleavg = 0;                                        // Average of the last NSAMPLES samples.
+uint8_t    sample = 10;                                       // Dampened 'sample' value from our twitchy microphone.
+uint8_t   squelch = 20;                                       // Noise squelching with a non-zero default value.
+bool   samplepeak = 0;                                        // Peak detection, which is set by soundmems, but reset by the display routines.
+
+// Reko Merio's global variables
 const int maxBeats = 10;                                      // Min is 2 and value has to be divisible by two.
 const int maxBubbles = 5; //NUM_LEDS / 3;                     // Decrease if there is too much action going on.
 const int maxTrails = 5;                                      // Maximum number of trails.
@@ -358,14 +373,17 @@ int8_t  thisdir = 1;                                          // Standard direct
 
 // Support functions
 #include "soundmems.h"
-#include "structs.h"                                          // Reko Meriö's structures
+#include "structs.h"                                          // Reko Merio's structures
 #include "support.h"
 #include "gradient_palettes.h"
 
-//Reko Meriö's global structure definitions
+//Reko Merio's global structure definitions
 Bubble bubble[maxBubbles];
 Bubble trail[maxTrails];
 
+
+// Non sound reactive routine(s)
+#include "noisepal.h"
 
 // Main sound reactive routines
 
@@ -385,7 +403,7 @@ Bubble trail[maxTrails];
 #include "myvumeter.h"      // My own vu meter
 #include "sinephase.h"      // Changing phases of sine waves
 
-// Reko Meriö display routines
+// Reko Merio display routines
 #include "bubbles.h"        // Bubbles
 #include "trails.h"         // Trails
 
@@ -415,9 +433,32 @@ void setup() {
   
   set_max_power_in_volts_and_milliamps(5, 1000);                                  // 5V, 1A maximum power draw.
 
-  random16_set_seed(4832);                                                        // Awesome randomizer of awesomeness.
-  random16_add_entropy(analogRead(2));
-  int ranstart = random16();
+
+// Setup the ADC for polled 10 bit sampling on analog pin 5 at 9.6KHz.
+
+  cli();                                  // Disable interrupts.
+  ADCSRA = 0;                             // Clear this register.
+  ADCSRB = 0;                             // Ditto.
+  ADMUX = 0;                              // Ditto.
+  ADMUX |= (MIC_PIN & 0x07);              // Set A5 analog input pin.
+  ADMUX |= (0 << REFS0);                  // Set reference voltage  (analog reference(external), or using 3.3V microphone on 5V Arduino.
+                                          // Set that to 1 if using 5V microphone or 3.3V Arduino.
+//  ADMUX |= (1 << ADLAR);                  // Left justify to get 8 bits of data.                                          
+  ADMUX |= (0 << ADLAR);                  // Right justify to get full 10 A/D bits.
+
+//  ADCSRA |= bit (ADPS0) | bit (ADPS2);                //  32 scaling or 38.5 KHz sampling
+//  ADCSRA |= bit (ADPS1) | bit (ADPS2);                //  Set ADC clock with 64 prescaler where 16mHz/64=250kHz and 250khz/13 instruction cycles = 19.2khz sampling.
+  ADCSRA |= bit (ADPS0) | bit (ADPS1) | bit (ADPS2);    // 128 prescaler with 9.6 KHz sampling
+  
+  ADCSRA |= (1 << ADATE);                 // Enable auto trigger.
+//  ADCSRA |= (1 << ADIE);                  // Enable interrupts when measurement complete (if using ISR method). Sorry, we're using polling here.
+  ADCSRA |= (1 << ADEN);                  // Enable ADC.
+  ADCSRA |= (1 << ADSC);                  // Start ADC measurements.
+  sei();                                  // Re-enable interrupts.
+
+Serial.println("---SOUND COMPLETE---");
+
+Serial.println("---EEPROM START---");
 
   if (EEPROM.read(ISINIT) != INITVAL) {                                           // Check to see if Arduino has been initialized, and if not, do so.
     EEPROM.write(STARTMODE, INITMODE);                                            // Initialize the starting mode to 0.
@@ -427,14 +468,17 @@ void setup() {
     EEPROM.write(FAV1, INITFAV);                                                  // Initialize first favourite mode to 0.
     EEPROM.write(FAV2, INITFAV);                                                  // Initialize second favourite mode to 0.
   }
+
+ Serial.println("---EEPROM COMPLETE---");
  
   ledMode = EEPROM.read(STARTMODE);                                               // Location 0 is the starting mode.
   NUM_LEDS = EEPROM.read(STRANDLEN);                                              // Need to ensure NUM_LEDS < MAX_LEDS elsewhere.
   meshdelay = EEPROM.read(STRANDEL);                                              // This is our notasound delay for cool delays across strands.
 
   Serial.print("Initial delay: "); Serial.print(meshdelay*100); Serial.println("ms delay.");
-  Serial.print("Initial strand length: "); Serial.print(NUM_LEDS); Serial.println(" LEDs");
+  Serial.print("Initial strand length: "); Serial.print(NUM_LEDS); Serial.println(" LEDs.");
   Serial.print("Strand ID: "); Serial.println(STRANDID);
+  Serial.print("Squelch: "); Serial.println(squelch);
 
   currentPalette = CRGBPalette16(CRGB::Black);
   targetPalette = (gGradientPalettes[0]);
@@ -496,7 +540,8 @@ void strobe_mode(uint8_t newMode, bool mc){                   // mc stands for '
 
   switch (newMode) {                                          // If firsst time through a new mode, then initialize the variables for a given display, otherwise, just call the routine.
 
-    case  0: if(mc) {fill_solid(leds,NUM_LEDS,CRGB(1,0,0));} break;                     // All off, not animated.
+//    case  0: if(mc) {fill_solid(leds,NUM_LEDS,CRGB(1,0,0));} break;                     // All off, not animated.
+    case   0: if(mc) {thisdelay=20;} noisepal(); break;                                   // Change mode 0 to a generic noise routine.
 
     case   1: if(mc) {thisdelay=20;} ripple(); break;
     case   2: if(mc) {thisdelay=40;} fillnoise(); break;
@@ -513,8 +558,7 @@ void strobe_mode(uint8_t newMode, bool mc){                   // mc stands for '
     case  13: if(mc) {thisdelay=30;} besin(); break;
     case  14: if(mc) {thisdelay=40;} matrix(); break;
     case  15: if(mc) {thisdelay= 0;} fire(); break;
-    case  16: if(mc) {thisdelay=30;} myvumeter(); break;
-    case  17: if(mc) {thisdelay=10;} sinephase(); break;
+    case  16: if(mc) {thisdelay=10;} sinephase(); break;
 
     default: break;
 
@@ -707,5 +751,6 @@ void set_meshdel() {                                                    // Setti
   } // if strandActive
   
 } // set_meshdel()
+
 
 

@@ -1,7 +1,7 @@
-#ifndef NOISEWIDE_H
-#define NOISEWIDE_H
+#ifndef NOISEPAL_H
+#define NOISEPAL_H
 
-void noisewide() {                                                              // Create fire based on noise and sampleavg. 
+void noisepal() {                                                              // Create fire based on noise and sampleavg. 
 
 // Local definitions
   #define xscale 20                                                             // How far apart they are
@@ -10,20 +10,20 @@ void noisewide() {                                                              
 // Persistent local variables
 
 // Temporary local variables
-  uint16_t index = 0;                                                            // Current colour lookup value.
+  static uint16_t dist;                                                     // A random number for our noise generator.
+  
+  for(int i = 0; i < NUM_LEDS; i++) {                                       // Just ONE loop to fill up the LED array as all of the pixels change.
+    uint8_t index = inoise8(i*xscale, dist+i*yscale);                         // Get a value from the noise function. I'm using both x and y axis.
+    leds[i] = ColorFromPalette(currentPalette, index, 255, LINEARBLEND);    // With that value, look up the 8 bit colour palette value and assign it to the current LED.
+  }
+  dist += beatsin8(10,1, 4);                                                // Moving along the distance (that random number we started out with). Vary it a bit with a sine wave.
+                                                                            // In some sketches, I've used millis() instead of an incremented counter. Works a treat.
 
 
-  for(int i = 0; i < NUM_LEDS; i++) {
 
-    index = inoise8(i*xscale,millis()*yscale*NUM_LEDS/255);                     // X location is constant, but we move along the Y at the rate of millis(). By Andrew Tuline.
 
-    index = (255 - i*256/NUM_LEDS) * index / 128;                                 // Now we need to scale index so that it gets blacker as we get close to one of the ends
-    
-    leds[NUM_LEDS/2-i/2+1] = ColorFromPalette(currentPalette, index, sampleavg*sampleavg/64, NOBLEND);      // With that value, look up the 8 bit colour palette value and assign it to the current LED. 
-    leds[NUM_LEDS/2+i/2-1] = ColorFromPalette(currentPalette, index, sampleavg*sampleavg/64, NOBLEND);      // With that value, look up the 8 bit colour palette value and assign it to the current LED. 
-    
-  }                                                                             // The higher the value of i => the higher up the palette index (see palette definition).
 
-} // noisewide()
+} // noisepal()
 
 #endif
+

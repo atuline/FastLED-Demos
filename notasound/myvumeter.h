@@ -1,7 +1,7 @@
 #ifndef MYVUMETER_H
 #define MYVUMETER_H
 
-void myvumeter() {                                                        // A vu meter. Grabbed the falling LED from Reko Meriö.
+void myvumeter() {                                                        // A vu meter. Grabbed the falling LED from Reko MeriÃ¶.
 
 // Local definitions
   #define GRAVITY 2
@@ -11,8 +11,7 @@ void myvumeter() {                                                        // A v
   static int gravityCounter = 0;
 
 // Temporary local variables
-  uint8_t tempsamp = constrain(sampleavg,0,NUM_LEDS);                     // Keep the sample from overflowing.
-
+  uint8_t tempsamp = constrain(sampleavg,0,NUM_LEDS-1);                     // Keep the sample from overflowing.
 
   fadeToBlackBy(leds, NUM_LEDS, 160);
     
@@ -35,3 +34,4 @@ void myvumeter() {                                                        // A v
 } // myvumeter()
 
 #endif
+

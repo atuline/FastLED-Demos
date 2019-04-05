@@ -2,7 +2,7 @@
 #define BUBBLES_H
 
 /* 
- *  Adapted from Reko Meriö. A pretty cool looking routine.
+ *  Adapted from Reko MeriÃ¶. A pretty cool looking routine.
  */
 
 void bubbles() {                                          // Spawns bubbles that move when audio peaks enough
@@ -13,8 +13,9 @@ void bubbles() {                                          // Spawns bubbles that
 
 // Temporary local variables
 
+  if (samplepeak) {
+    samplepeak = 0;
 
-  if (oldsample > max_vol) {
     int randomBubble = random(maxBubbles);
     
     if (bubble[randomBubble].exist) {
@@ -38,3 +39,4 @@ void bubbles() {                                          // Spawns bubbles that
 } // bubbles()
 
 #endif
+

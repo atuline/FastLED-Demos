@@ -17,7 +17,8 @@ void ripple() {                                                                 
 // Temporary local variables
 
 
-  if (samplepeak == 1) {step = -1;}                                             // Trigger a new ripple if we have a peak.
+
+  if (samplepeak) {samplepeak = 0; step = -1;}                                  // Trigger a new ripple if we have a peak.
   
   fadeToBlackBy(leds, NUM_LEDS, 64);                                            // Fade the strand, where 1 = slow, 255 = fast
 
@@ -25,7 +26,7 @@ void ripple() {                                                                 
 
     case -1:                                                                    // Initialize ripple variables. By Andrew Tuline.
       center = random(NUM_LEDS);
-      colour = (oldsample) % 255;                                               // More peaks/s = higher the hue colour.
+      colour = (sample) % 255;                                                  // More peaks/s = higher the hue colour.
       step = 0;
       break;
 
@@ -50,3 +51,4 @@ void ripple() {                                                                 
 } // ripple()
 
 #endif
+

@@ -521,3 +521,4 @@ const uint8_t gGradientPaletteCount =
 
 
 #endif
+

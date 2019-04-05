@@ -2,7 +2,7 @@
 #define TRAILS_H
 
 /* 
- *  Adapted from Reko Meriö.
+ *  Adapted from Reko Merio.
  */
 
 void trails() {                                         // Spawns trails that move
@@ -14,7 +14,9 @@ void trails() {                                         // Spawns trails that mo
 // Temporary local variables
 
 
-  if (samplepeak == 1) {
+  if (samplepeak) {
+    
+    samplepeak = 0;
     int randomTrail = random(maxTrails);
     if (trail[randomTrail].exist) {
       trail[randomTrail].life /= 2;                     // Extend life of trail
@@ -37,3 +39,4 @@ void trails() {                                         // Spawns trails that mo
 } // trails()
 
 #endif
+

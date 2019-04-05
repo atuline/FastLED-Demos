@@ -13,7 +13,7 @@ void firewide() {                                                               
   uint16_t index = 0;                                                            // Current colour lookup value.
 
 
-  currentPalette = CRGBPalette16(CHSV(0,255,2), CHSV(0,255,4), CHSV(0,255,8), CHSV(0, 255, 8),    // Fire palette definition. Lower value = darker.
+  currentPalette = CRGBPalette16(CHSV(0,255,2), CHSV(0,255,4), CHSV(0,255,6), CHSV(0, 255, 8),    // Fire palette definition. Lower value = darker.
                                  CHSV(0, 255, 16), CRGB::Red, CRGB::Red, CRGB::Red,                                   
                                  CRGB::DarkOrange,CRGB::DarkOrange, CRGB::Orange, CRGB::Orange,
                                  CRGB::Yellow, CRGB::Orange, CRGB::Yellow, CRGB::Yellow);
@@ -32,3 +32,4 @@ void firewide() {                                                               
 } // firewide()
 
 #endif
+
