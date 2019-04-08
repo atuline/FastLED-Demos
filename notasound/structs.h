@@ -1,7 +1,7 @@
 #ifndef STRUCTS_H
 #define STRUCTS_H
 
-// These structs are from Reko MeriÃ¶.
+// These structs are from Reko Merio.
 
 struct bubble {
 

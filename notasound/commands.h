@@ -2,6 +2,7 @@
 #define COMMANDS_H
 
 // This maps 24 IR key locations to the digital output of each key. Edit to match your controller.
+// I have another almost identical 24 button controller, and it has different commands. Ugh!
 
 #define IR_A1   62985   // 65280
 #define IR_A2   57885   // 65025

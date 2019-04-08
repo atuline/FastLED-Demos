@@ -17,7 +17,6 @@ void ripple() {                                                                 
 // Temporary local variables
 
 
-
   if (samplepeak) {samplepeak = 0; step = -1;}                                  // Trigger a new ripple if we have a peak.
   
   fadeToBlackBy(leds, NUM_LEDS, 64);                                            // Fade the strand, where 1 = slow, 255 = fast

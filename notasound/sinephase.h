@@ -11,6 +11,7 @@ void sinephase() {
 
 // Temporary local variables
 
+
   for (int i=0; i<NUM_LEDS; i++) {
 
     int hue = sin8(i*4+sampleavg) + sin8(i*4+beatsin16(6,-100,100) + sin8(i*4+beatsin16(13,-20,50)) - sin8(i*4+sampleavg));
