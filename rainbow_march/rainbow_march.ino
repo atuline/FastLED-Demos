@@ -44,7 +44,7 @@ struct CRGB leds[NUM_LEDS];                                   // Initialize our 
 
 void setup() {
 
-  Serial.begin(57600);
+  Serial.begin(115200);
 
 //  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);         // For WS2812B
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);   // For APA102 or WS2801

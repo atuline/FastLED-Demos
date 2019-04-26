@@ -59,7 +59,7 @@ TBlendType    currentBlending;
 
 void setup() {
 
-  Serial.begin(57600);                                        // Initialize serial port for debugging.
+  Serial.begin(115200);                                        // Initialize serial port for debugging.
   delay(1000);                                                // Soft startup to ease the flow of electrons.
 
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);   //WS2801 and APA102

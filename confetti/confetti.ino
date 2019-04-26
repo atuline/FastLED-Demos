@@ -45,7 +45,7 @@ uint8_t thisdelay = 5;                                        // We don't need m
 
 void setup() {
   delay(1000);                                                // Power-up safety delay or something like that.
-  Serial.begin(57600);
+  Serial.begin(115200);
 
 //  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);    // Use this for WS2812B
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);  // Use this for WS2801 or APA102

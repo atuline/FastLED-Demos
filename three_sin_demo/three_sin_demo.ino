@@ -51,7 +51,7 @@ uint8_t mul3 = 22;
 
 
 void setup() {
-  Serial.begin(57600);
+  Serial.begin(115200);
   FastLED.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);        // Use this for WS2812B
 //  FastLED.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);  // Use this for WS2801 or APA102
   FastLED.setBrightness(max_bright);

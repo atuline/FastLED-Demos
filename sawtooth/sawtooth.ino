@@ -35,7 +35,7 @@ TBlendType    currentBlending = LINEARBLEND;                  // NOBLEND or LINE
 
 void setup() {
 
-  Serial.begin(57600);                                        // Initialize serial port for debugging.
+  Serial.begin(115200);                                        // Initialize serial port for debugging.
   delay(1000);                                                // Delayed startup in case there's an issue on some platforms.
 
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);  // Use this for WS2801 or APA102

@@ -115,7 +115,7 @@ void setup() {
   FastLED.setBrightness(max_bright);
   set_max_power_in_volts_and_milliamps(5, 500);                                 // FastLED Power management set at 5V, 500mA.
   
-  Serial.begin(57600);                                                          // Serial port speed for debugging.
+  Serial.begin(115200);                                                          // Serial port speed for debugging.
    
 } // setup()
 

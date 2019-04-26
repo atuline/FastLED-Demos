@@ -247,7 +247,7 @@
 #define IRL_BLOCKING true
 
 // Serial definition
-#define SERIAL_BAUDRATE 57600                                 // Or 115200.
+#define SERIAL_BAUDRATE 115200                                 // Or 115200.
 
 
 // Fixed definitions cannot change on the fly.

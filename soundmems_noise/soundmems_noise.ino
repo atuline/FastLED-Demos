@@ -58,7 +58,7 @@ void setup() {
 
   for (int i=0; i<NSAMPLES; i++) samplearray[i]=0;
  
-  Serial.begin(57600);
+  Serial.begin(115200);
 
 //  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);      // Use this for WS2812B
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);  // Use this for WS2801 or APA102

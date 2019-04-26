@@ -60,7 +60,7 @@ unsigned int sample = 0;                                      // Our sampled sou
 void setup() {
   analogReference(EXTERNAL);                                  // 3.3V reference for analog input.
  
-  Serial.begin(57600);                                        // Initialize serial port for debugging.
+  Serial.begin(115200);                                        // Initialize serial port for debugging.
   delay(1000);                                                // Soft startup to ease the flow of electrons.
 
 //  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);      // Use this for WS2812B

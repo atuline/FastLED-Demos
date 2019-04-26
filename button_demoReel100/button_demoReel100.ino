@@ -68,7 +68,7 @@ typedef void (*SimplePatternList[])();                        // List of pattern
 
 void setup() {
 
-  Serial.begin(57600);                                        // Initialize serial port for debugging.
+  Serial.begin(115200);                                        // Initialize serial port for debugging.
   delay(1000);                                                // Soft startup to ease the flow of electrons.
 
   pinMode(buttonPin, INPUT);                                  // Set button input pin

@@ -18,7 +18,7 @@
 
 void setup() {
   analogReference(EXTERNAL);
-  Serial.begin(57600);                                 // Initialize serial port for debugging.
+  Serial.begin(115200);                                 // Initialize serial port for debugging.
 } // setup()
 
 

@@ -35,7 +35,7 @@ CRGB leds3[NUM_LEDS];
 void setup() {
 
   delay(1000);                                                // Power-up safety delay.
-  Serial.begin(57600);                                        // Initialize serial port for debugging.
+  Serial.begin(115200);                                        // Initialize serial port for debugging.
 
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);  // Use this for WS2801 or APA102
 //  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);  // Use this for WS2812

@@ -75,7 +75,7 @@ TBlendType    currentBlending;                                // NOBLEND or LINE
 void setup() {
 
   delay(1000);                                                // Power-up safety delay or something like that.
-  Serial.begin(57600);
+  Serial.begin(115200);
 
   FastLED.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);  // WS2801 and APA102
 //  FastLED.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);       // WS2812

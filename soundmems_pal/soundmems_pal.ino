@@ -49,7 +49,7 @@ void setup() {
  // line.  Audio samples are 'cleaner' at 3.3V. COMMENT OUT THE NEXT LINE FOR 3.3V ARDUINOS (FLORA, ETC.):
   analogReference(EXTERNAL);
 
-  Serial.begin(57600);                                        // Initialize serial port for debugging.
+  Serial.begin(115200);                                        // Initialize serial port for debugging.
   delay(1000);                                                // Soft startup to ease the flow of electrons.
   
 //  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);
