@@ -20,12 +20,14 @@ void soundmems() {                                                              
 
   while(!(ADCSRA & 0x10));                                                      // wait for adc to be ready
   ADCSRA = 0xf5;                                                                // restart adc
+
+//  micIn = analogRead(MIC_PIN) - DC_OFFSET;
   
   micIn = ADC - DC_OFFSET;                                                      // Get the data from the ADC and subtract the DC Offset.
   micIn = abs(micIn);                                                           // Get the absolute value of that.
   micIn   = (micIn <= squelch) ? 0 : (micIn - squelch);                         // Remove noise/hum.
 
-  sample = ((sample * 7) + micIn) >> 3;                                       // Very dampened reading.
+  sample = ((sample * 7) + micIn) >> 3;                                         // Very dampened reading.
 //  sample = ((sample * 3) + micIn) >> 2;                                         // Somewhat dampened reading, which is good enough for us.
 
 //  if (sample < sampleavg+maxvol) samplepeak = 0;                              // Reset the global sample peak only if we're below maxvol. Actually, display routines need to reset this.
@@ -42,7 +44,7 @@ void soundmems() {                                                              
   if (  sample > (sampleavg+maxvol)                                                     &&      // Keep above a floor value. 
 //        sample < samplearray[(samplecount+30)%NSAMPLES]                                 &&      // Is it < previous sample.
 //        samplearray[(samplecount+30)%NSAMPLES] > samplearray[(samplecount+29)%NSAMPLES] &&      // Is previous sample > sample before that.
-        millis() > (peaktime + 50)                                                      &&      // Wait at least 200ms for another peak.
+        millis() > (peaktime + 50)                                                      &&      // Wait at least 50ms for another peak.
         samplepeak == 0                                                                         // and there wasn't a recent peak.
         ) {samplepeak = 1;peaktime=millis();} else {/*samplepeak = 0;*/}   // Then we got a peak, else we don't. Err, let the display routines reset the samplepeak value.
 
@@ -68,4 +70,3 @@ void soundmems() {                                                              
 } // soundmems()
 
 #endif
-

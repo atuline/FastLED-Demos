@@ -1,6 +1,3 @@
-
-// This maps 24 IR key locations to the digital output of each key. Edit to match your controller.
-// I have another almost identical 24 button controller, and it has different commands. Ugh!
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
@@ -78,5 +75,6 @@
 #define IR_F4   12
 
 */
+
 
 #endif

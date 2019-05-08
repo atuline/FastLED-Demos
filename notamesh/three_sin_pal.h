@@ -14,14 +14,16 @@ uint8_t mul3;
 
 
 void three_sin_pal() {
-  wave1 += beatsin8(10,-4,4);
-  wave2 += beatsin8(15,-2,2);
-  wave3 += beatsin8(12,-3, 3);
+  
+  wave1 += beatsin8(10,-4,4)*thisdir;
+  wave2 += beatsin8(15,-2,2)*thisdir;
+  wave3 += beatsin8(12,-3, 3)*thisdir;
 
   for (int k=0; k<NUM_LEDS; k++) {
     uint8_t tmp = sin8(mul1*k + wave1) + sin8(mul1*k + wave2) + sin8(mul1*k + wave3);
-    leds[k] = ColorFromPalette( currentPalette, tmp, 255);
+    leds[k] = ColorFromPalette(gCurrentPalette, tmp, 255, currentBlending);
   }
+  
 } // three_sin_pal()
 
 
