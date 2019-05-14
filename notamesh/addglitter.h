@@ -10,7 +10,7 @@
 void addglitter( fract8 chanceOfGlitter) 
 {
   if( random8() < chanceOfGlitter) {
-    leds[ random8(NUM_LEDS-1) ] += CRGB::White;
+    leds[ random8(NUM_LEDS-1) ] += CRGB(64,64,64);
   }
 }
 

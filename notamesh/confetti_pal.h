@@ -19,7 +19,7 @@ void confetti_pal() {                                                           
 
   fadeToBlackBy(leds, NUM_LEDS, thisfade);                                                                      
   int pos = random8(NUM_LEDS);                                                                                      // Pick an LED at random.
-  leds[pos] = ColorFromPalette(gCurrentPalette, thisindex + random8(thisdiff)/4 , thisbright, currentBlending);     // Munge the values and pick a colour from the palette
+  leds[pos] = ColorFromPalette(CurrentPalette, thisindex + random8(thisdiff)/4 , thisbright, currentBlending);     // Munge the values and pick a colour from the palette
   thisindex = thisindex + thisinc;                                                                                  // base palette counter increments here.
   
 } // confetti_pal()

@@ -29,8 +29,8 @@ void two_sin() {                                                              //
     int thisbright = qsuba(cubicwave8((k*allfreq)+thisphase), thiscutoff);     // qsub sets a minimum value called thiscutoff. If < thiscutoff, then bright = 0. Otherwise, bright = 128 (as defined in qsub)..
     int thatbright = qsuba(cubicwave8((k*allfreq)+128+thatphase), thatcutoff); // This wave is 180 degrees out of phase (with the value of 128).
 
-    leds[k] = ColorFromPalette(gCurrentPalette, thishue, thisbright, currentBlending);
-    leds[k] += ColorFromPalette(gCurrentPalette, thathue, thatbright, currentBlending);
+    leds[k] = ColorFromPalette(CurrentPalette, thishue, thisbright, currentBlending);
+    leds[k] += ColorFromPalette(CurrentPalette, thathue, thatbright, currentBlending);
   }
   
 } // two_sin()

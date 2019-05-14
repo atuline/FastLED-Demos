@@ -22,9 +22,9 @@ void matrix_pal() {                                           // One line matrix
   
   if (random8(90) > 80) {
     if (thisdir == -1)
-      leds[0] = ColorFromPalette(gCurrentPalette, thisindex, thisbright, currentBlending);          // Foreground matrix colour
+      leds[0] = ColorFromPalette(CurrentPalette, thisindex, thisbright, currentBlending);          // Foreground matrix colour
     else
-      leds[NUM_LEDS-1] = ColorFromPalette(gCurrentPalette, thisindex, thisbright, currentBlending);
+      leds[NUM_LEDS-1] = ColorFromPalette(CurrentPalette, thisindex, thisbright, currentBlending);
   } else {
     if (thisdir == -1)
       leds[0] = CHSV(bgclr, thissat, bgbri);                                                        // Background colour

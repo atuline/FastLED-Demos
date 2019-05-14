@@ -21,7 +21,7 @@ void three_sin_pal() {
 
   for (int k=0; k<NUM_LEDS; k++) {
     uint8_t tmp = sin8(mul1*k + wave1) + sin8(mul1*k + wave2) + sin8(mul1*k + wave3);
-    leds[k] = ColorFromPalette(gCurrentPalette, tmp, 255, currentBlending);
+    leds[k] = ColorFromPalette(CurrentPalette, tmp, 255, currentBlending);
   }
   
 } // three_sin_pal()

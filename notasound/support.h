@@ -3,7 +3,7 @@
 
 // Supporting general function -------------------------------------------------------------------------------------------
 
-void showfps() {                                                                // Show rames per seocond on the serial monitor.
+void showfps() {                                                                // Show frames per seocond on the serial monitor.
 
 // Local definitions
 
@@ -67,4 +67,3 @@ void waveit() {                                                                 
 
 
 #endif
-
