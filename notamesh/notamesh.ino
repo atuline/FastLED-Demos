@@ -145,8 +145,8 @@
  * - Press B2 to decrease the strand length.
  * - Press B3 to increase the strand length.
  * 
- * LED's will light up as 'white' to indicate the strand length. The strand length willbe saved to EEPROM after each keypress.
- * Once done, press A3 to reset the Arduino.
+ * LED's will light up as 'white' to indicate the strand length. The strand length will be saved to EEPROM after each keypress.
+ * Once done, press B1 again or press A3 to reset the Arduino.
  * 
  * 
  * 2) To increase/decrease the mesh delay (which works best with notamesh):
@@ -159,7 +159,7 @@
  * - Press E3 to increase the amount of mesh delay by 100ms.
  * 
  * LED's will light up as 'white' to indicate the mesh delay (1 led per 100ms). The mesh delay will be saved to EEPROM after each keypress.
- * Once done, press button 'A3' to reset the Arduino.
+ * Once done, press B1 again or A3 to reset the Arduino.
  *
  * 
  * Setting Favourites Configuration ********************************************************************************************************
@@ -197,9 +197,9 @@
  * Reset and set mode 0             A3  Reboots the Arduino in order to sync millis() if using notamesh. Factory reset if < 2 seconds.
  * Enable demo mode                 A4  Demo mode cycles through the routines based on the millis() counter. Not a toggle.
  * 
- * Select Arduino                   B1  This allows the EEPROM to be updated. Then press A1 through F4 as configured with STRANDID at compile time. (not A3 or B1 though). Reboot to get out of Select mode.
- * Decrease strand length           B2  The # of LED's programmed are white, only if strand is active (via B1 & STRANDID). This is saved in EEPROM. Reboot when done.
- * Increase strand length           B3  The # of LED's programmed are white, only if strand is active (via B1 & STRANDID). This is saved in EEPROM. Reboot when done.
+ * Select Arduino                   B1  This allows the EEPROM to be updated. Then press A1 through F4 as configured with STRANDID at compile time. (not A3 or B1 though). Press B1 again to get out of Select mode or A3 to reboot.
+ * Decrease strand length           B2  The # of LED's programmed are white, only if strand is active (via B1 & STRANDID). This is saved in EEPROM. Press B1 again or A3 to reboot when done.
+ * Increase strand length           B3  The # of LED's programmed are white, only if strand is active (via B1 & STRANDID). This is saved in EEPROM. Press B1 again or A3 to reboot when done.
  *                                  B4
  * 
  *                                  C1
@@ -214,8 +214,8 @@
  * 
  * 
  * Set/display favourite 1          E1  Put in select mode to set current mode as favourite 1.
- * Shorter mesh delay               E2  Decrease delay by 100ms before starting (using white LED's), only if strand is active (with the Select Arduino command. Reboot when done.
- * Longer mesh delay                E3  Increase delay by 100ms before starting (using white LED's), only if strand is active (with the Select Arduino command. Reboot when done.
+ * Shorter mesh delay               E2  Decrease mesh delay by 100ms before starting (using white LED's), only if strand is active (with the Select Arduino command). This is saved in EEPROM. Press B1 again or A3 to reboot when done.
+ * Longer mesh delay                E3  Increase mesh delay by 100ms before starting (using white LED's), only if strand is active (with the Select Arduino command). This is saved in EEPROM. Press B1 again or A3 to reboot when done.
  * Set/display favourite 2          E4  Put in select mode to set current mode as favourite 2.
  * 
  * 
@@ -494,7 +494,7 @@ void strobe_mode(uint8_t newMode, bool mc){                   // mc stands for '
     Serial.println(newMode);
   }
 
-  if (!strandActive) {                                          // If we're not updating the EEPROM, then we can run the display sequences.
+  if (!strandActive) {                                          // Stops the display sequence if we're updating the EEPROM in ACTIVE mode.
     switch (newMode) {                                          // First time through a new mode, so let's initialize the variables for a given display.
   
       case  0: if(mc) {fill_solid(leds,NUM_LEDS,CRGB(1,0,0));} break;                     // All off, not animated.
@@ -682,7 +682,6 @@ void set_strandlen() {                                                // Setting
   
   if(strandActive == 1) {                                               // Only do this if the strand is active.
     demorun = 0;                                                        // First we disable the demo mode.
-    ledMode = 0;                                                        // And set to mode 0 (black).
     fill_solid(leds,MAX_LEDS, CRGB::Black);                             // Let's make it black manually.
     
     if (IRCommand == IR_B2) {
