@@ -57,7 +57,7 @@ struct ripple {                                                                 
   bool exist;                                           // 0 to 1
 
   
-  Move() {
+  void Move() {
     
     pos += velocity;
     life++;
@@ -80,7 +80,7 @@ struct ripple {                                                                 
 
 
   
-  Init(uint8_t Fade, uint8_t MaxLife) {                 // Typically 216, 20
+  void Init(uint8_t Fade, uint8_t MaxLife) {                 // Typically 216, 20
     
     pos = random8(NUM_LEDS/8, NUM_LEDS-NUM_LEDS/8);     // Avoid spawning too close to edge.
     velocity = 1;                                       // -1 or 1
@@ -169,4 +169,3 @@ void SetupMySimilar4Palette() {                                                 
                                 CHSV(thishue+random8(32), 255, random8(128,255)));
                                 
 } // SetupMySimilar4Palette()
-
