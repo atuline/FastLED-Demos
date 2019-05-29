@@ -10,10 +10,15 @@
  */
 
 
-void rainbow_march() {                                           // The fill_rainbow call doesn't support brightness levels
+void rainbow_march() {                                           
   
-  thisindex +=thisrot*thisdir;
-  fill_rainbow(leds, NUM_LEDS, thisindex, thisdiff);               // I don't change deltahue on the fly as it's too fast near the end of the strip.
+  thisindex += thisrot*thisdir;
+
+//  fill_rainbow(leds, NUM_LEDS, thisindex, thisdiff);                                                // This doesn't support palettes.
+
+  for (int i=0; i<NUM_LEDS; i++) {                                                                    // This version supports palettes.
+    leds[i] = ColorFromPalette(CurrentPalette, thisindex + i*256/NUM_LEDS, 255, currentBlending);
+  }
 
 } // rainbow_march()
 

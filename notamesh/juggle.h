@@ -1,9 +1,9 @@
-#ifndef JUGGLE_PAL_H
-#define JUGGLE_PAL_H
+#ifndef JUGGLE_H
+#define JUGGLE_H
 
 /* This is adapted from a routine created by Mark Kriegsman */
 
-/*  Usage - juggle_pal();
+/*  Usage - juggle();
  *  
  *  thishue
  *  thisfade
@@ -13,9 +13,8 @@
  *  thisdiff
  */
 
-uint8_t numdots;
 
-void juggle_pal() {                                           // Several colored dots, weaving in and out of sync with each other
+void juggle() {                                           // Several colored dots, weaving in and out of sync with each other
   
   thisindex = 0;                                              // Reset the hue values.
   fadeToBlackBy(leds, NUM_LEDS, thisfade);
@@ -24,6 +23,6 @@ void juggle_pal() {                                           // Several colored
     thisindex += thisdiff;
   }
   
-} // juggle_pal()
+} // juggle()
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef SERENDIPITOUS_PAL_H
-#define SERENDIPITOUS_PAL_H
+#ifndef SERENDIPITOUS_H
+#define SERENDIPITOUS_H
 
 /*  This is from Serendipitous Circles from the August 1977 and April 1978 issues of Byte Magazine. I didn't do a very good job of it, but am at least getting some animation and the routine is very short.
 */
@@ -17,7 +17,7 @@ uint16_t Xn;
 uint16_t Yn;
 
 
-void serendipitous_pal() {
+void serendipitous() {
 
   EVERY_N_SECONDS(5) {
     X = Xorig;
@@ -36,6 +36,6 @@ void serendipitous_pal() {
   leds[X%(NUM_LEDS)] = ColorFromPalette(CurrentPalette, thisindex, 255, currentBlending);
   fadeToBlackBy(leds, NUM_LEDS, 16);                     // 8 bit, 1 = slow, 255 = fast
   
-} // serendipitous_pal()
+} // serendipitous()
 
 #endif

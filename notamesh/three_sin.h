@@ -1,9 +1,9 @@
-#ifndef THREE_SIN_PAL_H
-#define THREE_SIN_PAL_H
+#ifndef THREE_SIN_H
+#define THREE_SIN_H
 
 
 
-// three_sin_pal variables ---------------------------------------------------------------------
+// three_sin variables ---------------------------------------------------------------------
 
 int wave1;
 int wave2;
@@ -13,7 +13,7 @@ uint8_t mul2;
 uint8_t mul3;
 
 
-void three_sin_pal() {
+void three_sin() {
   
   wave1 += beatsin8(10,-4,4)*thisdir;
   wave2 += beatsin8(15,-2,2)*thisdir;
@@ -24,7 +24,7 @@ void three_sin_pal() {
     leds[k] = ColorFromPalette(CurrentPalette, tmp, 255, currentBlending);
   }
   
-} // three_sin_pal()
+} // three_sin()
 
 
 #endif
