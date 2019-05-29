@@ -5,7 +5,7 @@
 
 **Email:** atuline@gmail.com
 
-**Date:** February, 2019
+**Date:** May, 2019
 
 
 Here's a big pile of FastLED demos.
@@ -46,9 +46,9 @@ In addition, I have included a few other sound reactive sequences, most notably 
 
 **fht_log_ripple.ino** - Uses Fast Hartley Transform (from a 3rd party library) to translate input sounds into frequency domain output. This is NOT for the beginner.
 
-**notamesh.ino** - Huge IR controlled demo display.
+**notamesh.ino** - Huge IR controlled demo display. Now works with ESP8266 and NOT for beginners.
 
-**notasound.ino** - HUGE IR controlled sound reactive demo display.
+**notasound.ino** - HUGE IR controlled sound reactive demo display. NOT for beginners.
 
 
 ## Introducing notamesh and notasound
@@ -94,6 +94,9 @@ Once they’re all programmed and running, you would then press the ‘Reset’ 
 - Select previous/next display routine.
 - Enable/disable palette rotation.
 - Select previous/next palette.
+- A 'lamp' mode.
+- Select hue/saturation.
+- Select a single hue based palette
 
 **EEPROM Functionality**
 - Select specific Arduino for EEPROM configuration.
@@ -101,6 +104,7 @@ Once they’re all programmed and running, you would then press the ‘Reset’ 
 - Adjust mesh delay.
 - Change startup display mode.
 - Program/select 2 favourite display modes.
+- Added a bunch of other things as documented in notamesh and notasound.
 
 **Sound functionality**
 - Continuous sampling of sounds via ADMP401 microphone.
@@ -116,8 +120,8 @@ Once they’re all programmed and running, you would then press the ‘Reset’ 
 
 - Do NOT use delay statements in the loop as that breaks input routines (i.e. button).
 - Do not use nested loops (for performance reasons).
-- Use millis() as a real time counter.
-- Spend a bit more time using high school math (trigonometry), rather than just count pixels.
+- Use millis() as a real time counter unless a fixed counter is required.
+- Spend a bit more time using high school math (ie trigonometry), rather than just count pixels.
 - Keep the display routines as short as possible.
 - Data typing as strict as possible i.e. why define an int when a uint8_t is all that is required. Oh, and floats are not used at all.
 - Localize variables to each routine as much as possible.
@@ -156,3 +160,4 @@ My Github account is at:                https://github.com/atuline
 My Gists are at:                        https://gist.github.com/atuline
 My Pastebins are at:                    https://pastebin.com/u/atuline
 FastLED support forum:					https://www.reddit.com/r/fastled
+
