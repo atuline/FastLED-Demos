@@ -452,7 +452,7 @@ void setup() {
 //  LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER >(leds, MAX_LEDS);         // APA102 or WS2801 definition
   LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER >(leds, MAX_LEDS);                   // WS2812 definition
   
-  set_max_power_in_volts_and_milliamps(5, 750);                                   // 5V, 750 mA maximum power draw.
+  FastLED.setMaxPowerInVoltsAndMilliamps(5, 750);                                   // 5V, 750 mA maximum power draw.
 
   #if defined(_ESP8266)
   EEPROM.begin(32);                                                               // Not used by the UNO/Nano, but critical for ESP8266.

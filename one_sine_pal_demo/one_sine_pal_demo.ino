@@ -67,7 +67,7 @@ void setup() {
 
   FastLED.setBrightness(max_bright);
 
-  set_max_power_in_volts_and_milliamps(5, 1000);               // FastLED Power management set at 5V, 500mA. This is OPTIONAL!!!
+  FastLED.setMaxPowerInVoltsAndMilliamps(5, 1000);               // FastLED Power management set at 5V, 500mA. This is OPTIONAL!!!
 
 } // setup()
 

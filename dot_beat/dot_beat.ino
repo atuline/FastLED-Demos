@@ -45,7 +45,7 @@ void setup() {
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS); // Use this for APA102 or WS2801
 
   FastLED.setBrightness(max_bright);
-  set_max_power_in_volts_and_milliamps(5, 500);
+  FastLED.setMaxPowerInVoltsAndMilliamps(5, 500);
 
 } // setup()
 

@@ -59,7 +59,7 @@ void setup() {
   currentBlending = LINEARBLEND;  
 
   FastLED.setBrightness(max_bright);
-  set_max_power_in_volts_and_milliamps(5, 1000);              // FastLED power management set at 5V, 500mA.
+  FastLED.setMaxPowerInVoltsAndMilliamps(5, 1000);              // FastLED power management set at 5V, 500mA.
   
 } // setup()
 

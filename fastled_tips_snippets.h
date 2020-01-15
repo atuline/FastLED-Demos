@@ -38,7 +38,7 @@ http://fastled.io/docs/3.1/modules.html
 
   Put the following in setup():
 
-    set_max_power_in_volts_and_milliamps(5, 500);               // This is used by the power management functionality and is currently set at 5V, 500mA.
+    FastLED.setMaxPowerInVoltsAndMilliamps(5, 500);               // This is used by the power management functionality and is currently set at 5V, 500mA.
 
  
  
@@ -151,7 +151,7 @@ void setup () {
 	FastLED.addLeds<LED_TYPE,LED_DT,LED_CK,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip).setDither(max_bright < 255);
 	FastLED.addLeds<LED_TYPE,LED_DT,LED_CK,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(0xffb0e0);
 	FastLED.setBrightness(max_bright);                          // You can change the overall brightness on the fly, i.e. with a potentiometer.
-	set_max_power_in_volts_and_milliamps(5, 500);               // This is used by the power management functionality and is currently set at 5V, 500mA.
+	FastLED.setMaxPowerInVoltsAndMilliamps(5, 500);               // This is used by the power management functionality and is currently set at 5V, 500mA.
 
 
 	// Optional randomization
@@ -210,7 +210,7 @@ FastLED.delay(thisdelay);									// I don't use this either. I use EVERY_N_MILL
 
 // Power managed display -----------------------------------
 
-set_max_power_in_volts_and_milliamps(5, 500);               // This is defined in setup and used by the power management functionality and is currently set at 5V, 500mA.
+FastLED.setMaxPowerInVoltsAndMilliamps(5, 500);               // This is defined in setup and used by the power management functionality and is currently set at 5V, 500mA.
 FastLED.show();                         					// This is used in loop for power managed display of LED's.
   
 

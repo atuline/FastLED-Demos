@@ -55,7 +55,7 @@ void setup() {
   FastLED.addLeds<LED_TYPE, LED_DT, COLOR_ORDER>(leds, NUM_LEDS);        // Use this for WS2812B
 //  FastLED.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER>(leds, NUM_LEDS);  // Use this for WS2801 or APA102
   FastLED.setBrightness(max_bright);
-  set_max_power_in_volts_and_milliamps(5, 500);               // FastLED Power management set at 5V, 500mA
+  FastLED.setMaxPowerInVoltsAndMilliamps(5, 500);               // FastLED Power management set at 5V, 500mA
 
   random16_set_seed(4832);                                    // Awesome randomizer (which we don't yet need here.)
   random16_add_entropy(analogRead(2));

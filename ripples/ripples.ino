@@ -109,7 +109,7 @@ void setup() {
   LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER >(leds, NUM_LEDS);           // APA102 or WS2801 definition
 //  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER >(leds, NUM_LEDS);                 // WS2812 definition
   
-  set_max_power_in_volts_and_milliamps(5, 1000);                                  // 5V, 1A
+  FastLED.setMaxPowerInVoltsAndMilliamps(5, 1000);                                  // 5V, 1A
 
 } // setup()
 
