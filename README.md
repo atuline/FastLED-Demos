@@ -44,11 +44,7 @@ In addition, I have included a few other sound reactive sequences, most notably 
 
 **button_demoReel100** - Use button to control the mode. Press button for > 1 second to save current mode to EEPROM (as startup mode). This required a 3rd party button library.
 
-**fht_log_ripple.ino** - Uses Fast Hartley Transform (from a 3rd party library) to translate input sounds into frequency domain output. This is NOT for the beginner.
-
 **notamesh.ino** - Huge IR controlled demo display. Now works with ESP8266 and NOT for beginners.
-
-**notasound.ino** - HUGE IR controlled sound reactive demo display. NOT for beginners.
 
 
 ## Introducing notamesh and notasound
@@ -56,7 +52,6 @@ In addition, I have included a few other sound reactive sequences, most notably 
 Introducing two new display demos for Arduino and FastLED.
 
 **notamesh** – Introduces the ability to synchronize and delay display sequences across multiple Arduino microcontrollers via IR control.
-**notasound** – Adds sound reactive capability and display sequences to the notamesh framework.
 
 
 **Q. What is this ‘mesh’ all about?**
@@ -131,15 +126,7 @@ Once they’re all programmed and running, you would then press the ‘Reset’ 
 
 ## Controls
 
-- ADMP401 MEMS microphone (with built-in pre-amp) for sound.
 - TSOP38238 IR receiver and a 24 button IR controller for IR control.
-- 10K potentiometer for analog control (may now be deprecated).
-- Any old button switch for push button control.
-
-
-## Microphones
-
-If you go out and buy one of those cheap sound sensors from aliexpress, you will be sorely disappointed. The ADMP401 MEMS microphone includes an amplifier (with a gain of 67db), which provides a line in signal that's adequate for the Arduino works just fine. Those sound sensors don't. You have been warned.
 
 
 ## More
