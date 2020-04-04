@@ -7,6 +7,7 @@
 
 **Date:** May, 2019
 
+**Update: April 2020. I am stopping work on my 'notasound/notamesh' large demos in favour of supporting WLED (at wled.me).
 
 Here's a big pile of FastLED demos.
 
