@@ -22,13 +22,13 @@
 
 
 // Fixed definitions cannot change on the fly.
-#define LED_DT 12                                                               // Serial data pin for all strands
+#define LED_DT 2                                                               // Serial data pin for all strands
 #define LED_CK 11                                                               // Serial clock pin for WS2801 or APA102
-#define COLOR_ORDER BGR                                                         // It's GRB for WS2812
-#define LED_TYPE APA102                                                         // Alternatively WS2801, or WS2812
+#define COLOR_ORDER GRB                                                         // It's GRB for WS2812
+#define LED_TYPE WS2812                                                         // Alternatively WS2801, or WS2812
 #define NUM_LEDS 40                                                             // Maximum number of LED's defined (at compile time).
 
-uint8_t max_bright = 255;                                                       // Overall brightness definition. It can be changed on the fly.
+uint8_t max_bright = 128;                                                       // Overall brightness definition. It can be changed on the fly.
 
 struct CRGB leds[NUM_LEDS];                                                     // Initialize our LED array. We'll be using less in operation.
 
@@ -106,8 +106,8 @@ void setup() {
   Serial.begin(115200);                                                            // Setup serial baud rate
   delay(1000);                                                                    // Slow startup so we can re-upload in the case of errors.
   LEDS.setBrightness(max_bright);                                                 // Set the generic maximum brightness value.
-  LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER >(leds, NUM_LEDS);           // APA102 or WS2801 definition
-//  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER >(leds, NUM_LEDS);                 // WS2812 definition
+//  LEDS.addLeds<LED_TYPE, LED_DT, LED_CK, COLOR_ORDER >(leds, NUM_LEDS);           // APA102 or WS2801 definition
+  LEDS.addLeds<LED_TYPE, LED_DT, COLOR_ORDER >(leds, NUM_LEDS);                 // WS2812 definition
   
   FastLED.setMaxPowerInVoltsAndMilliamps(5, 1000);                                  // 5V, 1A
 
