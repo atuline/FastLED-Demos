@@ -129,13 +129,11 @@ void loop() {
 //    gCurrentPatternNumber = (gCurrentPatternNumber + 1) % ARRAY_SIZE(gPatterns);
 //  }
 
-  EVERY_N_MILLIS(20) {
+  EVERY_N_MILLIS(1000/FRAMES_PER_SECOND) {                    // You can optionally set the display frame rate to a fixed frame rate without
+                                                              // resorting to the blocking method of FastLED.delay(1000/FRAMES_PER_SECOND).
     gPatterns[gCurrentPatternNumber]();                       // Call the current pattern function once, updating the 'leds' array.
     gHue++;
-  }
-
-  EVERY_N_MILLIS(1000/FRAMES_PER_SECOND) {                    // You can optionally set the display frame rate to a fixed frame rate without
-    FastLED.show();                                           // resorting to the blocking method of FastLED.delay(1000/FRAMES_PER_SECOND).
+    FastLED.show();
   }
 
 } // loop()
